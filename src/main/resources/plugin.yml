@@ -1,0 +1,37 @@
+name: ${project.name}
+main: es.kikisito.nfcnotes.Main
+version: ${project.version}
+api-version: 1.13
+depend: [Vault]
+author: Kikisito
+commands:
+  withdraw:
+    description: Withdraw your money
+    #remove
+  createnote:
+    description: Create a note
+    aliases:
+      - nc
+permissions:
+  nfcnotes.withdraw:
+    description: Allows you to withdraw money
+    default: true
+    children:
+      nfcnotes.withdraw.all: true
+  nfcnotes.withdraw.all:
+    description: Allows you to withdraw all your money using "all" instead of a number.
+    default: true
+  nfcnotes.deposit:
+    description: Allows you to deposit money back into your account
+    default: true
+    children:
+      nfcnotes.deposit.massdeposit: true
+  nfcnotes.deposit.massdeposit:
+    description: Allows you to deposit all your notes back into your account
+    default: true
+  nfcnotes.staff.warn:
+    description: Warns you when a player withdraws or deposits a large amount of money
+    default: op
+  nfcnotes.staff.createnote:
+    description: Create a note
+    default: op

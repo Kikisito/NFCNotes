@@ -1,0 +1,4 @@
+notes:
+  name: "&aCheque &lNFC"
+  lore:
+    - "&7Cantidad: &e{money} Θ"
