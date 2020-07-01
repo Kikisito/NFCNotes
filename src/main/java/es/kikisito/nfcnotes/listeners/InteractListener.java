@@ -3,7 +3,6 @@ package es.kikisito.nfcnotes.listeners;
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.Configuration;
@@ -89,6 +88,7 @@ public class InteractListener implements Listener {
                         }
                     }
                 }
+                // Warn staff if the note's value is higher than the specified in the configuration file
                 if (totalAmount >= config.getInt("warn-staff-if-value-is-higher-than")) {
                     String formattedMoney = decimalFormat.format(totalAmount);
                     for (Player pl : plugin.getServer().getOnlinePlayers()) {

@@ -23,18 +23,12 @@ public class CreateNote implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Only players can execute this command. Console, get away!
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(plugin.parseMessage(messages.getString("only-players")));
-            return false;
-        }
-        Player p = (Player) sender;
         // Check if the player is allowed to withdraw money and its inventory is not full
-        if (!p.hasPermission("nfcnotes.withdraw")) {
-            p.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
+        if (!sender.hasPermission("nfcnotes.withdraw")) {
+            sender.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
             return false;
-        } else if (p.getInventory().firstEmpty() == -1) {
-            p.sendMessage(plugin.parseMessage(messages.getString("full-inventory")));
+        } else if (sender instanceof Player && ((Player) sender).getInventory().firstEmpty() == -1) {
+            sender.sendMessage(plugin.parseMessage(messages.getString("full-inventory")));
             return false;
         }
         // Define variables
@@ -43,26 +37,40 @@ public class CreateNote implements CommandExecutor {
         try {
             switch (args.length) {
                 case 1:
-                    if (args[0].equalsIgnoreCase("all")) {
-                        money = plugin.getEco().getBalance(p);
-                        withdraw(p, money, 1);
-                        return true;
-                    } else {
+                    if(sender instanceof Player) {
+                        Player p = (Player) sender;
                         money = Double.parseDouble(args[0]);
                         withdraw(p, money, 1);
-                    }
+                    } else sender.sendMessage(plugin.parseMessage(messages.getString("only-players")));
                     break;
                 case 2:
-                    money = Double.parseDouble(args[0]);
-                    amount = Integer.parseInt(args[1]);
-                    withdraw(p, money, amount);
+                    if(plugin.getServer().getOnlinePlayers().contains(plugin.getServer().getPlayer(args[0]))) {
+                        Player player = plugin.getServer().getPlayer(args[0]);
+                        money = Double.parseDouble(args[1]);
+                        withdraw(player, money, 1);
+                    } else {
+                        if(sender instanceof Player) {
+                            Player p = (Player) sender;
+                            money = Double.parseDouble(args[0]);
+                            amount = Integer.parseInt(args[1]);
+                            withdraw(p, money, amount);
+                        } else sender.sendMessage(plugin.parseMessage(messages.getString("only-players")));
+                    }
                     break;
+                case 3:
+                    if(plugin.getServer().getOnlinePlayers().contains(plugin.getServer().getPlayer(args[0]))) {
+                        Player player = plugin.getServer().getPlayer(args[0]);
+                        money = Double.parseDouble(args[1]);
+                        amount = Integer.parseInt(args[2]);
+                        withdraw(player, money, amount);
+                        break;
+                    }
                 default:
-                    p.sendMessage(plugin.parseMessage(messages.getString("withdraw-usage")));
+                    sender.sendMessage(plugin.parseMessage(messages.getString("withdraw-usage")));
                     break;
             }
         } catch (NumberFormatException ex) {
-            p.sendMessage(plugin.parseMessage(messages.getString("only-integers")));
+            sender.sendMessage(plugin.parseMessage(messages.getString("only-integers")));
         }
         return true;
     }
@@ -77,7 +85,7 @@ public class CreateNote implements CommandExecutor {
             return;
         }
         // Make the amount readable
-        String formattedMoney = new DecimalFormat(config.getString("notes.decimal-format")).format(m * a);
+        String formattedMoney = new DecimalFormat(config.getString("notes.decimal-format")).format(m);
         // Create the note and give it to the player
         ItemStack paper = plugin.createNote(formattedMoney, m, a);
         p.getInventory().addItem(paper);

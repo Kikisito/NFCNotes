@@ -47,6 +47,7 @@ public class Withdraw implements CommandExecutor {
         try {
             switch (args.length) {
                 case 1:
+                    // Check if "withdraw all" submodule is enabled and te first argument is "all"
                     if (args[0].equalsIgnoreCase("all") && config.getBoolean("modules.withdraw-all")) {
                         money = plugin.getEco().getBalance(p);
                         withdraw(p, money, 1);
@@ -57,6 +58,7 @@ public class Withdraw implements CommandExecutor {
                     }
                     break;
                 case 2:
+                    // Works only if the multiple withdraw submodule is enabled
                     if(config.getBoolean("modules.multiple-withdraw")) {
                         money = Double.parseDouble(args[0]);
                         amount = Integer.parseInt(args[1]);
@@ -107,6 +109,7 @@ public class Withdraw implements CommandExecutor {
                 // Unexpected error
                 player.sendMessage(ChatColor.RED + response.errorMessage);
             }
+            // Warn staff if the note's value is higher than the specified in the configuration file
             if (money * amount >= config.getInt("warn-staff-if-value-is-higher-than")) {
                 for (Player pl : plugin.getServer().getOnlinePlayers()) {
                     if (pl.hasPermission("nfcnotes.staff.warn") && player != pl) {
