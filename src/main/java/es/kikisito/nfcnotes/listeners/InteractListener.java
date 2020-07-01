@@ -6,6 +6,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,11 +21,13 @@ import java.util.List;
 
 public class InteractListener implements Listener {
     private Main plugin;
+    private Configuration config;
     private FileConfiguration messages;
     private Economy eco = Main.getEco();
 
     public InteractListener(Main plugin) {
         this.plugin = plugin;
+        this.config = plugin.getConfig();
         this.messages = plugin.getMessages();
     }
 
@@ -36,11 +39,11 @@ public class InteractListener implements Listener {
             ItemStack item = e.getItem();
             if(plugin.isNote(item)) {
                 // Check if player is allowed to deposit money
-                if (!p.hasPermission("nfcnotes.deposit")) return;
-                DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
+                if (!p.hasPermission("nfcnotes.deposit") || !config.getBoolean("modules.deposit")) return;
+                DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
                 double totalAmount = 0;
                 // Mass Deposit
-                if (p.isSneaking() && p.hasPermission("nfcnotes.deposit.massdeposit")) {
+                if (p.isSneaking() && p.hasPermission("nfcnotes.deposit.massdeposit") && config.getBoolean("modules.massdeposit")) {
                     List<ItemStack> notes = new ArrayList<>();
                     double value = 0;
                     for (ItemStack i : e.getPlayer().getInventory()) {
@@ -78,7 +81,6 @@ public class InteractListener implements Listener {
                         double money = depositEvent.getMoney();
                         String formattedMoney = decimalFormat.format(money);
                         if (eco.depositPlayer(player, money).transactionSuccess()) {
-                            plugin.getLogger().info(player.getName() + " ha canjeado un cheque de " + formattedMoney + " Θ.");
                             player.sendMessage(plugin.parseMessage(messages.getString("deposit-successful")).replace("{money}", formattedMoney));
                             item.setAmount(item.getAmount() - 1);
                             totalAmount = money;
@@ -87,11 +89,12 @@ public class InteractListener implements Listener {
                         }
                     }
                 }
-                if (totalAmount >= 100000) {
+                if (totalAmount >= config.getInt("warn-staff-if-value-is-higher-than")) {
                     String formattedMoney = decimalFormat.format(totalAmount);
                     for (Player pl : plugin.getServer().getOnlinePlayers()) {
-                        if (pl.hasPermission("nfcnotes.staff.warn")) {
-                            pl.sendMessage(ChatColor.GREEN + p.getName() + ChatColor.GRAY + " ha canjeado un cheque de " + ChatColor.GOLD + formattedMoney + ChatColor.GRAY + " Θ.");
+                        if (pl.hasPermission("nfcnotes.staff.warn") && e.getPlayer() != pl) {
+                            pl.sendMessage(plugin.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
+                            plugin.getLogger().info(plugin.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
                         }
                     }
                 }

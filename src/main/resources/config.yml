@@ -1,4 +1,22 @@
+#Note's properties
 notes:
+  # Available placeholders: {money}
   name: "&aCheque &lNFC"
   lore:
     - "&7Cantidad: &e{money} Θ"
+  # Do not modify these values unless you know what you're doing. Changing them can cause unwanted changes #
+  decimal-format: "#,###.#"
+  identifier: "9a12cb32-1a7e-4e41-be79-9938528b4375" # Attribute's ID
+
+modules:
+  # If you disable any module, its corresponding submodules will also be disabled.
+  withdraw: true
+  deposit: true
+  # Submodules
+  massdeposit: true # If enabled, users will be able to use Shift + Right Click while holding a note to deposit all their notes.
+  multiple-withdraw: true # If enabled, users will be able to use the 'amount' parameter in /withdraw <money> [amount]
+  withdraw-all: true # If enabled, users will be able to use /withdraw all to withdraw all their money.
+  warn-staff: true # If enabled, staff will receive a message when anyone withdraws or deposits more money than the specified in the option 'warn-staff-if-value-is-higher-than' below.
+
+# If 'warn-staff' is enabled, staff will get a message when a player withdraws or deposits more money than the specified here.
+warn-staff-if-value-is-higher-than: 100000

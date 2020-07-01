@@ -6,16 +6,19 @@ import es.kikisito.nfcnotes.Main;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class CreateNote implements CommandExecutor {
     private Main plugin;
+    private Configuration config;
     private FileConfiguration messages;
 
     public CreateNote(Main plugin){
         this.plugin = plugin;
+        this.config = plugin.getConfig();
         this.messages = plugin.getMessages();
     }
 
@@ -74,7 +77,7 @@ public class CreateNote implements CommandExecutor {
             return;
         }
         // Make the amount readable
-        String formattedMoney = new DecimalFormat("#,###.##").format(m * a);
+        String formattedMoney = new DecimalFormat(config.getString("notes.decimal-format")).format(m * a);
         // Create the note and give it to the player
         ItemStack paper = plugin.createNote(formattedMoney, m, a);
         p.getInventory().addItem(paper);

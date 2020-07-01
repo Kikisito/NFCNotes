@@ -5,6 +5,7 @@ import es.kikisito.nfcnotes.commands.Withdraw;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -22,7 +23,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -49,6 +49,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
         this.getCommand("withdraw").setExecutor(new Withdraw(this));
         this.getCommand("createnote").setExecutor(new CreateNote(this));
+        Metrics metrics = new Metrics(this, 8048);
     }
 
     private boolean getVault() {
@@ -66,8 +67,6 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static Economy getEco() { return eco; }
-
-    public Configuration getConfiguration() { return this.config; }
 
     public FileConfiguration getMessages() { return this.messages; }
 
@@ -94,7 +93,7 @@ public class Main extends JavaPlugin implements Listener {
     public ItemStack createNote(String formattedMoney, Double money, Integer amount){
         ItemStack is = new ItemStack(Material.PAPER, amount);
         ItemMeta im = is.getItemMeta();
-        im.setDisplayName(this.parseMessage(config.getString("notes.name")));
+        im.setDisplayName(this.parseMessage(config.getString("notes.name")).replace("{money}", formattedMoney));
         // Parse lore
         List<String> lore = new ArrayList<>();
         for(String s : config.getStringList("notes.lore")){
@@ -102,7 +101,7 @@ public class Main extends JavaPlugin implements Listener {
         }
         im.setLore(lore);
         // Note value is stored as an Attribute and then it's hidden, so its name and lore can be safely edited or removed
-        im.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.fromString("9a12cb32-1a7e-4e41-be79-9938528b4375"), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
+        im.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.fromString(config.getString("notes.identifier")), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         is.setItemMeta(im);
         return is;

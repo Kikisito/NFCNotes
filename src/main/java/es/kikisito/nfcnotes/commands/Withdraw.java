@@ -10,16 +10,19 @@ import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class Withdraw implements CommandExecutor {
     private Main plugin;
+    private Configuration config;
     private FileConfiguration messages;
 
     public Withdraw(Main plugin){
         this.plugin = plugin;
+        this.config = plugin.getConfig();
         this.messages = plugin.getMessages();
     }
 
@@ -31,7 +34,7 @@ public class Withdraw implements CommandExecutor {
         }
         Player p = (Player) sender;
         // Check if the player is allowed to withdraw money and its inventory is not full
-        if (!p.hasPermission("nfcnotes.withdraw")) {
+        if (!p.hasPermission("nfcnotes.withdraw") || !config.getBoolean("modules.withdraw")) {
             p.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
             return false;
         } else if (p.getInventory().firstEmpty() == -1) {
@@ -44,7 +47,7 @@ public class Withdraw implements CommandExecutor {
         try {
             switch (args.length) {
                 case 1:
-                    if (args[0].equalsIgnoreCase("all")) {
+                    if (args[0].equalsIgnoreCase("all") && config.getBoolean("modules.withdraw-all")) {
                         money = plugin.getEco().getBalance(p);
                         withdraw(p, money, 1);
                         return true;
@@ -54,10 +57,12 @@ public class Withdraw implements CommandExecutor {
                     }
                     break;
                 case 2:
-                    money = Double.parseDouble(args[0]);
-                    amount = Integer.parseInt(args[1]);
-                    withdraw(p, money, amount);
-                    break;
+                    if(config.getBoolean("modules.multiple-withdraw")) {
+                        money = Double.parseDouble(args[0]);
+                        amount = Integer.parseInt(args[1]);
+                        withdraw(p, money, amount);
+                        break;
+                    }
                 default:
                     p.sendMessage(plugin.parseMessage(messages.getString("withdraw-usage")));
                     break;
@@ -86,7 +91,7 @@ public class Withdraw implements CommandExecutor {
             Double money = withdrawEvent.getMoney();
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
-            String formattedMoney = new DecimalFormat("#,###.##").format(money * amount);
+            String formattedMoney = new DecimalFormat(config.getString("notes.decimal-format")).format(money * amount);
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
             EconomyResponse response = Main.getEco().withdrawPlayer(player, money * amount);
@@ -101,6 +106,14 @@ public class Withdraw implements CommandExecutor {
             } else {
                 // Unexpected error
                 player.sendMessage(ChatColor.RED + response.errorMessage);
+            }
+            if (money * amount >= config.getInt("warn-staff-if-value-is-higher-than")) {
+                for (Player pl : plugin.getServer().getOnlinePlayers()) {
+                    if (pl.hasPermission("nfcnotes.staff.warn") && player != pl) {
+                        pl.sendMessage(plugin.parseMessage(messages.getString("staff.warn-withdraw")).replace("{player}", player.getName()).replace("{money}", formattedMoney));
+                        plugin.getLogger().info(plugin.parseMessage(messages.getString("staff.warn-withdraw")).replace("{player}", player.getName()).replace("{money}", formattedMoney));
+                    }
+                }
             }
         }
     }
