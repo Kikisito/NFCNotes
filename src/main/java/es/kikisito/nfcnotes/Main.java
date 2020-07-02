@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2020  Kikisito (Kyllian)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 package es.kikisito.nfcnotes;
 
 import es.kikisito.nfcnotes.commands.CreateNote;
@@ -12,7 +29,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -86,8 +103,7 @@ public class Main extends JavaPlugin implements Listener {
 
     public static boolean isNote(ItemStack item){
         ItemMeta im = item.getItemMeta();
-        if(im.hasAttributeModifiers() && im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase("noteValue")) return true;
-        else return false;
+        return im.hasAttributeModifiers() && im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase("noteValue");
     }
 
     public ItemStack createNote(String formattedMoney, Double money, Integer amount){
@@ -120,7 +136,7 @@ public class Main extends JavaPlugin implements Listener {
         if(version >= 16){
             Pattern pattern = Pattern.compile("&#([0-9a-fA-F]){6}");
             Matcher matcher = pattern.matcher(string);
-            StringBuilder sb = new StringBuilder();
+            StringBuffer sb = new StringBuffer();
             while(matcher.find()){
                 String hex = matcher.group();
                 matcher.appendReplacement(sb, ChatColor.of(hex.substring(1)).toString());

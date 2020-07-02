@@ -7,11 +7,10 @@ author: Kikisito
 commands:
   withdraw:
     description: Withdraw your money
-    #remove
   createnote:
     description: Create a note
     aliases:
-      - nc
+      - cn
 permissions:
   nfcnotes.withdraw:
     description: Allows you to withdraw money

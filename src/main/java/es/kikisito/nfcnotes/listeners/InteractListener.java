@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2020  Kikisito (Kyllian)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
@@ -42,9 +59,11 @@ public class InteractListener implements Listener {
                 DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
                 double totalAmount = 0;
                 // Mass Deposit
+                // Checks if a player is sneaking, the submodule is enabled and if the player is allowed to mass-deposit.
                 if (p.isSneaking() && p.hasPermission("nfcnotes.deposit.massdeposit") && config.getBoolean("modules.massdeposit")) {
                     List<ItemStack> notes = new ArrayList<>();
                     double value = 0;
+                    // Checks for notes in player's inventory
                     for (ItemStack i : e.getPlayer().getInventory()) {
                         if (i != null && i.getType().equals(Material.PAPER)) {
                             if (plugin.isNote(i)) {
@@ -54,11 +73,14 @@ public class InteractListener implements Listener {
                             }
                         }
                     }
+                    // Calls DepositEvent
                     DepositEvent depositEvent = new DepositEvent(p, value);
                     plugin.getServer().getPluginManager().callEvent(depositEvent);
+                    // Get variables from called event
                     Player player = depositEvent.getPlayer();
                     double money = depositEvent.getMoney();
                     String formattedMoney = decimalFormat.format(money);
+                    // Deposit money if the event wasn't cancelled
                     if (!depositEvent.isCancelled()) {
                         if (eco.depositPlayer(player, money).transactionSuccess()) {
                             for (ItemStack i : notes) i.setAmount(0);
@@ -73,9 +95,12 @@ public class InteractListener implements Listener {
                     // Deposit
                     ItemMeta im = item.getItemMeta();
                     double m = im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount();
+                    // Calls DepositEvent
                     DepositEvent depositEvent = new DepositEvent(p, m);
                     plugin.getServer().getPluginManager().callEvent(depositEvent);
+                    // Deposit money if the event wasn't cancelled
                     if (!depositEvent.isCancelled()) {
+                        // Get variables from called event
                         Player player = depositEvent.getPlayer();
                         double money = depositEvent.getMoney();
                         String formattedMoney = decimalFormat.format(money);

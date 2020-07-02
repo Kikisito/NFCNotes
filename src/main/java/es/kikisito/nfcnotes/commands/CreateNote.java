@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2020  Kikisito (Kyllian)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package es.kikisito.nfcnotes.commands;
 
 import java.text.DecimalFormat;
@@ -24,14 +41,13 @@ public class CreateNote implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Check if the player is allowed to withdraw money and its inventory is not full
-        if (!sender.hasPermission("nfcnotes.withdraw")) {
+        if (!sender.hasPermission("nfcnotes.staff.createnote")) {
             sender.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
             return false;
         } else if (sender instanceof Player && ((Player) sender).getInventory().firstEmpty() == -1) {
             sender.sendMessage(plugin.parseMessage(messages.getString("full-inventory")));
             return false;
         }
-        // Define variables
         double money;
         int amount;
         try {
@@ -89,6 +105,6 @@ public class CreateNote implements CommandExecutor {
         // Create the note and give it to the player
         ItemStack paper = plugin.createNote(formattedMoney, m, a);
         p.getInventory().addItem(paper);
-        p.sendMessage(plugin.parseMessage(messages.getString("withdraw-successful").replace("{money}", formattedMoney)));
+        p.sendMessage(plugin.parseMessage(messages.getString("createnote-successful").replace("{money}", formattedMoney)));
     }
 }
