@@ -9,7 +9,8 @@ createnote-successful: "&8[&6NFCNotes&8] &7You created a note with a value of &6
 insufficient-funds: "&8[&6NFCNotes&8] &7You don't have enough money."
 deposit-successful: "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."
 massdeposit-successful: "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."
-unexpected-error: "&8[&6NFCNotes&8] &7An unexpected error has ocurred. This action has been cancelled."
+unexpected-error: "&8[&6NFCNotes&8] &7An unexpected error has occurred. This action has been cancelled."
 staff:
   warn-withdraw: "&8[&6NFCNotes&8] &7{player} has withdrawn &6{money}&7$."
   warn-deposit: "&8[&6NFCNotes&8] &7{player} has redeemed &6{money}&7$."
+  plugin-reloaded: "&8[&6NFCNotes&8] &7NFCNotes has successfully restarted."

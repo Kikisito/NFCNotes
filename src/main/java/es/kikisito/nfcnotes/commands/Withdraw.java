@@ -43,7 +43,8 @@ public class Withdraw implements CommandExecutor {
         this.messages = plugin.getMessages();
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         // Only players can execute this command. Console, get away!
         if (!(sender instanceof Player)) {
             sender.sendMessage(plugin.parseMessage(messages.getString("only-players")));

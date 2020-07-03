@@ -11,6 +11,8 @@ commands:
     description: Create a note
     aliases:
       - cn
+  nfcnotes:
+    description: Plugin information
 permissions:
   nfcnotes.withdraw:
     description: Allows you to withdraw money
@@ -28,9 +30,19 @@ permissions:
   nfcnotes.deposit.massdeposit:
     description: Allows you to deposit all your notes back into your account
     default: true
+  nfcnotes.staff.*:
+    description: Allows you to use any staff command
+    default: op
+    children:
+      nfcnotes.staff.warn: true
+      nfcnotes.staff.createnote: true
+      nfcnotes.staff.reload: true
   nfcnotes.staff.warn:
     description: Warns you when a player withdraws or deposits a large amount of money
     default: op
   nfcnotes.staff.createnote:
+    description: Create a note
+    default: op
+  nfcnotes.staff.reload:
     description: Create a note
     default: op

@@ -18,6 +18,7 @@
 package es.kikisito.nfcnotes;
 
 import es.kikisito.nfcnotes.commands.CreateNote;
+import es.kikisito.nfcnotes.commands.NFCNotes;
 import es.kikisito.nfcnotes.commands.Withdraw;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import net.md_5.bungee.api.ChatColor;
@@ -51,6 +52,7 @@ public class Main extends JavaPlugin implements Listener {
     private FileConfiguration messages;
     private static Economy eco;
 
+    @Override
     public void onEnable() {
         this.saveDefaultConfig();
         this.loadMessages();
@@ -66,6 +68,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
         this.getCommand("withdraw").setExecutor(new Withdraw(this));
         this.getCommand("createnote").setExecutor(new CreateNote(this));
+        this.getCommand("nfcnotes").setExecutor(new NFCNotes(this));
         Metrics metrics = new Metrics(this, 8048);
     }
 
@@ -87,7 +90,7 @@ public class Main extends JavaPlugin implements Listener {
 
     public FileConfiguration getMessages() { return this.messages; }
 
-    private void loadMessages() {
+    public void loadMessages() {
         File messages = new File(getDataFolder(), "messages.yml");
         if (!messages.exists()) {
             messages.getParentFile().mkdirs();
@@ -96,6 +99,20 @@ public class Main extends JavaPlugin implements Listener {
         this.messages = new YamlConfiguration();
         try {
             this.messages.load(messages);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reloadPlugin(){
+        try {
+            File config = new File(getDataFolder(), "config.yml");
+            if(!config.exists()){
+                config.getParentFile().mkdirs();
+                this.saveResource("config.yml", false);
+            }
+            this.getConfig().load(config);
+            loadMessages();
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }

@@ -39,7 +39,8 @@ public class CreateNote implements CommandExecutor {
         this.messages = plugin.getMessages();
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         // Check if the player is allowed to withdraw money and its inventory is not full
         if (!sender.hasPermission("nfcnotes.staff.createnote")) {
             sender.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
