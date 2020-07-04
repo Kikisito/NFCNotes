@@ -110,7 +110,7 @@ public class Withdraw implements CommandExecutor {
             Double money = withdrawEvent.getMoney();
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
-            String formattedMoney = new DecimalFormat(config.getString("notes.decimal-format")).format(money * amount);
+            String formattedMoney = new DecimalFormat(config.getString("notes.decimal-format")).format(money);
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
             EconomyResponse response = Main.getEco().withdrawPlayer(player, money * amount);
