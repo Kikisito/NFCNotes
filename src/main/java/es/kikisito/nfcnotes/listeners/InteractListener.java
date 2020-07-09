@@ -38,17 +38,16 @@ import java.util.List;
 public class InteractListener implements Listener {
     private Main plugin;
     private Configuration config;
-    private FileConfiguration messages;
     private Economy eco = Main.getEco();
 
     public InteractListener(Main plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
-        this.messages = plugin.getMessages();
     }
 
     @EventHandler
     private void redeem(PlayerInteractEvent e) {
+        FileConfiguration messages = plugin.getMessages();
         Player p = e.getPlayer();
         // Check if the item's material is Paper
         if(e.getItem() != null && e.getItem().getType() == Material.PAPER){

@@ -21,6 +21,7 @@ import es.kikisito.nfcnotes.commands.CreateNote;
 import es.kikisito.nfcnotes.commands.NFCNotes;
 import es.kikisito.nfcnotes.commands.Withdraw;
 import es.kikisito.nfcnotes.listeners.InteractListener;
+import es.kikisito.nfcnotes.listeners.JoinListener;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
@@ -57,6 +58,15 @@ public class Main extends JavaPlugin implements Listener {
         this.saveDefaultConfig();
         this.loadMessages();
         config = this.getConfig();
+        if(config.getBoolean("update-checker.enable")) {
+            new UpdateChecker(this).getVersion((version) -> {
+                if (!getDescription().getVersion().equals(version)) {
+                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "A newer version of NFCNotes is available.");
+                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Version installed: " + this.getDescription().getVersion() + ". Latest version: " + version);
+                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Download it from " + ChatColor.GOLD + "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/");
+                }
+            });
+        }
         if(!getVault()){
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect Vault in your server.");
@@ -65,7 +75,11 @@ public class Main extends JavaPlugin implements Listener {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        if(config.getInt("config-version") < 3 || config.get("config-version") == null) {
+            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it. You won't receive any support if you don't update it.");
+        }
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
+        if(config.getBoolean("update-checker.notify-on-join")) this.getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         this.getCommand("withdraw").setExecutor(new Withdraw(this));
         this.getCommand("createnote").setExecutor(new CreateNote(this));
         this.getCommand("nfcnotes").setExecutor(new NFCNotes(this));
@@ -91,13 +105,13 @@ public class Main extends JavaPlugin implements Listener {
     public FileConfiguration getMessages() { return this.messages; }
 
     public void loadMessages() {
-        File messages = new File(getDataFolder(), "messages.yml");
-        if (!messages.exists()) {
-            messages.getParentFile().mkdirs();
-            this.saveResource("messages.yml", false);
-        }
-        this.messages = new YamlConfiguration();
         try {
+            File messages = new File(getDataFolder(), "messages.yml");
+            if (!messages.exists()) {
+                messages.getParentFile().mkdirs();
+                this.saveResource("messages.yml", false);
+            }
+            this.messages = new YamlConfiguration();
             this.messages.load(messages);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();

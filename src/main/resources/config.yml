@@ -21,3 +21,6 @@ modules:
 
 # If 'warn-staff' is enabled, staff will get a message when a player withdraws or deposits more money than the specified here.
 warn-staff-if-value-is-higher-than: 100000
+
+update-checker:
+  enable: true

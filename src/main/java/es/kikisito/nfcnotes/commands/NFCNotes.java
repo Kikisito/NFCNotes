@@ -18,35 +18,51 @@
 package es.kikisito.nfcnotes.commands;
 
 import es.kikisito.nfcnotes.Main;
+import es.kikisito.nfcnotes.UpdateChecker;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class NFCNotes implements CommandExecutor {
+import java.util.List;
+
+public class NFCNotes implements CommandExecutor, TabCompleter {
     private Main plugin;
     private Configuration config;
-    private FileConfiguration messages;
 
     public NFCNotes(Main plugin){
         this.plugin = plugin;
         this.config = plugin.getConfig();
-        this.messages = plugin.getMessages();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        FileConfiguration messages = plugin.getMessages();
         switch(args.length){
             case 1:
                 if(args[0].equalsIgnoreCase("reload")){
                     if(sender.hasPermission("nfcnotes.staff.reload")) {
                         plugin.reloadPlugin();
-                        sender.sendMessage(plugin.parseMessage(messages.getString("staff.plugin-reloaded")));
+                        sender.sendMessage(plugin.parseMessage(plugin.getMessages().getString("staff.plugin-reloaded")));
                     } else {
                         sender.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
                     }
+                } else if ((args[0].equalsIgnoreCase("check") || args[0].equalsIgnoreCase("update")) && sender.hasPermission("nfcnotes.staff.check-updates")) {
+                    (new UpdateChecker(plugin)).getVersion((version) -> {
+                        if (!plugin.getDescription().getVersion().equals(version)) {
+                            TextComponent msg = new TextComponent(plugin.parseMessage(messages.getString("updates.update-available").replace("{version}", plugin.getDescription().getVersion())));
+                            msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/"));
+                            sender.spigot().sendMessage(msg);
+                        } else {
+                            sender.sendMessage(plugin.parseMessage(messages.getString("updates.no-updates")));
+                        }
+
+                    });
                 }
                 break;
             default:
@@ -59,5 +75,9 @@ public class NFCNotes implements CommandExecutor {
                 break;
         }
         return false;
+    }
+
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return null;
     }
 }

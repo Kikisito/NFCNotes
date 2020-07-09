@@ -35,16 +35,15 @@ import org.bukkit.inventory.ItemStack;
 public class Withdraw implements CommandExecutor {
     private Main plugin;
     private Configuration config;
-    private FileConfiguration messages;
 
     public Withdraw(Main plugin){
         this.plugin = plugin;
         this.config = plugin.getConfig();
-        this.messages = plugin.getMessages();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        FileConfiguration messages = plugin.getMessages();
         // Only players can execute this command. Console, get away!
         if (!(sender instanceof Player)) {
             sender.sendMessage(plugin.parseMessage(messages.getString("only-players")));
@@ -93,6 +92,7 @@ public class Withdraw implements CommandExecutor {
     }
 
     private void withdraw(Player p, Double m, Integer a){
+        FileConfiguration messages = plugin.getMessages();
         // Check if given number is positive and is an integer.
         if (m <= 0) {
             p.sendMessage(plugin.parseMessage(messages.getString("use-a-number-higher-than-zero")));
