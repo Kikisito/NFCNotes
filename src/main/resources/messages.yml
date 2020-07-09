@@ -15,5 +15,5 @@ staff:
   warn-deposit: "&8[&6NFCNotes&8] &7{player} has redeemed &6{money}&7$."
   plugin-reloaded: "&8[&6NFCNotes&8] &7NFCNotes has successfully restarted."
 updates:
-  update-available: "&8[&6NFCNotes&8] &7A new version of NFCNotes ({version}) is available. Check it out at https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/"
+  update-available: "&8[&6NFCNotes&8] &7NFCNotes {version} is available. Click here to download it."
   no-updates: "&8[&6NFCNotes&8] &7You are using the latest version."

@@ -29,6 +29,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NFCNotes implements CommandExecutor, TabCompleter {
@@ -53,9 +54,9 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
                         sender.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
                     }
                 } else if ((args[0].equalsIgnoreCase("check") || args[0].equalsIgnoreCase("update")) && sender.hasPermission("nfcnotes.staff.check-updates")) {
-                    (new UpdateChecker(plugin)).getVersion((version) -> {
-                        if (!plugin.getDescription().getVersion().equals(version)) {
-                            TextComponent msg = new TextComponent(plugin.parseMessage(messages.getString("updates.update-available").replace("{version}", plugin.getDescription().getVersion())));
+                    new UpdateChecker(plugin).getVersion((version) -> {
+                        if(!plugin.getDescription().getVersion().equals(version)) {
+                            TextComponent msg = new TextComponent(plugin.parseMessage(messages.getString("updates.update-available").replace("{version}", version)));
                             msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/"));
                             sender.spigot().sendMessage(msg);
                         } else {
@@ -78,6 +79,12 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
     }
 
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+        List<String> tab = new ArrayList<>();
+        if(args.length == 1){
+            tab.add("reload");
+            tab.add("check");
+            tab.add("update");
+        }
+        return tab;
     }
 }
