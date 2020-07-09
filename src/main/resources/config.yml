@@ -24,3 +24,7 @@ warn-staff-if-value-is-higher-than: 100000
 
 update-checker:
   enable: true
+  notify-on-join: true
+
+# Do not touch this!
+config-version: 3
