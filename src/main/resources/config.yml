@@ -23,8 +23,8 @@ modules:
 warn-staff-if-value-is-higher-than: 100000
 
 update-checker:
-  enable: true
-  notify-on-join: true
+  enable: true # If true, each time the server starts you will receive a message if there is a newer version.
+  notify-on-join: true # If enabled and a new version is available, each time an user with the permission nfcnotes.staff.check-updates connects to the server will be notified of the new version.
 
 # Do not touch this!
 config-version: 3

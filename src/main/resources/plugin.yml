@@ -37,6 +37,7 @@ permissions:
       nfcnotes.staff.warn: true
       nfcnotes.staff.createnote: true
       nfcnotes.staff.reload: true
+      nfcnotes.staff.check-updates: true
   nfcnotes.staff.warn:
     description: Warns you when a player withdraws or deposits a large amount of money
     default: op
@@ -45,4 +46,7 @@ permissions:
     default: op
   nfcnotes.staff.reload:
     description: Create a note
+    default: op
+  nfcnotes.staff.check-updates:
+    description: Allows the user to check if the plugin is up to date
     default: op
