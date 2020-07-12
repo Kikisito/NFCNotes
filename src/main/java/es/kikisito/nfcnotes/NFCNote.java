@@ -3,11 +3,9 @@ package es.kikisito.nfcnotes;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -33,7 +31,7 @@ public class NFCNote {
 
     public Double getValue(){ return this.value; }
 
-    public static ItemStack createNFCNote(String name, List<String> lore, String identifier, DecimalFormat decimalFormat, Double money, Integer amount){
+    public static ItemStack createNFCNote(String identifier, String name, List<String> lore, DecimalFormat decimalFormat, Double money, Integer amount){
         String formattedMoney = decimalFormat.format(money);
         ItemStack is = new ItemStack(Material.PAPER, amount);
         ItemMeta im = is.getItemMeta();

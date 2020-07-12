@@ -25,27 +25,17 @@ import es.kikisito.nfcnotes.listeners.JoinListener;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -58,6 +48,7 @@ public class Main extends JavaPlugin implements Listener {
         this.saveDefaultConfig();
         this.loadMessages();
         config = this.getConfig();
+
         if(config.getBoolean("update-checker.enable")) {
             new UpdateChecker(this).getVersion((version) -> {
                 if (!getDescription().getVersion().equals(version)) {
@@ -67,6 +58,7 @@ public class Main extends JavaPlugin implements Listener {
                 }
             });
         }
+
         if(!getVault()){
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect Vault in your server.");
@@ -75,9 +67,13 @@ public class Main extends JavaPlugin implements Listener {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        if(config.getInt("config-version") < 3 || config.get("config-version") == null) {
+
+        if(config.getInt("config-version") < 4 || config.get("config-version") == null) {
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it. You won't receive any support if you don't update it.");
+            // In case of this plugin being reloaded using Plugman.
+            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it. You won't receive any support if you don't update it.");
         }
+
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
         if(config.getBoolean("update-checker.notify-on-join")) this.getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         this.getCommand("withdraw").setExecutor(new Withdraw(this));

@@ -58,20 +58,20 @@ public class CreateNote implements CommandExecutor {
                     if(sender instanceof Player) {
                         Player p = (Player) sender;
                         money = Double.parseDouble(args[0]);
-                        withdraw(p, money, 1);
+                        createNote(p, money, 1);
                     } else sender.sendMessage(Utils.parseMessage(messages.getString("only-players")));
                     break;
                 case 2:
                     if(plugin.getServer().getOnlinePlayers().contains(plugin.getServer().getPlayer(args[0]))) {
                         Player player = plugin.getServer().getPlayer(args[0]);
                         money = Double.parseDouble(args[1]);
-                        withdraw(player, money, 1);
+                        createNote(player, money, 1);
                     } else {
                         if(sender instanceof Player) {
                             Player p = (Player) sender;
                             money = Double.parseDouble(args[0]);
                             amount = Integer.parseInt(args[1]);
-                            withdraw(p, money, amount);
+                            createNote(p, money, amount);
                         } else sender.sendMessage(Utils.parseMessage(messages.getString("only-players")));
                     }
                     break;
@@ -80,7 +80,7 @@ public class CreateNote implements CommandExecutor {
                         Player player = plugin.getServer().getPlayer(args[0]);
                         money = Double.parseDouble(args[1]);
                         amount = Integer.parseInt(args[2]);
-                        withdraw(player, money, amount);
+                        createNote(player, money, amount);
                         break;
                     }
                 default:
@@ -93,7 +93,7 @@ public class CreateNote implements CommandExecutor {
         return true;
     }
 
-    private void withdraw(Player p, Double m, Integer a){
+    private void createNote(Player p, Double m, Integer a){
         FileConfiguration messages = plugin.getMessages();
         // Check if given number is positive and is an integer.
         if (m <= 0) {
@@ -107,7 +107,7 @@ public class CreateNote implements CommandExecutor {
         DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
         String formattedMoney = decimalFormat.format(m);
         // Create the note and give it to the player
-        ItemStack paper = NFCNote.createNFCNote(config.getString("notes.name"), config.getStringList("notes.lore"), config.getString("notes.identifier"), decimalFormat, m, a);
+        ItemStack paper = NFCNote.createNFCNote(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), decimalFormat, m, a);
         p.getInventory().addItem(paper);
         p.sendMessage(Utils.parseMessage(messages.getString("createnote-successful").replace("{money}", formattedMoney)));
     }

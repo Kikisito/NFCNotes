@@ -1,4 +1,10 @@
-#Note's properties
+# --- NFCNotes configuration file --- #
+
+# --------------------------------------------------------------------------------------------------------- #
+# [!] This is IMPORTANT if you already have notes created and you want to change any value of this category.
+# [!] Remember that if you change any of these options and a plugin is using your old notes,
+# [!] these must be changed or newer notes won't work on that plugin.
+# --------------------------------------------------------------------------------------------------------- #
 notes:
   # Available placeholders: {money}
   name: "&aNFCNote"
@@ -28,3 +34,5 @@ update-checker:
 
 # Do not touch this!
 config-version: 3
+
+# --- This is the end of this file, trust me --- #
