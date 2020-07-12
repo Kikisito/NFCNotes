@@ -19,6 +19,7 @@ package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
+import es.kikisito.nfcnotes.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.configuration.Configuration;
@@ -42,7 +43,7 @@ public class JoinListener implements Listener {
         if (e.getPlayer().hasPermission("nfcnotes.staff.check-updates")) {
             new UpdateChecker(plugin).getVersion((version) -> {
                 if (!plugin.getDescription().getVersion().equals(version)) {
-                    TextComponent msg = new TextComponent(plugin.parseMessage(messages.getString("updates.update-available").replace("{version}", plugin.getDescription().getVersion())));
+                    TextComponent msg = new TextComponent(Utils.parseMessage(messages.getString("updates.update-available").replace("{version}", version)));
                     msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/"));
                     e.getPlayer().spigot().sendMessage(msg);
                 }

@@ -19,6 +19,7 @@ package es.kikisito.nfcnotes.commands;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
+import es.kikisito.nfcnotes.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -49,18 +50,18 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
                 if(args[0].equalsIgnoreCase("reload")){
                     if(sender.hasPermission("nfcnotes.staff.reload")) {
                         plugin.reloadPlugin();
-                        sender.sendMessage(plugin.parseMessage(plugin.getMessages().getString("staff.plugin-reloaded")));
+                        sender.sendMessage(Utils.parseMessage(plugin.getMessages().getString("staff.plugin-reloaded")));
                     } else {
-                        sender.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
+                        sender.sendMessage(Utils.parseMessage(messages.getString("no-permission")));
                     }
                 } else if ((args[0].equalsIgnoreCase("check") || args[0].equalsIgnoreCase("update")) && sender.hasPermission("nfcnotes.staff.check-updates")) {
                     new UpdateChecker(plugin).getVersion((version) -> {
                         if(!plugin.getDescription().getVersion().equals(version)) {
-                            TextComponent msg = new TextComponent(plugin.parseMessage(messages.getString("updates.update-available").replace("{version}", version)));
+                            TextComponent msg = new TextComponent(Utils.parseMessage(messages.getString("updates.update-available").replace("{version}", version)));
                             msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/"));
                             sender.spigot().sendMessage(msg);
                         } else {
-                            sender.sendMessage(plugin.parseMessage(messages.getString("updates.no-updates")));
+                            sender.sendMessage(Utils.parseMessage(messages.getString("updates.no-updates")));
                         }
 
                     });

@@ -20,6 +20,9 @@ package es.kikisito.nfcnotes.commands;
 import java.text.DecimalFormat;
 
 import es.kikisito.nfcnotes.Main;
+import es.kikisito.nfcnotes.NFCNote;
+import es.kikisito.nfcnotes.Utils;
+import es.kikisito.nfcnotes.enums.WithdrawMethod;
 import es.kikisito.nfcnotes.events.WithdrawEvent;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -46,16 +49,16 @@ public class Withdraw implements CommandExecutor {
         FileConfiguration messages = plugin.getMessages();
         // Only players can execute this command. Console, get away!
         if (!(sender instanceof Player)) {
-            sender.sendMessage(plugin.parseMessage(messages.getString("only-players")));
+            sender.sendMessage(Utils.parseMessage(messages.getString("only-players")));
             return false;
         }
         Player p = (Player) sender;
         // Check if the player is allowed to withdraw money and its inventory is not full
         if (!p.hasPermission("nfcnotes.withdraw") || !config.getBoolean("modules.withdraw")) {
-            p.sendMessage(plugin.parseMessage(messages.getString("no-permission")));
+            p.sendMessage(Utils.parseMessage(messages.getString("no-permission")));
             return false;
         } else if (p.getInventory().firstEmpty() == -1) {
-            p.sendMessage(plugin.parseMessage(messages.getString("full-inventory")));
+            p.sendMessage(Utils.parseMessage(messages.getString("full-inventory")));
             return false;
         }
         double money;
@@ -65,7 +68,7 @@ public class Withdraw implements CommandExecutor {
                 case 1:
                     // Check if "withdraw all" submodule is enabled and te first argument is "all"
                     if (args[0].equalsIgnoreCase("all") && config.getBoolean("modules.withdraw-all")) {
-                        money = plugin.getEco().getBalance(p);
+                        money = Main.getEco().getBalance(p);
                         withdraw(p, money, 1);
                         return true;
                     } else {
@@ -82,11 +85,11 @@ public class Withdraw implements CommandExecutor {
                         break;
                     }
                 default:
-                    p.sendMessage(plugin.parseMessage(messages.getString("withdraw-usage")));
+                    p.sendMessage(Utils.parseMessage(messages.getString("withdraw-usage")));
                     break;
             }
         } catch (NumberFormatException ex) {
-            p.sendMessage(plugin.parseMessage(messages.getString("only-integers")));
+            p.sendMessage(Utils.parseMessage(messages.getString("only-integers")));
         }
         return true;
     }
@@ -95,14 +98,14 @@ public class Withdraw implements CommandExecutor {
         FileConfiguration messages = plugin.getMessages();
         // Check if given number is positive and is an integer.
         if (m <= 0) {
-            p.sendMessage(plugin.parseMessage(messages.getString("use-a-number-higher-than-zero")));
+            p.sendMessage(Utils.parseMessage(messages.getString("use-a-number-higher-than-zero")));
             return;
         } else if(!(m % 1 == 0)) {
-            p.sendMessage(plugin.parseMessage(messages.getString("only-integers")));
+            p.sendMessage(Utils.parseMessage(messages.getString("only-integers")));
             return;
         }
         // Call WithdrawEvent and check if it was cancelled
-        WithdrawEvent withdrawEvent = new WithdrawEvent(p, m, a);
+        WithdrawEvent withdrawEvent = new WithdrawEvent(p, m, a, WithdrawMethod.COMMAND);
         plugin.getServer().getPluginManager().callEvent(withdrawEvent);
         if(!withdrawEvent.isCancelled()) {
             // Get variables from event
@@ -110,18 +113,19 @@ public class Withdraw implements CommandExecutor {
             Double money = withdrawEvent.getMoney();
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
-            String formattedMoney = new DecimalFormat(config.getString("notes.decimal-format")).format(money);
+            DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
+            String formattedMoney = decimalFormat.format(money);
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
             EconomyResponse response = Main.getEco().withdrawPlayer(player, money * amount);
             if (response.type.equals(ResponseType.SUCCESS)) {
                 // Create the note and give it to the player
-                ItemStack paper = plugin.createNote(formattedMoney, money, amount);
+                ItemStack paper = NFCNote.createNFCNote(config.getString("notes.name"), config.getStringList("notes.lore"), config.getString("notes.identifier"), decimalFormat, money, amount);
                 player.getInventory().addItem(paper);
-                player.sendMessage(plugin.parseMessage(messages.getString("withdraw-successful").replace("{money}", formattedMoney)));
+                player.sendMessage(Utils.parseMessage(messages.getString("withdraw-successful").replace("{money}", formattedMoney)));
             } else if(response.amount == 0){
                 // Insufficient funds
-                player.sendMessage(plugin.parseMessage(messages.getString("insufficient-funds")));
+                player.sendMessage(Utils.parseMessage(messages.getString("insufficient-funds")));
             } else {
                 // Unexpected error
                 player.sendMessage(ChatColor.RED + response.errorMessage);
@@ -130,8 +134,8 @@ public class Withdraw implements CommandExecutor {
             if (money * amount >= config.getInt("warn-staff-if-value-is-higher-than")) {
                 for (Player pl : plugin.getServer().getOnlinePlayers()) {
                     if (pl.hasPermission("nfcnotes.staff.warn") && player != pl) {
-                        pl.sendMessage(plugin.parseMessage(messages.getString("staff.warn-withdraw")).replace("{player}", player.getName()).replace("{money}", formattedMoney));
-                        plugin.getLogger().info(plugin.parseMessage(messages.getString("staff.warn-withdraw")).replace("{player}", player.getName()).replace("{money}", formattedMoney));
+                        pl.sendMessage(Utils.parseMessage(messages.getString("staff.warn-withdraw")).replace("{player}", player.getName()).replace("{money}", formattedMoney));
+                        plugin.getLogger().info(Utils.parseMessage(messages.getString("staff.warn-withdraw")).replace("{player}", player.getName()).replace("{money}", formattedMoney));
                     }
                 }
             }

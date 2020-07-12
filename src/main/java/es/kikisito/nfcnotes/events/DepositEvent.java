@@ -17,6 +17,7 @@
 
 package es.kikisito.nfcnotes.events;
 
+import es.kikisito.nfcnotes.enums.DepositMethod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -27,11 +28,25 @@ public class DepositEvent extends Event implements Cancellable {
     private Player player;
     private Double money;
     private boolean isCancelled;
+    private DepositMethod depositMethod;
 
+    /**
+     * @deprecated see DepositEvent(Player player, Double money, DepositMethod depositMethod)
+     * Deprecated since 2.1. This constructor will be removed soon. Added DepositMethod.
+     */
+    @Deprecated
     public DepositEvent(Player player, Double money){
         this.player = player;
         this.money = money;
         this.isCancelled = false;
+        this.depositMethod = DepositMethod.DEPRECATED_METHOD;
+    }
+
+    public DepositEvent(Player player, Double money, DepositMethod depositMethod){
+        this.player = player;
+        this.money = money;
+        this.isCancelled = false;
+        this.depositMethod = depositMethod;
     }
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -55,6 +70,8 @@ public class DepositEvent extends Event implements Cancellable {
     public void setMoney(Double money){
         this.money = money;
     }
+
+    public DepositMethod getDepositMethod(){ return this.depositMethod; }
 
     @Override
     public boolean isCancelled() {

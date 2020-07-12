@@ -18,6 +18,9 @@
 package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
+import es.kikisito.nfcnotes.NFCNote;
+import es.kikisito.nfcnotes.Utils;
+import es.kikisito.nfcnotes.enums.DepositMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
@@ -26,6 +29,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -45,14 +49,14 @@ public class InteractListener implements Listener {
         this.config = plugin.getConfig();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     private void redeem(PlayerInteractEvent e) {
         FileConfiguration messages = plugin.getMessages();
         Player p = e.getPlayer();
         // Check if the item's material is Paper
         if(e.getItem() != null && e.getItem().getType() == Material.PAPER){
             ItemStack item = e.getItem();
-            if(plugin.isNote(item)) {
+            if(NFCNote.isNFCNote(item)) {
                 // Check if player is allowed to deposit money
                 if (!p.hasPermission("nfcnotes.deposit") || !config.getBoolean("modules.deposit")) return;
                 DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
@@ -65,7 +69,7 @@ public class InteractListener implements Listener {
                     // Checks for notes in player's inventory
                     for (ItemStack i : e.getPlayer().getInventory()) {
                         if (i != null && i.getType().equals(Material.PAPER)) {
-                            if (plugin.isNote(i)) {
+                            if (NFCNote.isNFCNote(i)) {
                                 double amount = i.getItemMeta().getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount() * i.getAmount();
                                 value = value + amount;
                                 notes.add(i);
@@ -73,7 +77,7 @@ public class InteractListener implements Listener {
                         }
                     }
                     // Calls DepositEvent
-                    DepositEvent depositEvent = new DepositEvent(p, value);
+                    DepositEvent depositEvent = new DepositEvent(p, value, DepositMethod.SHIFT_RIGHT_CLICK);
                     plugin.getServer().getPluginManager().callEvent(depositEvent);
                     // Get variables from called event
                     Player player = depositEvent.getPlayer();
@@ -84,10 +88,10 @@ public class InteractListener implements Listener {
                         if (eco.depositPlayer(player, money).transactionSuccess()) {
                             for (ItemStack i : notes) i.setAmount(0);
                             plugin.getLogger().info(player.getName() + " ha canjeado un total de " + formattedMoney + " Θ.");
-                            player.sendMessage(plugin.parseMessage(messages.getString("massdeposit-successful")).replace("{money}", formattedMoney));
+                            player.sendMessage(Utils.parseMessage(messages.getString("massdeposit-successful")).replace("{money}", formattedMoney));
                             totalAmount = money;
                         } else {
-                            player.sendMessage(plugin.parseMessage(messages.getString("unexpected-error")));
+                            player.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
                         }
                     }
                 } else {
@@ -95,7 +99,7 @@ public class InteractListener implements Listener {
                     ItemMeta im = item.getItemMeta();
                     double m = im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount();
                     // Calls DepositEvent
-                    DepositEvent depositEvent = new DepositEvent(p, m);
+                    DepositEvent depositEvent = new DepositEvent(p, m, DepositMethod.RIGHT_CLICK);
                     plugin.getServer().getPluginManager().callEvent(depositEvent);
                     // Deposit money if the event wasn't cancelled
                     if (!depositEvent.isCancelled()) {
@@ -104,11 +108,11 @@ public class InteractListener implements Listener {
                         double money = depositEvent.getMoney();
                         String formattedMoney = decimalFormat.format(money);
                         if (eco.depositPlayer(player, money).transactionSuccess()) {
-                            player.sendMessage(plugin.parseMessage(messages.getString("deposit-successful")).replace("{money}", formattedMoney));
+                            player.sendMessage(Utils.parseMessage(messages.getString("deposit-successful")).replace("{money}", formattedMoney));
                             item.setAmount(item.getAmount() - 1);
                             totalAmount = money;
                         } else {
-                            player.sendMessage(plugin.parseMessage(messages.getString("unexpected-error")));
+                            player.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
                         }
                     }
                 }
@@ -117,8 +121,8 @@ public class InteractListener implements Listener {
                     String formattedMoney = decimalFormat.format(totalAmount);
                     for (Player pl : plugin.getServer().getOnlinePlayers()) {
                         if (pl.hasPermission("nfcnotes.staff.warn") && e.getPlayer() != pl) {
-                            pl.sendMessage(plugin.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
-                            plugin.getLogger().info(plugin.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
+                            pl.sendMessage(Utils.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
+                            plugin.getLogger().info(Utils.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
                         }
                     }
                 }
