@@ -17,7 +17,7 @@
 
 package es.kikisito.nfcnotes.events;
 
-import es.kikisito.nfcnotes.enums.WithdrawMethod;
+import es.kikisito.nfcnotes.enums.ActionMethod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -29,7 +29,7 @@ public class WithdrawEvent extends Event implements Cancellable {
     private Double money;
     private Integer amount;
     private boolean isCancelled;
-    private WithdrawMethod withdrawMethod;
+    private ActionMethod actionMethod;
 
     /**
      * @deprecated see WithdrawtEvent(Player player, Double money, WithdrawMethod withdrawtMethod)
@@ -41,15 +41,15 @@ public class WithdrawEvent extends Event implements Cancellable {
         this.money = money;
         this.amount = amount;
         this.isCancelled = false;
-        this.withdrawMethod = WithdrawMethod.DEPRECATED_METHOD;
+        this.actionMethod = ActionMethod.DEPRECATED_METHOD;
     }
 
-    public WithdrawEvent(Player player, Double money, Integer amount, WithdrawMethod withdrawMethod){
+    public WithdrawEvent(Player player, Double money, Integer amount, ActionMethod actionMethod){
         this.player = player;
         this.money = money;
         this.amount = amount;
         this.isCancelled = false;
-        this.withdrawMethod = withdrawMethod;
+        this.actionMethod = actionMethod;
     }
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -80,6 +80,10 @@ public class WithdrawEvent extends Event implements Cancellable {
 
     public void setAmount(Integer amount){
         this.amount = amount;
+    }
+
+    public ActionMethod getWithdrawMethod(Double money){
+        return actionMethod;
     }
 
     @Override

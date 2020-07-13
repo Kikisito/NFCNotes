@@ -17,7 +17,9 @@ notes:
 modules:
   # If you disable any module, its corresponding submodules will also be disabled.
   withdraw: true
-  deposit: true
+  deposit:
+    action: true # This allows players to right click their notes to redeem them.
+    command: true
   # Submodules
   massdeposit: true # If enabled, users will be able to use Shift + Right Click while holding a note to deposit all their notes.
   multiple-withdraw: true # If enabled, users will be able to use the 'amount' parameter in /withdraw <money> [amount]

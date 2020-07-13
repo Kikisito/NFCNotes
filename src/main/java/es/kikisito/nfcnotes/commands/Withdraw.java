@@ -22,9 +22,10 @@ import java.text.DecimalFormat;
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
 import es.kikisito.nfcnotes.Utils;
-import es.kikisito.nfcnotes.enums.WithdrawMethod;
+import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.WithdrawEvent;
 import net.md_5.bungee.api.ChatColor;
+import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.command.Command;
@@ -38,10 +39,12 @@ import org.bukkit.inventory.ItemStack;
 public class Withdraw implements CommandExecutor {
     private Main plugin;
     private Configuration config;
+    private Economy eco;
 
     public Withdraw(Main plugin){
         this.plugin = plugin;
         this.config = plugin.getConfig();
+        this.eco = plugin.getEco();
     }
 
     @Override
@@ -68,7 +71,7 @@ public class Withdraw implements CommandExecutor {
                 case 1:
                     // Check if "withdraw all" submodule is enabled and te first argument is "all"
                     if (args[0].equalsIgnoreCase("all") && config.getBoolean("modules.withdraw-all")) {
-                        money = Main.getEco().getBalance(p);
+                        money = plugin.getEco().getBalance(p);
                         withdraw(p, money, 1);
                         return true;
                     } else {
@@ -105,7 +108,7 @@ public class Withdraw implements CommandExecutor {
             return;
         }
         // Call WithdrawEvent and check if it was cancelled
-        WithdrawEvent withdrawEvent = new WithdrawEvent(p, m, a, WithdrawMethod.COMMAND);
+        WithdrawEvent withdrawEvent = new WithdrawEvent(p, m, a, ActionMethod.COMMAND);
         plugin.getServer().getPluginManager().callEvent(withdrawEvent);
         if(!withdrawEvent.isCancelled()) {
             // Get variables from event
@@ -114,13 +117,13 @@ public class Withdraw implements CommandExecutor {
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
             DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
-            String formattedMoney = decimalFormat.format(money);
+            String formattedMoney = decimalFormat.format(money * amount);
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
-            EconomyResponse response = Main.getEco().withdrawPlayer(player, money * amount);
+            EconomyResponse response = plugin.getEco().withdrawPlayer(player, money * amount);
             if (response.type.equals(ResponseType.SUCCESS)) {
                 // Create the note and give it to the player
-                ItemStack paper = NFCNote.createNFCNote(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), decimalFormat, money, amount);
+                ItemStack paper = NFCNote.createNFCNoteItem(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), decimalFormat, money, amount);
                 player.getInventory().addItem(paper);
                 player.sendMessage(Utils.parseMessage(messages.getString("withdraw-successful").replace("{money}", formattedMoney)));
             } else if(response.amount == 0){

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2020  Kikisito (Kyllian)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package es.kikisito.nfcnotes;
 
 import org.bukkit.Material;
@@ -25,13 +42,15 @@ public class NFCNote {
         this.value = itemStack.getItemMeta().getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount();
     }
 
+    public ItemStack getItemStack(){ return this.itemStack; }
+
     public String getDisplayName(){ return this.name; }
 
     public List<String> getLore(){ return this.lore; }
 
     public Double getValue(){ return this.value; }
 
-    public static ItemStack createNFCNote(String identifier, String name, List<String> lore, DecimalFormat decimalFormat, Double money, Integer amount){
+    public static ItemStack createNFCNoteItem(String identifier, String name, List<String> lore, DecimalFormat decimalFormat, Double money, Integer amount){
         String formattedMoney = decimalFormat.format(money);
         ItemStack is = new ItemStack(Material.PAPER, amount);
         ItemMeta im = is.getItemMeta();
@@ -48,6 +67,7 @@ public class NFCNote {
     }
 
     public static boolean isNFCNote(ItemStack itemStack){
+        if(itemStack == null || !itemStack.hasItemMeta()) return false;
         ItemMeta im = itemStack.getItemMeta();
         return im.hasAttributeModifiers() && im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase("noteValue");
     }

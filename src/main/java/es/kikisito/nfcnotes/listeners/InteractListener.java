@@ -20,7 +20,7 @@ package es.kikisito.nfcnotes.listeners;
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
 import es.kikisito.nfcnotes.Utils;
-import es.kikisito.nfcnotes.enums.DepositMethod;
+import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.configuration.Configuration;
@@ -39,11 +39,12 @@ import java.util.List;
 public class InteractListener implements Listener {
     private Main plugin;
     private Configuration config;
-    private Economy eco = Main.getEco();
+    private Economy eco;
 
     public InteractListener(Main plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
+        this.eco = plugin.getEco();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -51,9 +52,9 @@ public class InteractListener implements Listener {
         FileConfiguration messages = plugin.getMessages();
         Player p = e.getPlayer();
         // Check if the item's material is Paper
-        if (e.getItem() != null && NFCNote.isNFCNote(e.getItem())) {
-            if (!p.hasPermission("nfcnotes.deposit") || !config.getBoolean("modules.deposit")) return;
+        if (NFCNote.isNFCNote(e.getItem())) {
             // Check if player is allowed to deposit money
+            if (!p.hasPermission("nfcnotes.deposit") || !config.getBoolean("modules.deposit.action")) return;
             DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
             double totalAmount = 0;
             // Mass Deposit
@@ -63,7 +64,7 @@ public class InteractListener implements Listener {
                 double value = 0;
                 // Checks for notes in player's inventory
                 for (ItemStack i : e.getPlayer().getInventory()) {
-                    if (i != null && NFCNote.isNFCNote(i)) {
+                    if (NFCNote.isNFCNote(i)) {
                         NFCNote nfcNote = new NFCNote(i);
                         double amount = nfcNote.getValue() * i.getAmount();
                         value = value + amount;
@@ -71,7 +72,7 @@ public class InteractListener implements Listener {
                     }
                 }
                 // Calls DepositEvent
-                DepositEvent depositEvent = new DepositEvent(p, value, DepositMethod.SHIFT_RIGHT_CLICK);
+                DepositEvent depositEvent = new DepositEvent(p, value, ActionMethod.SHIFT_RIGHT_CLICK);
                 plugin.getServer().getPluginManager().callEvent(depositEvent);
                 // Get variables from called event
                 Player player = depositEvent.getPlayer();
@@ -81,7 +82,6 @@ public class InteractListener implements Listener {
                 if (!depositEvent.isCancelled()) {
                     if (eco.depositPlayer(player, money).transactionSuccess()) {
                         for (ItemStack i : notes) i.setAmount(0);
-                        plugin.getLogger().info(player.getName() + " ha canjeado un total de " + formattedMoney + " Θ.");
                         player.sendMessage(Utils.parseMessage(messages.getString("massdeposit-successful")).replace("{money}", formattedMoney));
                         totalAmount = money;
                     } else {
@@ -93,7 +93,7 @@ public class InteractListener implements Listener {
                 NFCNote nfcNote = new NFCNote(e.getItem());
                 double m = nfcNote.getValue();
                 // Calls DepositEvent
-                DepositEvent depositEvent = new DepositEvent(p, m, DepositMethod.RIGHT_CLICK);
+                DepositEvent depositEvent = new DepositEvent(p, m, ActionMethod.RIGHT_CLICK);
                 plugin.getServer().getPluginManager().callEvent(depositEvent);
                 // Deposit money if the event wasn't cancelled
                 if (!depositEvent.isCancelled()) {

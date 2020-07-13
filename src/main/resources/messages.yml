@@ -10,6 +10,9 @@ insufficient-funds: "&8[&6NFCNotes&8] &7You don't have enough money."
 deposit-successful: "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."
 massdeposit-successful: "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."
 unexpected-error: "&8[&6NFCNotes&8] &7An unexpected error has occurred. This action has been cancelled."
+deposit-usage: "&8[&6NFCNotes&8] &7Usage: /deposit <all/amount>"
+no-notes-found: "&8[&6NFCNotes&8] &7No notes have been found in your inventory."
+not-a-note: "&8[&6NFCNotes&8] &7This item is not a bank note!"
 staff:
   warn-withdraw: "&8[&6NFCNotes&8] &7{player} has withdrawn &6{money}&7$."
   warn-deposit: "&8[&6NFCNotes&8] &7{player} has redeemed &6{money}&7$."
@@ -17,3 +20,6 @@ staff:
 updates:
   update-available: "&8[&6NFCNotes&8] &7NFCNotes {version} is available. Click here to download it."
   no-updates: "&8[&6NFCNotes&8] &7You are using the latest version."
+
+# Do not touch this
+messages-version: 1

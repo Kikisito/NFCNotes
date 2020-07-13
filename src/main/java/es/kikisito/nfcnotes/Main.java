@@ -18,6 +18,7 @@
 package es.kikisito.nfcnotes;
 
 import es.kikisito.nfcnotes.commands.CreateNote;
+import es.kikisito.nfcnotes.commands.Deposit;
 import es.kikisito.nfcnotes.commands.NFCNotes;
 import es.kikisito.nfcnotes.commands.Withdraw;
 import es.kikisito.nfcnotes.listeners.InteractListener;
@@ -41,7 +42,7 @@ public class Main extends JavaPlugin implements Listener {
 
     private Configuration config;
     private FileConfiguration messages;
-    private static Economy eco;
+    private Economy eco;
 
     @Override
     public void onEnable() {
@@ -68,10 +69,11 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        if(config.getInt("config-version") < 4 || config.get("config-version") == null) {
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it. You won't receive any support if you don't update it.");
+        if(config.getInt("config-version", 0) < 4) {
+            String outdatedmsg = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it, otherwise you won't receive any support.";
+            this.getServer().getConsoleSender().sendMessage(outdatedmsg);
             // In case of this plugin being reloaded using Plugman.
-            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it. You won't receive any support if you don't update it.");
+            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsg);
         }
 
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
@@ -79,6 +81,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getCommand("withdraw").setExecutor(new Withdraw(this));
         this.getCommand("createnote").setExecutor(new CreateNote(this));
         this.getCommand("nfcnotes").setExecutor(new NFCNotes(this));
+        this.getCommand("deposit").setExecutor(new Deposit(this));
         Metrics metrics = new Metrics(this, 8048);
     }
 
@@ -96,7 +99,7 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
-    public static Economy getEco() { return eco; }
+    public Economy getEco() { return this.eco; }
 
     public FileConfiguration getMessages() { return this.messages; }
 

@@ -17,8 +17,11 @@
 
 package es.kikisito.nfcnotes.enums;
 
-public enum WithdrawMethod {
+public enum ActionMethod {
+    RIGHT_CLICK,
+    SHIFT_RIGHT_CLICK,
     COMMAND,
+    COMMAND_ALL,
     API,
     DEPRECATED_METHOD,
     OTHER;

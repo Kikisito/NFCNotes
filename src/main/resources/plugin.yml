@@ -13,6 +13,8 @@ commands:
       - cn
   nfcnotes:
     description: Plugin information
+  deposit:
+    description: Deposit money
 permissions:
   nfcnotes.withdraw:
     description: Allows you to withdraw money

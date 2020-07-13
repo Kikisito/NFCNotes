@@ -107,7 +107,7 @@ public class CreateNote implements CommandExecutor {
         DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
         String formattedMoney = decimalFormat.format(m);
         // Create the note and give it to the player
-        ItemStack paper = NFCNote.createNFCNote(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), decimalFormat, m, a);
+        ItemStack paper = NFCNote.createNFCNoteItem(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), decimalFormat, m, a);
         p.getInventory().addItem(paper);
         p.sendMessage(Utils.parseMessage(messages.getString("createnote-successful").replace("{money}", formattedMoney)));
     }
