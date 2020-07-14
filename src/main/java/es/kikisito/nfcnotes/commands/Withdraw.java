@@ -63,6 +63,9 @@ public class Withdraw implements CommandExecutor {
         } else if (p.getInventory().firstEmpty() == -1) {
             p.sendMessage(Utils.parseMessage(messages.getString("full-inventory")));
             return false;
+        } else if(config.getStringList("disabled-worlds").contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.withdraw.bypass.disabled-world")){
+            p.sendMessage(Utils.parseMessage(messages.getString("disabled-world")));
+            return false;
         }
         double money;
         int amount;

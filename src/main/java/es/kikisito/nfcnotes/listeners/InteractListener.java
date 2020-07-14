@@ -55,6 +55,10 @@ public class InteractListener implements Listener {
         if (NFCNote.isNFCNote(e.getItem())) {
             // Check if player is allowed to deposit money
             if (!p.hasPermission("nfcnotes.deposit.action") || !config.getBoolean("modules.deposit.action")) return;
+            else if(config.getStringList("disabled-worlds").contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
+                p.sendMessage(Utils.parseMessage(messages.getString("disabled-world")));
+                return;
+            }
             DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
             double totalAmount = 0;
             // Mass Deposit

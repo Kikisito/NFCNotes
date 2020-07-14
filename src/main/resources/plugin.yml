@@ -60,3 +60,9 @@ permissions:
   nfcnotes.staff.check-updates:
     description: Allows the user to check if the plugin is up to date
     default: op
+  nfcnotes.staff.withdraw.bypass.disabled-world:
+    description: Bypass disabled world restriction. Withdraw only.
+    default: op
+  nfcnotes.staff.deposit.bypass.disabled-world:
+    description: Bypass disabled world restriction. Deposit only.
+    default: op

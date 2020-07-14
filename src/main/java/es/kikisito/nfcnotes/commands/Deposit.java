@@ -58,6 +58,9 @@ public class Deposit implements CommandExecutor {
         if (!p.hasPermission("nfcnotes.deposit.command") || !config.getBoolean("modules.deposit.command")){
             sender.sendMessage(Utils.parseMessage(messages.getString("no-permission")));
             return false;
+        } else if(config.getStringList("disabled-worlds").contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
+            sender.sendMessage(Utils.parseMessage(messages.getString("disabled-world")));
+            return false;
         }
         DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
         double value = 0;

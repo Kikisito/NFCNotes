@@ -29,6 +29,29 @@ modules:
   warn-staff: true # If enabled, staff will receive a message when anyone withdraws or deposits more money than the specified in the option 'warn-staff-if-value-is-higher-than' below.
   show-plugin-info: true # This submodule enables /nfcnotes with no arguments.
 
+# This prevents player from withdrawing and redeeming notes in certain worlds.
+# Players with the permission nfcnotes.staff.withdraw.bypass.disabled-world or nfcnotes.staff.deposit.bypass.disabled-world
+# won't be affected by this.
+disabled-worlds:
+  - disabled_world
+
+# Not working, yet...
+disabled-tables:
+  - ANVIL
+  - BEACON
+  - BLAST_FURNACE
+  - BREWING
+  - CARTOGRAPHY
+  - CRAFTING
+  - ENCHANTING
+  - FURNACE
+  - GRINDSTONE
+  - LOOM
+  - SMITHING
+  - SMOKER
+  - STONECUTTER
+  - WORKBENCH
+
 # If 'warn-staff' is enabled, staff will get a message when a player withdraws or deposits more money than the specified here.
 warn-staff-if-value-is-higher-than: 100000
 
@@ -37,6 +60,6 @@ update-checker:
   notify-on-join: true # If enabled and a new version is available, each time an user with the permission nfcnotes.staff.check-updates connects to the server will be notified of the new version.
 
 # Do not touch this!
-config-version: 4
+config-version: 5
 
 # --- This is the end of this file, trust me --- #
