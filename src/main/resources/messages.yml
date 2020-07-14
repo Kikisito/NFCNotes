@@ -10,7 +10,7 @@ insufficient-funds: "&8[&6NFCNotes&8] &7You don't have enough money."
 deposit-successful: "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."
 massdeposit-successful: "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."
 unexpected-error: "&8[&6NFCNotes&8] &7An unexpected error has occurred. This action has been cancelled."
-deposit-usage: "&8[&6NFCNotes&8] &7Usage: /deposit <all/amount>"
+deposit-usage: "&8[&6NFCNotes&8] &7Usage: /deposit [all/n. of notes]"
 no-notes-found: "&8[&6NFCNotes&8] &7No notes have been found in your inventory."
 not-a-note: "&8[&6NFCNotes&8] &7This item is not a bank note!"
 staff:

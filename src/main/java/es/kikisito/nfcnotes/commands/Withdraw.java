@@ -123,7 +123,7 @@ public class Withdraw implements CommandExecutor {
             EconomyResponse response = plugin.getEco().withdrawPlayer(player, money * amount);
             if (response.type.equals(ResponseType.SUCCESS)) {
                 // Create the note and give it to the player
-                ItemStack paper = NFCNote.createNFCNoteItem(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), decimalFormat, money, amount);
+                ItemStack paper = NFCNote.createNFCNoteItem(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), config.getString("notes.material"), decimalFormat, money, amount);
                 player.getInventory().addItem(paper);
                 player.sendMessage(Utils.parseMessage(messages.getString("withdraw-successful").replace("{money}", formattedMoney)));
             } else if(response.amount == 0){

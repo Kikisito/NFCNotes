@@ -55,6 +55,10 @@ public class Deposit implements CommandExecutor {
             return false;
         }
         Player p = (Player) sender;
+        if (!p.hasPermission("nfcnotes.deposit.command") || !config.getBoolean("modules.deposit.command")){
+            sender.sendMessage(Utils.parseMessage(messages.getString("no-permission")));
+            return false;
+        }
         DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
         double value = 0;
         switch(args.length){

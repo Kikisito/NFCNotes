@@ -54,7 +54,7 @@ public class InteractListener implements Listener {
         // Check if the item's material is Paper
         if (NFCNote.isNFCNote(e.getItem())) {
             // Check if player is allowed to deposit money
-            if (!p.hasPermission("nfcnotes.deposit") || !config.getBoolean("modules.deposit.action")) return;
+            if (!p.hasPermission("nfcnotes.deposit.action") || !config.getBoolean("modules.deposit.action")) return;
             DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
             double totalAmount = 0;
             // Mass Deposit

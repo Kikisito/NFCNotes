@@ -21,6 +21,7 @@ import es.kikisito.nfcnotes.commands.CreateNote;
 import es.kikisito.nfcnotes.commands.Deposit;
 import es.kikisito.nfcnotes.commands.NFCNotes;
 import es.kikisito.nfcnotes.commands.Withdraw;
+import es.kikisito.nfcnotes.listeners.CraftListener;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import es.kikisito.nfcnotes.listeners.JoinListener;
 import net.md_5.bungee.api.ChatColor;
@@ -70,13 +71,21 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         if(config.getInt("config-version", 0) < 4) {
-            String outdatedmsg = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it, otherwise you won't receive any support.";
-            this.getServer().getConsoleSender().sendMessage(outdatedmsg);
+            String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it, otherwise you won't receive any support.";
+            this.getServer().getConsoleSender().sendMessage(outdatedconfig);
             // In case of this plugin being reloaded using Plugman.
-            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsg);
+            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
+        }
+
+        if(config.getInt("config-version", 0) < 1) {
+            String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, regenerate it, otherwise you won't receive any support.";
+            this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
+            // In case of this plugin being reloaded using Plugman.
+            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsgs);
         }
 
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new CraftListener(this), this);
         if(config.getBoolean("update-checker.notify-on-join")) this.getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         this.getCommand("withdraw").setExecutor(new Withdraw(this));
         this.getCommand("createnote").setExecutor(new CreateNote(this));

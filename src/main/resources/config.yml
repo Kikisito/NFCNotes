@@ -10,6 +10,8 @@ notes:
   name: "&aNFCNote"
   lore:
     - "&7Value: &e{money}$"
+  # Please, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html before changing this value, otherwise it may break.
+  material: PAPER
   # Do not modify these values unless you know what you're doing. Changing them can cause unwanted changes
   decimal-format: "#,###.#"
   identifier: "9a12cb32-1a7e-4e41-be79-9938528b4375" # Attribute's ID
@@ -35,6 +37,6 @@ update-checker:
   notify-on-join: true # If enabled and a new version is available, each time an user with the permission nfcnotes.staff.check-updates connects to the server will be notified of the new version.
 
 # Do not touch this!
-config-version: 3
+config-version: 4
 
 # --- This is the end of this file, trust me --- #

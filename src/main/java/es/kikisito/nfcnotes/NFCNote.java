@@ -50,9 +50,9 @@ public class NFCNote {
 
     public Double getValue(){ return this.value; }
 
-    public static ItemStack createNFCNoteItem(String identifier, String name, List<String> lore, DecimalFormat decimalFormat, Double money, Integer amount){
+    public static ItemStack createNFCNoteItem(String identifier, String name, List<String> lore, String material, DecimalFormat decimalFormat, Double money, Integer amount){
         String formattedMoney = decimalFormat.format(money);
-        ItemStack is = new ItemStack(Material.PAPER, amount);
+        ItemStack is = new ItemStack(Material.valueOf(material.toUpperCase()), amount);
         ItemMeta im = is.getItemMeta();
         im.setDisplayName(Utils.parseMessage(name).replace("{money}", formattedMoney));
         // Parse lore
