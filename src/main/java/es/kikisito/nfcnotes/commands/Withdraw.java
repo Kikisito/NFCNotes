@@ -21,7 +21,7 @@ import java.text.DecimalFormat;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.Utils;
+import es.kikisito.nfcnotes.utils.Utils;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.WithdrawEvent;
 import net.md_5.bungee.api.ChatColor;
@@ -100,7 +100,7 @@ public class Withdraw implements CommandExecutor {
         return true;
     }
 
-    private void withdraw(Player p, Double m, Integer a){
+    private void withdraw(Player p, double m, int a){
         FileConfiguration messages = plugin.getMessages();
         // Check if given number is positive and is an integer.
         if (m <= 0) {

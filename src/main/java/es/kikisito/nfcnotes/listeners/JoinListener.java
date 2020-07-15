@@ -19,7 +19,7 @@ package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
-import es.kikisito.nfcnotes.Utils;
+import es.kikisito.nfcnotes.utils.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.configuration.Configuration;

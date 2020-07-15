@@ -19,7 +19,7 @@ package es.kikisito.nfcnotes.commands;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.Utils;
+import es.kikisito.nfcnotes.utils.Utils;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import net.milkbowl.vault.economy.Economy;
@@ -39,6 +39,9 @@ public class Deposit implements CommandExecutor {
     private Main plugin;
     private Configuration config;
     private Economy eco;
+    private double value = 0;
+    private FileConfiguration messages;
+    private DecimalFormat decimalFormat;
 
     public Deposit(Main plugin){
         this.plugin = plugin;
@@ -48,7 +51,7 @@ public class Deposit implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        FileConfiguration messages = plugin.getMessages();
+        messages = plugin.getMessages();
         // Only players can execute this command.
         if (!(sender instanceof Player)) {
             sender.sendMessage(Utils.parseMessage(messages.getString("only-players")));
@@ -62,23 +65,13 @@ public class Deposit implements CommandExecutor {
             sender.sendMessage(Utils.parseMessage(messages.getString("disabled-world")));
             return false;
         }
-        DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
-        double value = 0;
+        decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
         switch(args.length){
             case 0:
                 if(NFCNote.isNFCNote(p.getInventory().getItemInMainHand())){
                     NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
-                    DepositEvent depositEvent = new DepositEvent(p, nfcNote.getValue(), ActionMethod.COMMAND);
-                    plugin.getServer().getPluginManager().callEvent(depositEvent);
-                    Player player = depositEvent.getPlayer();
-                    Double money = depositEvent.getMoney();
-                    String formattedMoney = decimalFormat.format(money);
-                    if(eco.depositPlayer(player, money).transactionSuccess()){
-                        player.sendMessage(Utils.parseMessage(messages.getString("deposit-successful")).replace("{money}", formattedMoney));
-                        nfcNote.getItemStack().setAmount(nfcNote.getItemStack().getAmount() - 1);
-                    } else {
-                        p.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
-                    }
+                    value = nfcNote.getValue();
+                    this.depositMoney(nfcNote, p, 1);
                 } else {
                     p.sendMessage(Utils.parseMessage(messages.getString("not-a-note")));
                 }
@@ -103,12 +96,12 @@ public class Deposit implements CommandExecutor {
                     // Calls DepositEvent
                     DepositEvent depositEvent = new DepositEvent(p, value, ActionMethod.COMMAND_ALL);
                     plugin.getServer().getPluginManager().callEvent(depositEvent);
-                    // Get variables from called event
-                    Player player = depositEvent.getPlayer();
-                    double money = depositEvent.getMoney();
-                    String formattedMoney = decimalFormat.format(money);
                     // Deposit money if the event wasn't cancelled
-                    if (!depositEvent.isCancelled()) {
+                    if(!depositEvent.isCancelled()) {
+                        // Get variables from called event
+                        Player player = depositEvent.getPlayer();
+                        double money = depositEvent.getMoney();
+                        String formattedMoney = decimalFormat.format(money);
                         if (eco.depositPlayer(player, money).transactionSuccess()) {
                             for (ItemStack i : notes) i.setAmount(0);
                             player.sendMessage(Utils.parseMessage(messages.getString("massdeposit-successful")).replace("{money}", formattedMoney));
@@ -117,8 +110,15 @@ public class Deposit implements CommandExecutor {
                         }
                     }
                     break;
-                } else {
-                    // Coming soon!
+                } else if(args[0].equals("stack")){
+                    if(NFCNote.isNFCNote(p.getInventory().getItemInMainHand())){
+                        NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                        value = nfcNote.getValue();
+                        this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount());
+                    } else {
+                        p.sendMessage(Utils.parseMessage(messages.getString("not-a-note")));
+                    }
+                    break;
                 }
             default:
                 sender.sendMessage(Utils.parseMessage(messages.getString("deposit-usage")));
@@ -135,5 +135,21 @@ public class Deposit implements CommandExecutor {
             }
         }
         return false;
+    }
+
+    public void depositMoney(NFCNote nfcNote, Player p, int amount){
+        DepositEvent depositEvent = new DepositEvent(p, value * amount, ActionMethod.COMMAND);
+        if(!depositEvent.isCancelled()) {
+            plugin.getServer().getPluginManager().callEvent(depositEvent);
+            Player player = depositEvent.getPlayer();
+            value = depositEvent.getMoney();
+            String formattedMoney = decimalFormat.format(value);
+            if (eco.depositPlayer(player, value).transactionSuccess()) {
+                player.sendMessage(Utils.parseMessage(messages.getString("deposit-successful")).replace("{money}", formattedMoney));
+                nfcNote.getItemStack().setAmount(nfcNote.getItemStack().getAmount() - amount);
+            } else {
+                p.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
+            }
+        }
     }
 }

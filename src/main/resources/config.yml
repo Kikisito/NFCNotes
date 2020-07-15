@@ -60,6 +60,6 @@ update-checker:
   notify-on-join: true # If enabled and a new version is available, each time an user with the permission nfcnotes.staff.check-updates connects to the server will be notified of the new version.
 
 # Do not touch this!
-config-version: 5
+config-version: 6
 
 # --- This is the end of this file, trust me --- #

@@ -17,6 +17,7 @@
 
 package es.kikisito.nfcnotes;
 
+import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;

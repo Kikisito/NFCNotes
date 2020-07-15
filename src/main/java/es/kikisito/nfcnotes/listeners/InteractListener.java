@@ -19,7 +19,7 @@ package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.Utils;
+import es.kikisito.nfcnotes.utils.Utils;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import net.milkbowl.vault.economy.Economy;

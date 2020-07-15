@@ -48,6 +48,8 @@ permissions:
       nfcnotes.staff.createnote: true
       nfcnotes.staff.reload: true
       nfcnotes.staff.check-updates: true
+      nfcnotes.staff.deposit.bypass.disabled-world: true
+      nfcnotes.staff.withdraw.bypass.disabled-world: true
   nfcnotes.staff.warn:
     description: Warns you when a player withdraws or deposits a large amount of money
     default: op

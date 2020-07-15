@@ -19,7 +19,8 @@ package es.kikisito.nfcnotes.commands;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
-import es.kikisito.nfcnotes.Utils;
+import es.kikisito.nfcnotes.utils.Messages;
+import es.kikisito.nfcnotes.utils.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -65,6 +66,8 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
                         }
 
                     });
+                } else if (args[0].equals("test")){
+                    sender.sendMessage(Messages.TEST.getString());
                 }
                 break;
             default:

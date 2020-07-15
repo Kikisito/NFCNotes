@@ -24,6 +24,7 @@ import es.kikisito.nfcnotes.commands.Withdraw;
 import es.kikisito.nfcnotes.listeners.CraftListener;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import es.kikisito.nfcnotes.listeners.JoinListener;
+import es.kikisito.nfcnotes.utils.Messages;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
@@ -50,6 +51,7 @@ public class Main extends JavaPlugin implements Listener {
         this.saveDefaultConfig();
         this.loadMessages();
         config = this.getConfig();
+        Messages.setMessagesFile(messages);
 
         if(config.getBoolean("update-checker.enable")) {
             new UpdateChecker(this).getVersion((version) -> {
@@ -77,7 +79,7 @@ public class Main extends JavaPlugin implements Listener {
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
-        if(config.getInt("config-version", 0) < 2) {
+        if(messages.getInt("messages-version", 0) < 3) {
             String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, regenerate it, otherwise you won't receive any support.";
             this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
             // In case of this plugin being reloaded using Plugman.
@@ -121,6 +123,7 @@ public class Main extends JavaPlugin implements Listener {
             }
             this.messages = new YamlConfiguration();
             this.messages.load(messages);
+            Messages.setMessagesFile(this.messages);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
