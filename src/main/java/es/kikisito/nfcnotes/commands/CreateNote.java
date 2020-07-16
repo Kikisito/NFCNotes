@@ -21,33 +21,29 @@ import java.text.DecimalFormat;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.utils.Utils;
+import es.kikisito.nfcnotes.enums.NFCConfig;
+import es.kikisito.nfcnotes.enums.NFCMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class CreateNote implements CommandExecutor {
-    private Main plugin;
-    private Configuration config;
+    private final Main plugin;
 
     public CreateNote(Main plugin){
         this.plugin = plugin;
-        this.config = plugin.getConfig();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        FileConfiguration messages = plugin.getMessages();
         // Check if the player is allowed to withdraw money and its inventory is not full
         if (!sender.hasPermission("nfcnotes.staff.createnote")) {
-            sender.sendMessage(Utils.parseMessage(messages.getString("no-permission")));
+            sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
             return false;
         } else if (sender instanceof Player && ((Player) sender).getInventory().firstEmpty() == -1) {
-            sender.sendMessage(Utils.parseMessage(messages.getString("full-inventory")));
+            sender.sendMessage(NFCMessages.FULL_INVENTORY.getString());
             return false;
         }
         double money;
@@ -59,7 +55,7 @@ public class CreateNote implements CommandExecutor {
                         Player p = (Player) sender;
                         money = Double.parseDouble(args[0]);
                         createNote(p, money, 1);
-                    } else sender.sendMessage(Utils.parseMessage(messages.getString("only-players")));
+                    } else sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
                     break;
                 case 2:
                     if(plugin.getServer().getOnlinePlayers().contains(plugin.getServer().getPlayer(args[0]))) {
@@ -72,7 +68,7 @@ public class CreateNote implements CommandExecutor {
                             money = Double.parseDouble(args[0]);
                             amount = Integer.parseInt(args[1]);
                             createNote(p, money, amount);
-                        } else sender.sendMessage(Utils.parseMessage(messages.getString("only-players")));
+                        } else sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
                     }
                     break;
                 case 3:
@@ -84,31 +80,30 @@ public class CreateNote implements CommandExecutor {
                         break;
                     }
                 default:
-                    sender.sendMessage(Utils.parseMessage(messages.getString("withdraw-usage")));
+                    sender.sendMessage(NFCMessages.CREATENOTE_USAGE.getString());
                     break;
             }
         } catch (NumberFormatException ex) {
-            sender.sendMessage(Utils.parseMessage(messages.getString("only-integers")));
+            sender.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
         }
         return true;
     }
 
     private void createNote(Player p, Double m, Integer a){
-        FileConfiguration messages = plugin.getMessages();
         // Check if given number is positive and is an integer.
         if (m <= 0) {
-            p.sendMessage(Utils.parseMessage(messages.getString("use-a-number-higher-than-zero")));
+            p.sendMessage(NFCMessages.USE_A_NUMBER_HIGHER_THAN_ZERO.getString());
             return;
         } else if(!(m % 1 == 0)) {
-            p.sendMessage(Utils.parseMessage(messages.getString("only-integers")));
+            p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
             return;
         }
         // Make the amount readable
-        DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
+        DecimalFormat decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
         String formattedMoney = decimalFormat.format(m);
         // Create the note and give it to the player
-        ItemStack paper = NFCNote.createNFCNoteItem(config.getString("notes.identifier"), config.getString("notes.name"), config.getStringList("notes.lore"), config.getString("notes.material"), decimalFormat, m, a);
+        ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), decimalFormat, m, a);
         p.getInventory().addItem(paper);
-        p.sendMessage(Utils.parseMessage(messages.getString("createnote-successful").replace("{money}", formattedMoney)));
+        p.sendMessage(NFCMessages.CREATENOTE_SUCCESSFUL.getString().replace("{money}", formattedMoney));
     }
 }

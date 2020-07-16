@@ -21,10 +21,11 @@ import es.kikisito.nfcnotes.commands.CreateNote;
 import es.kikisito.nfcnotes.commands.Deposit;
 import es.kikisito.nfcnotes.commands.NFCNotes;
 import es.kikisito.nfcnotes.commands.Withdraw;
+import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.listeners.CraftListener;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import es.kikisito.nfcnotes.listeners.JoinListener;
-import es.kikisito.nfcnotes.utils.Messages;
+import es.kikisito.nfcnotes.enums.NFCMessages;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
@@ -51,12 +52,13 @@ public class Main extends JavaPlugin implements Listener {
         this.saveDefaultConfig();
         this.loadMessages();
         config = this.getConfig();
-        Messages.setMessagesFile(messages);
+        NFCConfig.setConfig(config);
+        NFCMessages.setMessagesFile(messages);
 
-        if(config.getBoolean("update-checker.enable")) {
+        if(NFCConfig.UPDATE_CHECKER_IS_ENABLED.getBoolean()) {
             new UpdateChecker(this).getVersion((version) -> {
                 if (!getDescription().getVersion().equals(version)) {
-                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "A newer version of NFCNotes is available.");
+                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "A new version of NFCNotes is available.");
                     this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Version installed: " + this.getDescription().getVersion() + ". Latest version: " + version);
                     this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Download it from " + ChatColor.GOLD + "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/");
                 }
@@ -72,14 +74,14 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        if(config.getInt("config-version", 0) < 5) {
+        if(NFCConfig.VERSION.getInt() < 6) {
             String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it, otherwise you won't receive any support.";
             this.getServer().getConsoleSender().sendMessage(outdatedconfig);
             // In case of this plugin being reloaded using Plugman.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
-        if(messages.getInt("messages-version", 0) < 3) {
+        if(NFCMessages.VERSION.getInt() < 3) {
             String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, regenerate it, otherwise you won't receive any support.";
             this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
             // In case of this plugin being reloaded using Plugman.
@@ -88,7 +90,7 @@ public class Main extends JavaPlugin implements Listener {
 
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
         this.getServer().getPluginManager().registerEvents(new CraftListener(this), this);
-        if(config.getBoolean("update-checker.notify-on-join")) this.getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+        if(NFCConfig.UPDATE_CHECKER_NOTIFY_ON_JOIN.getBoolean()) this.getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         this.getCommand("withdraw").setExecutor(new Withdraw(this));
         this.getCommand("createnote").setExecutor(new CreateNote(this));
         this.getCommand("nfcnotes").setExecutor(new NFCNotes(this));
@@ -123,7 +125,7 @@ public class Main extends JavaPlugin implements Listener {
             }
             this.messages = new YamlConfiguration();
             this.messages.load(messages);
-            Messages.setMessagesFile(this.messages);
+            NFCMessages.setMessagesFile(this.messages);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }

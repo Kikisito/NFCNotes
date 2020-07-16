@@ -19,7 +19,8 @@ package es.kikisito.nfcnotes.commands;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.utils.Utils;
+import es.kikisito.nfcnotes.enums.NFCConfig;
+import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import net.milkbowl.vault.economy.Economy;
@@ -27,7 +28,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,36 +36,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Deposit implements CommandExecutor {
-    private Main plugin;
-    private Configuration config;
-    private Economy eco;
+    private final Main plugin;
+    private final Economy eco;
     private double value = 0;
-    private FileConfiguration messages;
     private DecimalFormat decimalFormat;
 
     public Deposit(Main plugin){
         this.plugin = plugin;
-        this.config = plugin.getConfig();
         this.eco = plugin.getEco();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        messages = plugin.getMessages();
         // Only players can execute this command.
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Utils.parseMessage(messages.getString("only-players")));
+            sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
             return false;
         }
         Player p = (Player) sender;
-        if (!p.hasPermission("nfcnotes.deposit.command") || !config.getBoolean("modules.deposit.command")){
-            sender.sendMessage(Utils.parseMessage(messages.getString("no-permission")));
+        if (!p.hasPermission("nfcnotes.deposit.command") || !NFCConfig.MODULES_DEPOSIT_COMMAND.getBoolean()){
+            sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
             return false;
-        } else if(config.getStringList("disabled-worlds").contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
-            sender.sendMessage(Utils.parseMessage(messages.getString("disabled-world")));
+        } else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
+            sender.sendMessage(NFCMessages.DISABLED_WORLD.getString());
             return false;
         }
-        decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
+        decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
         switch(args.length){
             case 0:
                 if(NFCNote.isNFCNote(p.getInventory().getItemInMainHand())){
@@ -73,7 +69,7 @@ public class Deposit implements CommandExecutor {
                     value = nfcNote.getValue();
                     this.depositMoney(nfcNote, p, 1);
                 } else {
-                    p.sendMessage(Utils.parseMessage(messages.getString("not-a-note")));
+                    p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                 }
                 break;
             case 1:
@@ -90,7 +86,7 @@ public class Deposit implements CommandExecutor {
                     }
                     // Check if any note has been found
                     if(value == 0){
-                        p.sendMessage(Utils.parseMessage(messages.getString("no-notes-found")));
+                        p.sendMessage(NFCMessages.NO_NOTES_FOUND.getString());
                         return false;
                     }
                     // Calls DepositEvent
@@ -104,9 +100,9 @@ public class Deposit implements CommandExecutor {
                         String formattedMoney = decimalFormat.format(money);
                         if (eco.depositPlayer(player, money).transactionSuccess()) {
                             for (ItemStack i : notes) i.setAmount(0);
-                            player.sendMessage(Utils.parseMessage(messages.getString("massdeposit-successful")).replace("{money}", formattedMoney));
+                            player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                         } else {
-                            player.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
+                            player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                         }
                     }
                     break;
@@ -116,21 +112,21 @@ public class Deposit implements CommandExecutor {
                         value = nfcNote.getValue();
                         this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount());
                     } else {
-                        p.sendMessage(Utils.parseMessage(messages.getString("not-a-note")));
+                        p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                     }
                     break;
                 }
             default:
-                sender.sendMessage(Utils.parseMessage(messages.getString("deposit-usage")));
+                sender.sendMessage(NFCMessages.DEPOSIT_USAGE.getString());
                 break;
         }
         // Warn staff if the note's value is higher than the specified in the configuration file
-        if (value >= config.getInt("warn-staff-if-value-is-higher-than")) {
+        if (value >= NFCConfig.MODULES_WARN_STAFF.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
             String formattedMoney = decimalFormat.format(value);
             for (Player pl : plugin.getServer().getOnlinePlayers()) {
                 if (pl.hasPermission("nfcnotes.staff.warn") && p != pl) {
-                    pl.sendMessage(Utils.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", p.getName()).replace("{money}", formattedMoney));
-                    plugin.getLogger().info(Utils.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", p.getName()).replace("{money}", formattedMoney));
+                    pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", p.getName()).replace("{money}", formattedMoney));
+                    plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", p.getName()).replace("{money}", formattedMoney));
                 }
             }
         }
@@ -145,10 +141,10 @@ public class Deposit implements CommandExecutor {
             value = depositEvent.getMoney();
             String formattedMoney = decimalFormat.format(value);
             if (eco.depositPlayer(player, value).transactionSuccess()) {
-                player.sendMessage(Utils.parseMessage(messages.getString("deposit-successful")).replace("{money}", formattedMoney));
+                player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                 nfcNote.getItemStack().setAmount(nfcNote.getItemStack().getAmount() - amount);
             } else {
-                p.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
+                p.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
             }
         }
     }

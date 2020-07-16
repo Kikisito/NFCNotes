@@ -19,12 +19,11 @@ package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.utils.Utils;
+import es.kikisito.nfcnotes.enums.NFCConfig;
+import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,32 +37,29 @@ import java.util.List;
 
 public class InteractListener implements Listener {
     private Main plugin;
-    private Configuration config;
     private Economy eco;
 
     public InteractListener(Main plugin) {
         this.plugin = plugin;
-        this.config = plugin.getConfig();
         this.eco = plugin.getEco();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void redeem(PlayerInteractEvent e) {
-        FileConfiguration messages = plugin.getMessages();
         Player p = e.getPlayer();
         // Check if the item's material is Paper
         if (NFCNote.isNFCNote(e.getItem())) {
             // Check if player is allowed to deposit money
-            if (!p.hasPermission("nfcnotes.deposit.action") || !config.getBoolean("modules.deposit.action")) return;
-            else if(config.getStringList("disabled-worlds").contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
-                p.sendMessage(Utils.parseMessage(messages.getString("disabled-world")));
+            if (!p.hasPermission("nfcnotes.deposit.action") || !NFCConfig.MODULES_DEPOSIT_ACTION.getBoolean()) return;
+            else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
+                p.sendMessage(NFCMessages.DISABLED_WORLD.getString());
                 return;
             }
-            DecimalFormat decimalFormat = new DecimalFormat(config.getString("notes.decimal-format"));
+            DecimalFormat decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
             double totalAmount = 0;
             // Mass Deposit
             // Checks if a player is sneaking, the submodule is enabled and if the player is allowed to mass-deposit.
-            if (p.isSneaking() && p.hasPermission("nfcnotes.deposit.massdeposit") && config.getBoolean("modules.massdeposit")) {
+            if (p.isSneaking() && p.hasPermission("nfcnotes.deposit.massdeposit") && NFCConfig.MODULES_MASSDEPOSIT.getBoolean()) {
                 List<ItemStack> notes = new ArrayList<>();
                 double value = 0;
                 // Checks for notes in player's inventory
@@ -86,10 +82,10 @@ public class InteractListener implements Listener {
                 if (!depositEvent.isCancelled()) {
                     if (eco.depositPlayer(player, money).transactionSuccess()) {
                         for (ItemStack i : notes) i.setAmount(0);
-                        player.sendMessage(Utils.parseMessage(messages.getString("massdeposit-successful")).replace("{money}", formattedMoney));
+                        player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                         totalAmount = money;
                     } else {
-                        player.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
+                        player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                     }
                 }
             } else {
@@ -106,21 +102,21 @@ public class InteractListener implements Listener {
                     double money = depositEvent.getMoney();
                     String formattedMoney = decimalFormat.format(money);
                     if (eco.depositPlayer(player, money).transactionSuccess()) {
-                        player.sendMessage(Utils.parseMessage(messages.getString("deposit-successful")).replace("{money}", formattedMoney));
+                        player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                         e.getItem().setAmount(e.getItem().getAmount() - 1);
                         totalAmount = money;
                     } else {
-                        player.sendMessage(Utils.parseMessage(messages.getString("unexpected-error")));
+                        player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                     }
                 }
             }
             // Warn staff if the note's value is higher than the specified in the configuration file
-            if (totalAmount >= config.getInt("warn-staff-if-value-is-higher-than")) {
+            if (totalAmount >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
                 String formattedMoney = decimalFormat.format(totalAmount);
                 for (Player pl : plugin.getServer().getOnlinePlayers()) {
                     if (pl.hasPermission("nfcnotes.staff.warn") && e.getPlayer() != pl) {
-                        pl.sendMessage(Utils.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
-                        plugin.getLogger().info(Utils.parseMessage(messages.getString("staff.warn-deposit")).replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
+                        pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
+                        plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
                     }
                 }
             }
