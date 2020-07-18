@@ -66,7 +66,7 @@ public class CraftListener implements Listener {
             forbiddeninventories.add(InventoryType.valueOf(invtype));
         }
         for(int i : e.getRawSlots()){
-            if(i < e.getInventory().getSize() && forbiddeninventories.contains(e.getInventory().getType())){
+            if(i < e.getInventory().getSize() && NFCNote.isNFCNote(e.getOldCursor()) && forbiddeninventories.contains(e.getInventory().getType())){
                 e.setCancelled(true);
                 return;
             }
