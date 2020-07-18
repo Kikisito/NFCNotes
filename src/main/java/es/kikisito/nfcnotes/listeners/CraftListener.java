@@ -19,27 +19,26 @@ package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import org.bukkit.configuration.Configuration;
+import es.kikisito.nfcnotes.enums.NFCConfig;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CraftListener implements Listener {
     private Main plugin;
-    private Configuration config;
 
     public CraftListener(Main plugin) {
         this.plugin = plugin;
-        this.config = plugin.getConfig();
     }
 
-    /*@EventHandler
-    public void onCraft(InventoryClickEvent e) {
-        e.getWhoClicked().sendMessage(e.getAction().toString());
+    @EventHandler
+    public void onClick(InventoryClickEvent e) {
         List<Object> forbiddeninventories = new ArrayList<>();
-        for(String invtype : config.getStringList("disable-tables")){
+        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
             forbiddeninventories.add(InventoryType.valueOf(invtype));
         }
         if(e.getClickedInventory() != null){
@@ -49,70 +48,50 @@ public class CraftListener implements Listener {
                 }
             }
         }
-    }*/
+    }
 
-    // Crafting table
+    @EventHandler
+    public void onShiftClick(InventoryClickEvent e) {
+        List<Object> forbiddeninventories = new ArrayList<>();
+        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+            forbiddeninventories.add(InventoryType.valueOf(invtype));
+        }
+        if(forbiddeninventories.contains(e.getInventory().getType()) && e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && NFCNote.isNFCNote(e.getCurrentItem())) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent e) {
+        List<Object> forbiddeninventories = new ArrayList<>();
+        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+            forbiddeninventories.add(InventoryType.valueOf(invtype));
+        }
+        for(int i : e.getRawSlots()){
+            if(i < e.getInventory().getSize() && forbiddeninventories.contains(e.getInventory().getType())){
+                e.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    // This prevents hoppers from putting NFCNotes inside disabled tables
+    @EventHandler
+    public void moveEvent(InventoryMoveItemEvent e){
+        List<Object> forbiddeninventories = new ArrayList<>();
+        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+            forbiddeninventories.add(InventoryType.valueOf(invtype));
+        }
+        if(forbiddeninventories.contains(e.getDestination().getType()) && NFCNote.isNFCNote(e.getItem())) e.setCancelled(true);
+    }
+
+    // This event exists because players would still use the crafting table from their inventories.
     @EventHandler
     public void craftEvent(CraftItemEvent e){
+        List<Object> forbiddeninventories = new ArrayList<>();
+        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+            forbiddeninventories.add(InventoryType.valueOf(invtype));
+        }
         for(ItemStack i : e.getInventory()) {
-            if(NFCNote.isNFCNote(i)){
-                e.setCancelled(true);
-                return;
-            }
-        }
-    }
-
-    // Furnace
-    @EventHandler
-    public void smeltEvent(FurnaceSmeltEvent e){
-        ItemStack i = new ItemStack(e.getSource());
-        if(NFCNote.isNFCNote(i)) {
-            i.setAmount(1);
-            e.setResult(i);
-        }
-    }
-
-    @EventHandler
-    public void burnEvent(FurnaceBurnEvent e){
-        if(NFCNote.isNFCNote(e.getFuel())) {
-            e.setCancelled(true);
-        }
-    }
-
-    // Brewing Stand
-    @EventHandler
-    public void brewEvent(BrewEvent e){
-        for(ItemStack i : e.getContents()) {
-            if(NFCNote.isNFCNote(i)){
-                e.setCancelled(true);
-                return;
-            }
-        }
-    }
-
-    @EventHandler
-    public void brewFuelEvent(BrewingStandFuelEvent e){
-        if(NFCNote.isNFCNote(e.getFuel())) {
-            e.setCancelled(true);
-        }
-    }
-
-    // Anvil
-    @EventHandler
-    public void anvilEvent(PrepareAnvilEvent e){
-        for(ItemStack i : e.getInventory()) {
-            if(NFCNote.isNFCNote(i)){
-                e.setResult(null);
-                return;
-            }
-        }
-    }
-
-    // Enchanting Table
-    @EventHandler
-    public void enchantEvent(EnchantItemEvent e){
-        for(ItemStack i : e.getInventory()) {
-            if(NFCNote.isNFCNote(i)){
+            if(NFCNote.isNFCNote(i) && forbiddeninventories.contains(InventoryType.WORKBENCH)){
                 e.setCancelled(true);
                 return;
             }

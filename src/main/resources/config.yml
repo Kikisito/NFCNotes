@@ -63,14 +63,13 @@ modules:
 disabled-worlds:
   - disabled_world
 
-# Not working, yet...
+# Tables in this list won't be able to work with NFCNotes. This also should be compatible with future tables from new Minecraft versions.
 disabled-tables:
   - ANVIL
   - BEACON
   - BLAST_FURNACE
   - BREWING
   - CARTOGRAPHY
-  - CRAFTING
   - ENCHANTING
   - FURNACE
   - GRINDSTONE
