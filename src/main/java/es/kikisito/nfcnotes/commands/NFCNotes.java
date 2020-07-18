@@ -65,7 +65,7 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
                 });
             }
         } else {
-            if (NFCConfig.MODULES_SHOW_PLUGIN_INFO.getBoolean()) {
+            if (NFCConfig.SHOW_PLUGIN_INFO.getBoolean()) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Developed by &6Kikisito"));
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Version &6" + plugin.getDescription().getVersion()));
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Get more information at"));

@@ -121,7 +121,7 @@ public class Withdraw implements CommandExecutor {
             EconomyResponse response = eco.withdrawPlayer(player, money * amount);
             if (response.type.equals(ResponseType.SUCCESS)) {
                 // Create the note and give it to the player
-                ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), decimalFormat, money, amount);
+                ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
                 player.getInventory().addItem(paper);
                 player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString().replace("{money}", formattedMoney));
             } else if(response.amount == 0){

@@ -54,7 +54,7 @@ public class Deposit implements CommandExecutor {
             return false;
         }
         Player p = (Player) sender;
-        if (!p.hasPermission("nfcnotes.deposit.command") || !NFCConfig.MODULES_DEPOSIT_COMMAND.getBoolean()){
+        if (!p.hasPermission("nfcnotes.deposit.command")){
             sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
             return false;
         } else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
@@ -64,16 +64,18 @@ public class Deposit implements CommandExecutor {
         decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
         switch(args.length){
             case 0:
-                if(NFCNote.isNFCNote(p.getInventory().getItemInMainHand())){
-                    NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
-                    value = nfcNote.getValue();
-                    this.depositMoney(nfcNote, p, 1);
-                } else {
-                    p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                if(NFCConfig.MODULES_DEPOSIT_COMMAND.getBoolean()) {
+                    if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
+                        NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                        value = nfcNote.getValue();
+                        this.depositMoney(nfcNote, p, 1);
+                    } else {
+                        p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                    }
+                    break;
                 }
-                break;
             case 1:
-                if(args[0].equals("all")){
+                if(args[0].equals("all") && NFCConfig.MODULES_DEPOSIT_ONE.getBoolean()){
                     List<ItemStack> notes = new ArrayList<>();
                     // Checks for notes in player's inventory
                     for (ItemStack i : p.getInventory()) {
@@ -106,7 +108,7 @@ public class Deposit implements CommandExecutor {
                         }
                     }
                     break;
-                } else if(args[0].equals("stack")){
+                } else if(args[0].equals("stack") && NFCConfig.MODULES_DEPOSIT_STACK.getBoolean()){
                     if(NFCNote.isNFCNote(p.getInventory().getItemInMainHand())){
                         NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
                         value = nfcNote.getValue();

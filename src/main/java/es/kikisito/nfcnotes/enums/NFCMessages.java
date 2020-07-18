@@ -48,27 +48,24 @@ public enum NFCMessages {
 
 
     private static FileConfiguration messages;
-    private String message;
-    private String def;
-
-    private String version;
-    private int defver;
+    private Object message;
+    private Object def;
 
     NFCMessages(String message, String def) {
         this.message = message;
         this.def = def;
     }
 
-    NFCMessages(String version, int defver){
-        this.version = version;
-        this.defver = defver;
+    NFCMessages(String message, int def){
+        this.message = message;
+        this.def = def;
     }
 
     public String getString(){
-        return Utils.parseMessage(messages.getString(this.message, this.def));
+        return Utils.parseMessage(messages.getString((String) this.message, (String) this.def));
     }
 
-    public int getInt(){ return messages.getInt(this.version, this.defver);}
+    public int getInt(){ return messages.getInt((String) this.message, (int) this.def);}
 
     public static void setMessagesFile(FileConfiguration messages){
         NFCMessages.messages = messages;

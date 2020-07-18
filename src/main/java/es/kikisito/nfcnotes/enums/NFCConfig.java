@@ -33,14 +33,18 @@ public enum NFCConfig {
     NOTE_UUID("notes.identifier", "9a12cb32-1a7e-4e41-be79-9938528b4375"),
 
     // Modules
-    MODULES_WITHDRAW("modules.withdraw", true),
-    MODULES_DEPOSIT_ACTION("modules.deposit.action", true),
-    MODULES_DEPOSIT_COMMAND("modules.deposit.command", true),
-    MODULES_MASSDEPOSIT("modules.massdeposit", true),
-    MODULES_MULTIPLE_WITHDRAW("modules.multiple-withdraw", true),
-    MODULES_WITHDRAW_ALL("modules.withdraw-all", true),
+    MODULES_WITHDRAW("modules.withdraw.base", true),
+    MODULES_MULTIPLE_WITHDRAW("modules.withdraw.multiple-withdraw", true),
+    MODULES_WITHDRAW_ALL("modules.withdraw.withdraw-all", true),
+    MODULES_DEPOSIT_ACTION("modules.deposit.action.base", true),
+    MODULES_MASSDEPOSIT("modules.deposit.action.massdeposit", true),
+    MODULES_DEPOSIT_COMMAND("modules.deposit.command.deposit-one", true),
+    MODULES_DEPOSIT_ONE("modules.deposit.command.deposit-all", true),
+    MODULES_DEPOSIT_STACK("modules.deposit.command.deposit-stack", true),
     MODULES_WARN_STAFF("modules.warn-staff", true),
-    MODULES_SHOW_PLUGIN_INFO("modules.show-plugin-info", true),
+
+    // Other
+    SHOW_PLUGIN_INFO("show-plugin-info", true),
 
     // Disabled worlds
     DISABLED_WORLDS("disabled-worlds", Collections.EMPTY_LIST),

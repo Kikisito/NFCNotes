@@ -1,33 +1,61 @@
 # --- NFCNotes configuration file --- #
+# If you have any issue, check your configuration is updated before submitting the issue! #
 
 # --------------------------------------------------------------------------------------------------------- #
 # [!] This is IMPORTANT if you already have notes created and you want to change any value of this category.
 # [!] Remember that if you change any of these options and a plugin is using your old notes,
 # [!] these must be changed or newer notes won't work on that plugin.
 # --------------------------------------------------------------------------------------------------------- #
+# Available placeholders for name and lore: {money}, {issuer}
+# If you use any plugin that requires notes to be identical like Shopkeepers, you can remove the {issuer}
+# placeholder.
+# --------------------------------------------------------------------------------------------------------- #
+# If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# before modifying the value, otherwise it may break.
+# --------------------------------------------------------------------------------------------------------- #
 notes:
-  # Available placeholders: {money}
   name: "&aNFCNote"
   lore:
     - "&7Value: &e{money}$"
-  # Please, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html before changing this value, otherwise it may break.
+    - "&7Issuer: &e{issuer}"
   material: PAPER
-  # Do not modify these values unless you know what you're doing. Changing them can cause unwanted changes
+  # -------------------------------------------------------------------------------------------------------- #
+  # Do not modify these values unless you know what you're doing. Changing them can break your existing notes.
   decimal-format: "#,###.#"
-  identifier: "9a12cb32-1a7e-4e41-be79-9938528b4375" # Attribute's ID
+  # Attribute UUID
+  identifier: 9a12cb32-1a7e-4e41-be79-9938528b4375
+  # -------------------------------------------------------------------------------------------------------- #
 
+# ------------------------------------------------------------------------------------------ #
+# "base" value is required to be enabled in order to other modules from the same type to work.
+# For example, if modules.deposit.action.base is disabled, "massdeposit" will also be, but
+# the values from modules.deposit.command won't.
+# ------------------------------------------------------------------------------------------ #
+# Meaning of some values
+# WITHDRAW
+# withdraw-all - "/withdraw all"
+# multiple-withdraw - "/withdraw [value] [amount]"
+# DEPOSIT
+# action.base - Right click to redeem one of the notes you're holding.
+# massdeposit - Shift + Right click to redeem all the notes from your inventory.
+# deposit-one - "/deposit"
+# deposit-all - "/deposit all" (inventory)
+# deposit-stack - "/deposit stack"
+# ------------------------------------------------------------------------------------------ #
 modules:
-  # If you disable any module, its corresponding submodules will also be disabled.
-  withdraw: true
+  withdraw:
+    base: true
+    withdraw-all: true
+    multiple-withdraw: true
   deposit:
-    action: true # This allows players to right click their notes to redeem them.
-    command: true
-  # Submodules
-  massdeposit: true # If enabled, users will be able to use Shift + Right Click while holding a note to deposit all their notes.
-  multiple-withdraw: true # If enabled, users will be able to use the 'amount' parameter in /withdraw <money> [amount]
-  withdraw-all: true # If enabled, users will be able to use /withdraw all.
-  warn-staff: true # If enabled, staff will receive a message when anyone withdraws or deposits more money than the specified in the option 'warn-staff-if-value-is-higher-than' below.
-  show-plugin-info: true # This submodule enables /nfcnotes with no arguments.
+    action:
+      base: true
+      massdeposit: true
+    command:
+      deposit-one: true
+      deposit-all: true
+      deposit-stack: true
+  warn-staff: true
 
 # This prevents player from withdrawing and redeeming notes in certain worlds.
 # Players with the permission nfcnotes.staff.withdraw.bypass.disabled-world or nfcnotes.staff.deposit.bypass.disabled-world
@@ -55,6 +83,10 @@ disabled-tables:
 # If 'warn-staff' is enabled, staff will get a message when a player withdraws or deposits more money than the specified here.
 warn-staff-if-value-is-higher-than: 100000
 
+# This enables /nfcnotes with no arguments.
+show-plugin-info: true
+
+# Update checker
 update-checker:
   enable: true # If true, each time the server starts you will receive a message if there is a newer version.
   notify-on-join: true # If enabled and a new version is available, each time an user with the permission nfcnotes.staff.check-updates connects to the server will be notified of the new version.
