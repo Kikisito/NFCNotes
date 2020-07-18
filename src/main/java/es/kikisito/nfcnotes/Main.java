@@ -95,8 +95,9 @@ public class Main extends JavaPlugin implements Listener {
         this.getCommand("createnote").setExecutor(new CreateNote(this));
         this.getCommand("nfcnotes").setExecutor(new NFCNotes(this));
         this.getCommand("deposit").setExecutor(new Deposit(this));
-        @SuppressWarnings(value = "unused")
+
         Metrics metrics = new Metrics(this, 8048);
+        new CustomMetrics(this, metrics);
     }
 
     private boolean getVault() {
