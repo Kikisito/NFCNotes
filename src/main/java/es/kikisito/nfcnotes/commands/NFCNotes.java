@@ -32,6 +32,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class NFCNotes implements CommandExecutor, TabCompleter {
@@ -75,12 +77,13 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if(args.length != 1) return Collections.emptyList();
+        List<String> options = Arrays.asList("reload", "check", "update");
         List<String> tab = new ArrayList<>();
-        if(args.length == 1){
-            tab.add("reload");
-            tab.add("check");
-            tab.add("update");
+        for(String s : options){
+            if(s.startsWith(args[0])) tab.add(s);
         }
         return tab;
     }

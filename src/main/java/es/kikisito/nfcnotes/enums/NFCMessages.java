@@ -43,6 +43,7 @@ public enum NFCMessages {
     STAFF_PLUGIN_RELOADED("staff.plugin-reloaded", "&8[&6NFCNotes&8] &7NFCNotes has successfully restarted."),
     UPDATES_UPDATE_AVAILABLE("updates.update-available", "&8[&6NFCNotes&8] &7NFCNotes {version} is available. Click here to download it."),
     UPDATES_NO_UPDATES("updates.no-updates", "&8[&6NFCNotes&8] &7You are using the latest version."),
+    MODULE_DISABLED("module-disabled", "&8[&6NFCNotes&8] &7This action is currently disabled."),
 
     VERSION("messages-version", 0);
 

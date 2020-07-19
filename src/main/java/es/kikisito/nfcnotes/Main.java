@@ -81,7 +81,7 @@ public class Main extends JavaPlugin implements Listener {
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
-        if(NFCMessages.VERSION.getInt() < 3) {
+        if(NFCMessages.VERSION.getInt() < 4) {
             String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, regenerate it, otherwise you won't receive any support.";
             this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
             // In case of this plugin being reloaded using Plugman.

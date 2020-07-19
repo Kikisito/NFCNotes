@@ -69,22 +69,42 @@ public class Withdraw implements CommandExecutor {
             switch (args.length) {
                 case 1:
                     // Check if "withdraw all" submodule is enabled and te first argument is "all"
-                    if (args[0].equalsIgnoreCase("all") && NFCConfig.MODULES_WITHDRAW_ALL.getBoolean()) {
-                        money = eco.getBalance(p);
-                        withdraw(p, money, 1);
-                        return true;
+                    if (args[0].equalsIgnoreCase("all")) {
+                        if(NFCConfig.MODULES_WITHDRAW_ALL.getBoolean()) {
+                            if (p.hasPermission("nfcnotes.withdraw.all")) {
+                                money = eco.getBalance(p);
+                                withdraw(p, money, 1);
+                                return true;
+                            } else {
+                                p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                            }
+                        } else {
+                            p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                        }
                     } else {
-                        money = Double.parseDouble(args[0]);
-                        withdraw(p, money, 1);
+                        if(NFCConfig.MODULES_WITHDRAW.getBoolean()) {
+                            if(p.hasPermission("nfcnotes.withdraw.one")) {
+                                money = Double.parseDouble(args[0]);
+                                withdraw(p, money, 1);
+                            } else {
+                                p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                            }
+                        } else {
+                            p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                        }
                     }
                     break;
                 case 2:
                     // Works only if the multiple withdraw submodule is enabled
-                    if(NFCConfig.MODULES_MULTIPLE_WITHDRAW.getBoolean()) {
-                        money = Double.parseDouble(args[0]);
-                        amount = Integer.parseInt(args[1]);
-                        withdraw(p, money, amount);
-                        break;
+                    if(p.hasPermission("nfcnotes.withdraw.multiple")) {
+                        if (NFCConfig.MODULES_MULTIPLE_WITHDRAW.getBoolean()) {
+                            money = Double.parseDouble(args[0]);
+                            amount = Integer.parseInt(args[1]);
+                            withdraw(p, money, amount);
+                            break;
+                        }
+                    } else {
+                        p.sendMessage(NFCMessages.NO_PERMISSION.getString());
                     }
                 default:
                     p.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());

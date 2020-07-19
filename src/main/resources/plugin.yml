@@ -16,31 +16,58 @@ commands:
   deposit:
     description: Deposit money
 permissions:
+  # Withdraw permissions
   nfcnotes.withdraw:
     description: Allows you to withdraw money
     default: true
     children:
+      nfcnotes.withdraw.one: true
       nfcnotes.withdraw.all: true
+      nfcnotes.withdraw.multiple: true
+  nfcnotes.withdraw.one:
+    description: Allows you to withdraw one note per command.
+    default: true
   nfcnotes.withdraw.all:
     description: Allows you to withdraw all your money using "all" instead of a number.
     default: true
+  nfcnotes.withdraw.multiple:
+    description: Allows you to withdraw multiples notes at once.
+    default: true
+
+  # Deposit permissions
   nfcnotes.deposit:
     description: Allows you to deposit money back into your account using all possible methods
     default: true
     children:
       nfcnotes.deposit.action: true
       nfcnotes.deposit.command: true
-      nfcnotes.deposit.massdeposit: true
   nfcnotes.deposit.action:
     description: Allows you to deposit money back into your account using right click
     default: true
-  nfcnotes.deposit.command:
-    description: Allows you to deposit money back into your account using /deposit command
-    default: true
+    children:
+      nfcnotes.deposit.massdeposit: true
   nfcnotes.deposit.massdeposit:
     description: Allows you to deposit all your notes back into your account
     default: true
-  nfcnotes.staff.*:
+  nfcnoes.deposit.command:
+    description: Allows you to use all deposit commands.
+    default: true
+    children:
+      nfcnotes.deposit.command.one: true
+      nfcnotes.deposit.command.all: true
+      nfcnotes.deposit.command.stack: true
+  nfcnotes.deposit.command.one:
+    description: Allows you to deposit money back into your account using /deposit command
+    default: true
+  nfcnotes.deposit.command.all:
+    description: Allows you to deposit all your notes
+    default: true
+  nfcnotes.deposit.command.stack:
+    description: Allows you to deposit the stack of notes you're holding.
+    default: true
+
+  # Staff permissions
+  nfcnotes.staff:
     description: Allows you to use any staff command
     default: op
     children:

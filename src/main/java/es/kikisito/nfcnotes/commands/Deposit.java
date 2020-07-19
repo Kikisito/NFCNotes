@@ -27,15 +27,18 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class Deposit implements CommandExecutor {
+public class Deposit implements CommandExecutor, TabCompleter {
     private final Main plugin;
     private final Economy eco;
     private double value = 0;
@@ -54,67 +57,84 @@ public class Deposit implements CommandExecutor {
             return false;
         }
         Player p = (Player) sender;
-        if (!p.hasPermission("nfcnotes.deposit.command")){
-            sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
-            return false;
-        } else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
+        if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
             sender.sendMessage(NFCMessages.DISABLED_WORLD.getString());
             return false;
         }
         decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
         switch(args.length){
             case 0:
-                if(NFCConfig.MODULES_DEPOSIT_COMMAND.getBoolean()) {
-                    if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
-                        NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
-                        value = nfcNote.getValue();
-                        this.depositMoney(nfcNote, p, 1);
-                    } else {
-                        p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
-                    }
-                    break;
-                }
-            case 1:
-                if(args[0].equals("all") && NFCConfig.MODULES_DEPOSIT_ONE.getBoolean()){
-                    List<ItemStack> notes = new ArrayList<>();
-                    // Checks for notes in player's inventory
-                    for (ItemStack i : p.getInventory()) {
-                        if (NFCNote.isNFCNote(i)) {
-                            NFCNote nfcNote = new NFCNote(i);
-                            double amount = nfcNote.getValue() * i.getAmount();
-                            value = value + amount;
-                            notes.add(i);
-                        }
-                    }
-                    // Check if any note has been found
-                    if(value == 0){
-                        p.sendMessage(NFCMessages.NO_NOTES_FOUND.getString());
-                        return false;
-                    }
-                    // Calls DepositEvent
-                    DepositEvent depositEvent = new DepositEvent(p, value, ActionMethod.COMMAND_ALL);
-                    plugin.getServer().getPluginManager().callEvent(depositEvent);
-                    // Deposit money if the event wasn't cancelled
-                    if(!depositEvent.isCancelled()) {
-                        // Get variables from called event
-                        Player player = depositEvent.getPlayer();
-                        double money = depositEvent.getMoney();
-                        String formattedMoney = decimalFormat.format(money);
-                        if (eco.depositPlayer(player, money).transactionSuccess()) {
-                            for (ItemStack i : notes) i.setAmount(0);
-                            player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                if(p.hasPermission("nfcnotes.deposit.command.one")) {
+                    if (NFCConfig.MODULES_DEPOSIT_COMMAND.getBoolean()) {
+                        if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
+                            NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                            value = nfcNote.getValue();
+                            this.depositMoney(nfcNote, p, 1);
                         } else {
-                            player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                            p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                         }
+                    } else {
+                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                    }
+                }
+                break;
+            case 1:
+                if(args[0].equals("all")){
+                    if(NFCConfig.MODULES_DEPOSIT_ONE.getBoolean()) {
+                        if (p.hasPermission("nfcnotes.deposit.command.all")) {
+                            List<ItemStack> notes = new ArrayList<>();
+                            // Checks for notes in player's inventory
+                            for (ItemStack i : p.getInventory()) {
+                                if (NFCNote.isNFCNote(i)) {
+                                    NFCNote nfcNote = new NFCNote(i);
+                                    double amount = nfcNote.getValue() * i.getAmount();
+                                    value = value + amount;
+                                    notes.add(i);
+                                }
+                            }
+                            // Check if any note has been found
+                            if (value == 0) {
+                                p.sendMessage(NFCMessages.NO_NOTES_FOUND.getString());
+                                return false;
+                            }
+                            // Calls DepositEvent
+                            DepositEvent depositEvent = new DepositEvent(p, value, ActionMethod.COMMAND_ALL);
+                            plugin.getServer().getPluginManager().callEvent(depositEvent);
+                            // Deposit money if the event wasn't cancelled
+                            if (!depositEvent.isCancelled()) {
+                                // Get variables from called event
+                                Player player = depositEvent.getPlayer();
+                                double money = depositEvent.getMoney();
+                                String formattedMoney = decimalFormat.format(money);
+                                if (eco.depositPlayer(player, money).transactionSuccess()) {
+                                    for (ItemStack i : notes) i.setAmount(0);
+                                    player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                                } else {
+                                    player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                                }
+                            }
+                        } else {
+                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                        }
+                    } else {
+                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                     }
                     break;
-                } else if(args[0].equals("stack") && NFCConfig.MODULES_DEPOSIT_STACK.getBoolean()){
-                    if(NFCNote.isNFCNote(p.getInventory().getItemInMainHand())){
-                        NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
-                        value = nfcNote.getValue();
-                        this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount());
+                } else if(args[0].equals("stack")) {
+                    if(NFCConfig.MODULES_DEPOSIT_STACK.getBoolean()) {
+                        if (p.hasPermission("nfcnotes.deposit.command.stack")) {
+                            if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
+                                NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                                value = nfcNote.getValue();
+                                this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount());
+                            } else {
+                                p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                            }
+                        } else {
+                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                        }
                     } else {
-                        p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                     }
                     break;
                 }
@@ -123,7 +143,7 @@ public class Deposit implements CommandExecutor {
                 break;
         }
         // Warn staff if the note's value is higher than the specified in the configuration file
-        if (value >= NFCConfig.MODULES_WARN_STAFF.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
+        if (value >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
             String formattedMoney = decimalFormat.format(value);
             for (Player pl : plugin.getServer().getOnlinePlayers()) {
                 if (pl.hasPermission("nfcnotes.staff.warn") && p != pl) {
@@ -149,5 +169,16 @@ public class Deposit implements CommandExecutor {
                 p.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
             }
         }
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if(args.length != 1) return Collections.emptyList();
+        List<String> options = Arrays.asList("all", "stack");
+        List<String> tab = new ArrayList<>();
+        for(String s : options){
+            if(s.startsWith(args[0])) tab.add(s);
+        }
+        return tab;
     }
 }
