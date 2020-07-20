@@ -18,6 +18,10 @@
 package es.kikisito.nfcnotes.commands;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
@@ -26,10 +30,11 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CreateNote implements CommandExecutor {
+public class CreateNote implements CommandExecutor, TabExecutor {
     private final Main plugin;
 
     public CreateNote(Main plugin){
@@ -105,5 +110,15 @@ public class CreateNote implements CommandExecutor {
         ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, m, a);
         p.getInventory().addItem(paper);
         p.sendMessage(NFCMessages.CREATENOTE_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if(args.length != 1) return Collections.emptyList();
+        List<String> tab = new ArrayList<>();
+        for(Player p : plugin.getServer().getOnlinePlayers()){
+            if(p.getName().startsWith(args[0])) tab.add(p.getName());
+        }
+        return tab;
     }
 }
