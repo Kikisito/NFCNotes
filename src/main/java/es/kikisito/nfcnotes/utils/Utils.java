@@ -49,4 +49,13 @@ public class Utils {
         }
         return finalmessage;
     }
+
+    public static boolean isInteger(Object o){
+        boolean isInteger = false;
+        try {
+            Integer.parseInt(o.toString());
+            isInteger = true;
+        } catch (NumberFormatException ignored) {}
+        return isInteger;
+    }
 }

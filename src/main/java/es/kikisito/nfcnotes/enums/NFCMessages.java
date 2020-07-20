@@ -34,7 +34,7 @@ public enum NFCMessages {
     DEPOSIT_SUCCESSFUL("deposit-successful", "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."),
     MASSDEPOSIT_SUCCESSFUL("massdeposit-successful", "&8[&6NFCNotes&8] &7You redeemed &6{money}&7$."),
     UNEXPECTED_ERROR("unexpected-error", "&8[&6NFCNotes&8] &7An unexpected error has occurred. This action has been cancelled."),
-    DEPOSIT_USAGE("deposit-usage", "&8[&6NFCNotes&8] &7Usage: /deposit [all/stack]"),
+    DEPOSIT_USAGE("deposit-usage", "&8[&6NFCNotes&8] &7Usage: /deposit [all/stack/amount of notes]"),
     NO_NOTES_FOUND("no-notes-found", "&8[&6NFCNotes&8] &7No notes have been found in your inventory."),
     NOT_A_NOTE("not-a-note", "&8[&6NFCNotes&8] &7No notes have been found in your inventory."),
     DISABLED_WORLD("disabled-world", "&8[&6NFCNotes&8] &7Notes are disabled in this world."),
@@ -44,6 +44,7 @@ public enum NFCMessages {
     UPDATES_UPDATE_AVAILABLE("updates.update-available", "&8[&6NFCNotes&8] &7NFCNotes {version} is available. Click here to download it."),
     UPDATES_NO_UPDATES("updates.no-updates", "&8[&6NFCNotes&8] &7You are using the latest version."),
     MODULE_DISABLED("module-disabled", "&8[&6NFCNotes&8] &7This action is currently disabled."),
+    INSUFFICIENT_NOTES("insufficient-notes", "&8[&6NFCNotes&8] &7You don't have enough notes."),
 
     VERSION("messages-version", 0);
 

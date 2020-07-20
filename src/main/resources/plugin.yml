@@ -59,9 +59,13 @@ permissions:
     children:
       nfcnotes.deposit.command.one: true
       nfcnotes.deposit.command.all: true
+      nfcnotes.deposit.command.multiple: true
       nfcnotes.deposit.command.stack: true
   nfcnotes.deposit.command.one:
     description: Allows you to deposit money back into your account using /deposit command
+    default: true
+  nfcnotes.deposit.command.multiple:
+    description: Allows you to deposit multiple notes back into your account using /deposit command
     default: true
   nfcnotes.deposit.command.all:
     description: Allows you to deposit all your notes

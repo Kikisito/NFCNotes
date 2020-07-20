@@ -40,6 +40,7 @@ public enum NFCConfig {
     MODULES_MASSDEPOSIT("modules.deposit.action.massdeposit", true),
     MODULES_DEPOSIT_COMMAND("modules.deposit.command.deposit-one", true),
     MODULES_DEPOSIT_ONE("modules.deposit.command.deposit-all", true),
+    MODULES_DEPOSIT_MULTIPLE("modules.deposit.command.deposit-multiple", true),
     MODULES_DEPOSIT_STACK("modules.deposit.command.deposit-stack", true),
     MODULES_WARN_STAFF("modules.warn-staff", true),
 

@@ -23,6 +23,7 @@ import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
+import es.kikisito.nfcnotes.utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -127,6 +128,28 @@ public class Deposit implements CommandExecutor, TabCompleter {
                                 NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
                                 value = nfcNote.getValue();
                                 this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount());
+                            } else {
+                                p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                            }
+                        } else {
+                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                        }
+                    } else {
+                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                    }
+                    break;
+                } else if(Utils.isInteger(args[0])) {
+                    if(NFCConfig.MODULES_DEPOSIT_MULTIPLE.getBoolean()){
+                        if (p.hasPermission("nfcnotes.deposit.command.multiple")) {
+                            if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
+                                Integer amount = Integer.parseInt(args[0]);
+                                NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                                if(nfcNote.getItemStack().getAmount() >= amount){
+                                    value = nfcNote.getValue();
+                                    this.depositMoney(nfcNote, p, amount);
+                                } else {
+                                    p.sendMessage(NFCMessages.INSUFFICIENT_NOTES.getString());
+                                }
                             } else {
                                 p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                             }
