@@ -17,7 +17,7 @@ commands:
     description: Deposit money
 permissions:
   # Withdraw permissions
-  nfcnotes.withdraw:
+  nfcnotes.withdraw.*:
     description: Allows you to withdraw money
     default: true
     children:
@@ -35,7 +35,7 @@ permissions:
     default: true
 
   # Deposit permissions
-  nfcnotes.deposit:
+  nfcnotes.deposit.*:
     description: Allows you to deposit money back into your account using all possible methods
     default: true
     children:
@@ -45,11 +45,15 @@ permissions:
     description: Allows you to deposit money back into your account using right click
     default: true
     children:
+      nfcnotes.deposit.action.deposit: true
       nfcnotes.deposit.massdeposit: true
+    nfcnotes.deposit.action.deposit:
+      description: Allows you to deposit a note into your account
+      default: true
   nfcnotes.deposit.massdeposit:
     description: Allows you to deposit all your notes back into your account
     default: true
-  nfcnoes.deposit.command:
+  nfcnoes.deposit.command.*:
     description: Allows you to use all deposit commands.
     default: true
     children:
@@ -67,7 +71,7 @@ permissions:
     default: true
 
   # Staff permissions
-  nfcnotes.staff:
+  nfcnotes.staff.*:
     description: Allows you to use any staff command
     default: op
     children:
