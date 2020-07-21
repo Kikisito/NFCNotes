@@ -17,13 +17,56 @@
 
 package es.kikisito.nfcnotes.utils;
 
+import es.kikisito.nfcnotes.Main;
 import net.md_5.bungee.api.ChatColor;
+import net.milkbowl.vault.economy.Economy;
+import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
+
+    public static boolean depositSuccessful(Main plugin, Player player, double money){
+        switch(plugin.getEco()){
+            case "Vault":
+                Economy vault = plugin.getVaultEco();
+                return vault.depositPlayer(player, money).transactionSuccess();
+            case "PlayerPoints":
+                PlayerPoints playerPoints = plugin.getPlayerPoints();
+                return playerPoints.getAPI().give(playerPoints.translateNameToUUID(player.getName()), (int) money);
+        }
+        return false;
+    }
+
+    public static boolean withdrawSuccessful(Main plugin, Player player, double money){
+        switch(plugin.getEco()){
+            case "Vault":
+                Economy vault = plugin.getVaultEco();
+                return vault.withdrawPlayer(player, money).transactionSuccess();
+            case "PlayerPoints":
+                PlayerPoints playerPoints = plugin.getPlayerPoints();
+                return playerPoints.getAPI().take(playerPoints.translateNameToUUID(player.getName()), (int) money);
+        }
+        return false;
+    }
+
+    @NotNull
+    public static Double getPlayerBalance(Main plugin, Player player){
+        switch(plugin.getEco()){
+            case "Vault":
+                Economy vault = plugin.getVaultEco();
+                return vault.getBalance(player);
+            case "PlayerPoints":
+                PlayerPoints playerPoints = plugin.getPlayerPoints();
+                return (double) playerPoints.getAPI().look(playerPoints.translateNameToUUID(player.getName()));
+        }
+        return 0.0;
+    }
+
     public static String parseMessage(String string){
         String finalmessage;
         Integer version = null;

@@ -25,6 +25,7 @@ import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.WithdrawEvent;
+import es.kikisito.nfcnotes.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -37,11 +38,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class Withdraw implements CommandExecutor {
     private final Main plugin;
-    private final Economy eco;
 
     public Withdraw(Main plugin){
         this.plugin = plugin;
-        this.eco = plugin.getEco();
     }
 
     @Override
@@ -69,7 +68,7 @@ public class Withdraw implements CommandExecutor {
                     if (args[0].equalsIgnoreCase("all")) {
                         if(NFCConfig.MODULES_WITHDRAW_ALL.getBoolean()) {
                             if (p.hasPermission("nfcnotes.withdraw.all")) {
-                                money = eco.getBalance(p);
+                                money = Utils.getPlayerBalance(plugin, p);
                                 withdraw(p, money, 1);
                                 return true;
                             } else {
@@ -135,18 +134,20 @@ public class Withdraw implements CommandExecutor {
             String formattedMoney = decimalFormat.format(money * amount);
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
-            EconomyResponse response = eco.withdrawPlayer(player, money * amount);
-            if (response.type.equals(ResponseType.SUCCESS)) {
-                // Create the note and give it to the player
-                ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
-                player.getInventory().addItem(paper);
-                player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString().replace("{money}", formattedMoney));
-            } else if(response.amount == 0){
-                // Insufficient funds
-                player.sendMessage(NFCMessages.INSUFFICIENT_FUNDS.getString());
+            // EconomyResponse response = plugin.getVaultEco().withdrawPlayer(player, money * amount);
+            System.out.println(Utils.getPlayerBalance(plugin, player));
+            if (Utils.getPlayerBalance(plugin, player) > money * amount) {
+                if(Utils.withdrawSuccessful(plugin, player, money * amount)) {
+                    // Create the note and give it to the player
+                    ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
+                    player.getInventory().addItem(paper);
+                    player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                } else {
+                    // Unexpected error
+                    player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                }
             } else {
-                // Unexpected error
-                player.sendMessage(ChatColor.RED + response.errorMessage);
+                player.sendMessage(NFCMessages.INSUFFICIENT_FUNDS.getString());
             }
             // Warn staff if the note's value is higher than the specified in the configuration file
             if (money * amount >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {

@@ -28,6 +28,7 @@ import es.kikisito.nfcnotes.listeners.JoinListener;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
+import org.black_ixx.playerpoints.PlayerPoints;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -45,7 +46,9 @@ public class Main extends JavaPlugin implements Listener {
 
     private Configuration config;
     private FileConfiguration messages;
+    private String economyPlugin;
     private Economy eco;
+    private PlayerPoints playerPoints;
 
     @Override
     public void onEnable() {
@@ -65,7 +68,7 @@ public class Main extends JavaPlugin implements Listener {
             });
         }
 
-        if(!getVault()){
+        if(!isEconomy()){
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect Vault in your server.");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Please, download Vault from " + ChatColor.GOLD + "https://github.com/MilkBowl/Vault");
@@ -100,21 +103,30 @@ public class Main extends JavaPlugin implements Listener {
         new CustomMetrics(this, metrics);
     }
 
-    private boolean getVault() {
-        if (this.getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        } else {
+    private boolean isEconomy() {
+        if (this.getServer().getPluginManager().getPlugin("Vault") != null) {
             RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
             if(rsp == null){
                 return false;
             } else {
                 eco = rsp.getProvider();
+                economyPlugin = "Vault";
                 return true;
             }
+        } else if(this.getServer().getPluginManager().getPlugin("PlayerPoints") != null) {
+            playerPoints = (PlayerPoints) this.getServer().getPluginManager().getPlugin("PlayerPoints");
+            economyPlugin = "PlayerPoints";
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public Economy getEco() { return this.eco; }
+    public PlayerPoints getPlayerPoints() { return this.playerPoints; }
+
+    public Economy getVaultEco() { return this.eco; }
+
+    public String getEco() { return this.economyPlugin; }
 
     public FileConfiguration getMessages() { return this.messages; }
 
