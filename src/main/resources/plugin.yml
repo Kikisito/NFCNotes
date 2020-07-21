@@ -53,7 +53,7 @@ permissions:
   nfcnotes.deposit.massdeposit:
     description: Allows you to deposit all your notes back into your account
     default: true
-  nfcnoes.deposit.command.*:
+  nfcnotes.deposit.command.*:
     description: Allows you to use all deposit commands.
     default: true
     children:

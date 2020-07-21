@@ -53,10 +53,7 @@ public class Withdraw implements CommandExecutor {
         }
         Player p = (Player) sender;
         // Check if the player is allowed to withdraw money and its inventory is not full
-        if (!p.hasPermission("nfcnotes.withdraw") || !NFCConfig.MODULES_WITHDRAW.getBoolean()) {
-            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
-            return false;
-        } else if (p.getInventory().firstEmpty() == -1) {
+        if (p.getInventory().firstEmpty() == -1) {
             p.sendMessage(NFCMessages.FULL_INVENTORY.getString());
             return false;
         } else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.withdraw.bypass.disabled-world")){
