@@ -48,7 +48,7 @@ public class InteractListener implements Listener {
     private void redeem(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         // Check if the item's material is Paper
-        if (NFCNote.isNFCNote(e.getItem())) {
+        if (NFCNote.isNFCNote(e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
             // Check if player is allowed to deposit money
             if (!p.hasPermission("nfcnotes.deposit.action.deposit") || !NFCConfig.MODULES_DEPOSIT_ACTION.getBoolean()) return;
             else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
