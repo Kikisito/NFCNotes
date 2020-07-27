@@ -6,7 +6,7 @@
 
     <groupId>es.kikisito</groupId>
     <artifactId>NFCNotes</artifactId>
-    <version>2.1.2-ME2</version>
+    <version>2.1.2-MERC1</version>
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>

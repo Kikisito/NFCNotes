@@ -58,6 +58,11 @@ modules:
       deposit-stack: true
   warn-staff: true
 
+# If you want to use a different economy plugin, you can set it here. Default: Vault
+# Supported economy plugins: Vault, PlayerPoints, Essentials.
+# Recommended plugin: Vault
+economy-plugin: Vault
+
 # This prevents player from withdrawing and redeeming notes in certain worlds.
 # Players with the permission nfcnotes.staff.withdraw.bypass.disabled-world or nfcnotes.staff.deposit.bypass.disabled-world
 # won't be affected by this.

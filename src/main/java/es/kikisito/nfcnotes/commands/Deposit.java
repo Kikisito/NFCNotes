@@ -24,12 +24,10 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import es.kikisito.nfcnotes.utils.Utils;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

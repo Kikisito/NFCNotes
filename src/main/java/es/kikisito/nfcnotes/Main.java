@@ -28,7 +28,6 @@ import es.kikisito.nfcnotes.listeners.JoinListener;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
-import org.black_ixx.playerpoints.PlayerPoints;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -47,8 +46,8 @@ public class Main extends JavaPlugin implements Listener {
     private Configuration config;
     private FileConfiguration messages;
     private String economyPlugin;
+    // Vault eco API
     private Economy eco;
-    private PlayerPoints playerPoints;
 
     @Override
     public void onEnable() {
@@ -70,8 +69,8 @@ public class Main extends JavaPlugin implements Listener {
 
         if(!isEconomy()){
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect Vault in your server.");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Please, download Vault from " + ChatColor.GOLD + "https://github.com/MilkBowl/Vault");
+            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect any economy plugin in your server.");
+            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Please, download Vault (recommended) from " + ChatColor.GOLD + "https://github.com/MilkBowl/Vault");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
@@ -104,7 +103,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private boolean isEconomy() {
-        if (this.getServer().getPluginManager().getPlugin("Vault") != null) {
+        if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Vault")) {
             RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
             if(rsp == null){
                 return false;
@@ -113,18 +112,15 @@ public class Main extends JavaPlugin implements Listener {
                 economyPlugin = "Vault";
                 return true;
             }
-        } else if(this.getServer().getPluginManager().getPlugin("Essentials") != null) {
+        } else if(NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
             economyPlugin = "Essentials";
             return true;
-        } else if(this.getServer().getPluginManager().getPlugin("PlayerPoints") != null) {
-            playerPoints = (PlayerPoints) this.getServer().getPluginManager().getPlugin("PlayerPoints");
+        } else if(NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("PlayerPoints")) {
             economyPlugin = "PlayerPoints";
             return true;
         }
         return false;
     }
-
-    public PlayerPoints getPlayerPoints() { return this.playerPoints; }
 
     public Economy getVaultEco() { return this.eco; }
 

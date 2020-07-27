@@ -17,8 +17,6 @@
 
 package es.kikisito.nfcnotes.utils;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
 import com.earth2me.essentials.api.NoLoanPermittedException;
 import com.earth2me.essentials.api.UserDoesNotExistException;
 import es.kikisito.nfcnotes.Main;
@@ -50,7 +48,7 @@ public class Utils {
                     return false;
                 }
             case "PlayerPoints":
-                PlayerPoints playerPoints = plugin.getPlayerPoints();
+                PlayerPoints playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");
                 return playerPoints.getAPI().give(playerPoints.translateNameToUUID(player.getName()), (int) money);
         }
         return false;
@@ -71,7 +69,7 @@ public class Utils {
                     return false;
                 }
             case "PlayerPoints":
-                PlayerPoints playerPoints = plugin.getPlayerPoints();
+                PlayerPoints playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");
                 return playerPoints.getAPI().take(playerPoints.translateNameToUUID(player.getName()), (int) money);
         }
         return false;
@@ -91,7 +89,7 @@ public class Utils {
                     ex.printStackTrace();
                 }
             case "PlayerPoints":
-                PlayerPoints playerPoints = plugin.getPlayerPoints();
+                PlayerPoints playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");
                 return (double) playerPoints.getAPI().look(playerPoints.translateNameToUUID(player.getName()));
         }
         return 0.0;
