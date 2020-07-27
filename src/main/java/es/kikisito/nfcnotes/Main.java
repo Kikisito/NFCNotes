@@ -113,13 +113,15 @@ public class Main extends JavaPlugin implements Listener {
                 economyPlugin = "Vault";
                 return true;
             }
+        } else if(this.getServer().getPluginManager().getPlugin("Essentials") != null) {
+            economyPlugin = "Essentials";
+            return true;
         } else if(this.getServer().getPluginManager().getPlugin("PlayerPoints") != null) {
             playerPoints = (PlayerPoints) this.getServer().getPluginManager().getPlugin("PlayerPoints");
             economyPlugin = "PlayerPoints";
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public PlayerPoints getPlayerPoints() { return this.playerPoints; }

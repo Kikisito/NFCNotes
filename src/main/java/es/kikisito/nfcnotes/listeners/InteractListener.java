@@ -24,7 +24,6 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import es.kikisito.nfcnotes.utils.Utils;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

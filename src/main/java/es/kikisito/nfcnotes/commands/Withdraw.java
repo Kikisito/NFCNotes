@@ -26,10 +26,6 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.WithdrawEvent;
 import es.kikisito.nfcnotes.utils.Utils;
-import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
-import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -136,7 +132,7 @@ public class Withdraw implements CommandExecutor {
             // Execute withdraw and get Vault's response
             // EconomyResponse response = plugin.getVaultEco().withdrawPlayer(player, money * amount);
             System.out.println(Utils.getPlayerBalance(plugin, player));
-            if (Utils.getPlayerBalance(plugin, player) > money * amount) {
+            if (Utils.getPlayerBalance(plugin, player) >= money * amount) {
                 if(Utils.withdrawSuccessful(plugin, player, money * amount)) {
                     // Create the note and give it to the player
                     ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);

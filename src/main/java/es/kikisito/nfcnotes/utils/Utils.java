@@ -17,6 +17,10 @@
 
 package es.kikisito.nfcnotes.utils;
 
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.api.NoLoanPermittedException;
+import com.earth2me.essentials.api.UserDoesNotExistException;
 import es.kikisito.nfcnotes.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
@@ -25,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +40,15 @@ public class Utils {
             case "Vault":
                 Economy vault = plugin.getVaultEco();
                 return vault.depositPlayer(player, money).transactionSuccess();
+            case "Essentials":
+            case "EssentialsX":
+                try {
+                    com.earth2me.essentials.api.Economy.add(player.getUniqueId(), BigDecimal.valueOf(money));
+                    return true;
+                } catch (NoLoanPermittedException | UserDoesNotExistException ex) {
+                    ex.printStackTrace();
+                    return false;
+                }
             case "PlayerPoints":
                 PlayerPoints playerPoints = plugin.getPlayerPoints();
                 return playerPoints.getAPI().give(playerPoints.translateNameToUUID(player.getName()), (int) money);
@@ -47,6 +61,15 @@ public class Utils {
             case "Vault":
                 Economy vault = plugin.getVaultEco();
                 return vault.withdrawPlayer(player, money).transactionSuccess();
+            case "Essentials":
+            case "EssentialsX":
+                try {
+                    com.earth2me.essentials.api.Economy.subtract(player.getUniqueId(), BigDecimal.valueOf(money));
+                    return true;
+                } catch (NoLoanPermittedException | UserDoesNotExistException ex) {
+                    ex.printStackTrace();
+                    return false;
+                }
             case "PlayerPoints":
                 PlayerPoints playerPoints = plugin.getPlayerPoints();
                 return playerPoints.getAPI().take(playerPoints.translateNameToUUID(player.getName()), (int) money);
@@ -60,6 +83,13 @@ public class Utils {
             case "Vault":
                 Economy vault = plugin.getVaultEco();
                 return vault.getBalance(player);
+            case "Essentials":
+            case "EssentialsX":
+                try {
+                    return com.earth2me.essentials.api.Economy.getMoneyExact(player.getUniqueId()).doubleValue();
+                } catch (UserDoesNotExistException ex) {
+                    ex.printStackTrace();
+                }
             case "PlayerPoints":
                 PlayerPoints playerPoints = plugin.getPlayerPoints();
                 return (double) playerPoints.getAPI().look(playerPoints.translateNameToUUID(player.getName()));
