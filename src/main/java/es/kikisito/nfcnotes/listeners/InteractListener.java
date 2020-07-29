@@ -23,7 +23,7 @@ import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
-import net.milkbowl.vault.economy.Economy;
+import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,11 +37,9 @@ import java.util.List;
 
 public class InteractListener implements Listener {
     private Main plugin;
-    private Economy eco;
 
     public InteractListener(Main plugin) {
         this.plugin = plugin;
-        this.eco = plugin.getEco();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -80,7 +78,7 @@ public class InteractListener implements Listener {
                 String formattedMoney = decimalFormat.format(money);
                 // Deposit money if the event wasn't cancelled
                 if (!depositEvent.isCancelled()) {
-                    if (eco.depositPlayer(player, money).transactionSuccess()) {
+                    if (Utils.depositSuccessful(plugin, player, money)) {
                         for (ItemStack i : notes) i.setAmount(0);
                         player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                         totalAmount = money;
@@ -101,7 +99,7 @@ public class InteractListener implements Listener {
                     Player player = depositEvent.getPlayer();
                     double money = depositEvent.getMoney();
                     String formattedMoney = decimalFormat.format(money);
-                    if (eco.depositPlayer(player, money).transactionSuccess()) {
+                    if (Utils.depositSuccessful(plugin, player, money)) {
                         player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                         e.getItem().setAmount(e.getItem().getAmount() - 1);
                         totalAmount = money;

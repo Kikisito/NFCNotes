@@ -45,6 +45,8 @@ public class Main extends JavaPlugin implements Listener {
 
     private Configuration config;
     private FileConfiguration messages;
+    private String economyPlugin;
+    // Vault eco API
     private Economy eco;
 
     @Override
@@ -65,16 +67,16 @@ public class Main extends JavaPlugin implements Listener {
             });
         }
 
-        if(!getVault()){
+        if(!isEconomy()){
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect Vault in your server.");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Please, download Vault from " + ChatColor.GOLD + "https://github.com/MilkBowl/Vault");
+            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect any economy plugin in your server.");
+            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Please, download Vault (recommended) from " + ChatColor.GOLD + "https://github.com/MilkBowl/Vault");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        if(NFCConfig.VERSION.getInt() < 8) {
+        if(NFCConfig.VERSION.getInt() < 9) {
             String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it, otherwise you won't receive any support.";
             this.getServer().getConsoleSender().sendMessage(outdatedconfig);
             // In case of this plugin being reloaded using Plugman.
@@ -100,21 +102,29 @@ public class Main extends JavaPlugin implements Listener {
         new CustomMetrics(this, metrics);
     }
 
-    private boolean getVault() {
-        if (this.getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        } else {
+    private boolean isEconomy() {
+        if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Vault")) {
             RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
             if(rsp == null){
                 return false;
             } else {
                 eco = rsp.getProvider();
+                economyPlugin = "Vault";
                 return true;
             }
+        } else if(NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
+            economyPlugin = "Essentials";
+            return true;
+        } else if(NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("PlayerPoints")) {
+            economyPlugin = "PlayerPoints";
+            return true;
         }
+        return false;
     }
 
-    public Economy getEco() { return this.eco; }
+    public Economy getVaultEco() { return this.eco; }
+
+    public String getEco() { return this.economyPlugin; }
 
     public FileConfiguration getMessages() { return this.messages; }
 

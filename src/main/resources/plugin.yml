@@ -2,7 +2,7 @@ name: ${project.name}
 main: es.kikisito.nfcnotes.Main
 version: ${project.version}
 api-version: 1.13
-softdepend: [Vault]
+softdepend: [Vault, Essentials, PlayerPoints]
 author: Kikisito
 commands:
   withdraw:

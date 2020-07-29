@@ -17,7 +17,6 @@
 
 package es.kikisito.nfcnotes;
 
-import org.bukkit.Bukkit;
 import org.bukkit.util.Consumer;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class UpdateChecker {
     }
 
     public void getVersion(final Consumer<String> consumer) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=80976").openStream(); Scanner scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext()) {
                     consumer.accept(scanner.next());

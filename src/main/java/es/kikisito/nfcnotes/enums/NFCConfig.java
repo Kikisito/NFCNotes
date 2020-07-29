@@ -47,6 +47,9 @@ public enum NFCConfig {
     // Other
     SHOW_PLUGIN_INFO("show-plugin-info", true),
 
+    // Economy plugin
+    ECONOMY_PLUGIN("economy-plugin", "Vault"),
+
     // Disabled worlds
     DISABLED_WORLDS("disabled-worlds", Collections.EMPTY_LIST),
 

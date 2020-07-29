@@ -24,12 +24,10 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import es.kikisito.nfcnotes.utils.Utils;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,13 +39,11 @@ import java.util.List;
 
 public class Deposit implements CommandExecutor, TabCompleter {
     private final Main plugin;
-    private final Economy eco;
     private double value = 0;
     private DecimalFormat decimalFormat;
 
     public Deposit(Main plugin){
         this.plugin = plugin;
-        this.eco = plugin.getEco();
     }
 
     @Override
@@ -107,7 +103,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                                 Player player = depositEvent.getPlayer();
                                 double money = depositEvent.getMoney();
                                 String formattedMoney = decimalFormat.format(money);
-                                if (eco.depositPlayer(player, money).transactionSuccess()) {
+                                if (Utils.depositSuccessful(plugin, player, money)) {
                                     for (ItemStack i : notes) i.setAmount(0);
                                     player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                                 } else {
@@ -185,7 +181,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
             Player player = depositEvent.getPlayer();
             value = depositEvent.getMoney();
             String formattedMoney = decimalFormat.format(value);
-            if (eco.depositPlayer(player, value).transactionSuccess()) {
+            if (Utils.depositSuccessful(plugin, player, value)) {
                 player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                 nfcNote.getItemStack().setAmount(nfcNote.getItemStack().getAmount() - amount);
             } else {
