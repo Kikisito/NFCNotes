@@ -76,7 +76,7 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        if(NFCConfig.VERSION.getInt() < 8) {
+        if(NFCConfig.VERSION.getInt() < 9) {
             String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it, otherwise you won't receive any support.";
             this.getServer().getConsoleSender().sendMessage(outdatedconfig);
             // In case of this plugin being reloaded using Plugman.
