@@ -17,8 +17,6 @@
 
 package es.kikisito.nfcnotes.utils;
 
-import com.earth2me.essentials.api.NoLoanPermittedException;
-import com.earth2me.essentials.api.UserDoesNotExistException;
 import es.kikisito.nfcnotes.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
@@ -32,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
+    // EssentialsX's are not used due to compatibility issues
 
     public static boolean depositSuccessful(Main plugin, Player player, double money){
         switch(plugin.getEco()){
@@ -43,7 +42,7 @@ public class Utils {
                 try {
                     com.earth2me.essentials.api.Economy.add(player.getUniqueId(), BigDecimal.valueOf(money));
                     return true;
-                } catch (NoLoanPermittedException | UserDoesNotExistException ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     return false;
                 }
@@ -64,7 +63,7 @@ public class Utils {
                 try {
                     com.earth2me.essentials.api.Economy.subtract(player.getUniqueId(), BigDecimal.valueOf(money));
                     return true;
-                } catch (NoLoanPermittedException | UserDoesNotExistException ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     return false;
                 }
@@ -85,7 +84,7 @@ public class Utils {
             case "EssentialsX":
                 try {
                     return com.earth2me.essentials.api.Economy.getMoneyExact(player.getUniqueId()).doubleValue();
-                } catch (UserDoesNotExistException ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             case "PlayerPoints":

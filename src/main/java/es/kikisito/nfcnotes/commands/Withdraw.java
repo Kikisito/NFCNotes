@@ -131,7 +131,6 @@ public class Withdraw implements CommandExecutor {
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
             // EconomyResponse response = plugin.getVaultEco().withdrawPlayer(player, money * amount);
-            System.out.println(Utils.getPlayerBalance(plugin, player));
             if (Utils.getPlayerBalance(plugin, player) >= money * amount) {
                 if(Utils.withdrawSuccessful(plugin, player, money * amount)) {
                     // Create the note and give it to the player

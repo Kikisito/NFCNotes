@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class NFCNote {
+    // Attributes will be changed into Namespaces in a major update in the future.
+    // A converter is also planned.
+
     private final ItemStack itemStack;
     private String name;
     private List<String> lore;
@@ -70,6 +73,7 @@ public class NFCNote {
     public static boolean isNFCNote(ItemStack itemStack){
         if(itemStack == null || !itemStack.hasItemMeta()) return false;
         ItemMeta im = itemStack.getItemMeta();
-        return im.hasAttributeModifiers() && im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase("noteValue");
+        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.GENERIC_LUCK) == null || im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next() == null) return false;
+        return im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase("noteValue");
     }
 }
