@@ -38,5 +38,7 @@ public class CustomMetrics {
             if(NFCConfig.MODULES_WARN_STAFF.getBoolean()) update_checker = "Enabled";
             return update_checker;
         }));
+        // Economy Plugin
+        metrics.addCustomChart(new Metrics.SimplePie("economy_plugin_used", NFCConfig.ECONOMY_PLUGIN::getString));
     }
 }
