@@ -65,6 +65,8 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
                     }
 
                 });
+            } else {
+                sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
             }
         } else {
             if (NFCConfig.SHOW_PLUGIN_INFO.getBoolean()) {
