@@ -31,17 +31,11 @@ public class DepositEvent extends Event implements Cancellable {
     private ActionMethod depositMethod;
 
     /**
-     * @deprecated see DepositEvent(Player player, Double money, DepositMethod depositMethod)
-     * Deprecated since 2.1. This constructor will be removed soon. Added DepositMethod.
+     * This constructor is used to create a new DepositEvent with given parameters
+     * @param player Player who rdeemed money
+     * @param money Amount of money redeemed
+     * @param depositMethod {@see ActionMethod} Method used in this transaction
      */
-    @Deprecated
-    public DepositEvent(Player player, Double money){
-        this.player = player;
-        this.money = money;
-        this.isCancelled = false;
-        this.depositMethod = ActionMethod.DEPRECATED_METHOD;
-    }
-
     public DepositEvent(Player player, Double money, ActionMethod depositMethod){
         this.player = player;
         this.money = money;
@@ -59,23 +53,47 @@ public class DepositEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
+    /**
+     * Get the player who redeemed money
+     * @return Player
+     */
     public Player getPlayer(){
         return this.player;
     }
 
+    /**
+     * Get the total amount of money redeemed
+     * @return Double
+     */
     public Double getMoney(){
         return this.money;
     }
 
+    /**
+     * Change the total amount of money redeemed
+     * @param money Double
+     */
     public void setMoney(Double money){ this.money = money; }
 
+    /**
+     * Get the ActionMethod used in this transaction
+     * @return {@see ActionMethod}
+     */
     public ActionMethod getDepositMethod(){ return this.depositMethod; }
 
+    /**
+     * Get if the event was cancelled or not
+     * @return Boolean
+     */
     @Override
     public boolean isCancelled() {
         return this.isCancelled;
     }
 
+    /**
+     * Cancel the event
+     * @param b Boolean
+     */
     @Override
     public void setCancelled(boolean b) {
         this.isCancelled = b;

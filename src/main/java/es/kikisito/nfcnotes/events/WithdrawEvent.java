@@ -32,18 +32,12 @@ public class WithdrawEvent extends Event implements Cancellable {
     private ActionMethod actionMethod;
 
     /**
-     * @deprecated see WithdrawtEvent(Player player, Double money, WithdrawMethod withdrawtMethod)
-     * Deprecated since 2.1. This constructor will be removed soon. Added WithdrawMethod.
+     * This constructor is used to create a new WithdrawEvent with given parameters
+     * @param player Player who has withdrawn money
+     * @param money Value of each note
+     * @param amount Amount of notes
+     * @param actionMethod {@see ActionMethod} Method used in this transaction
      */
-    @Deprecated
-    public WithdrawEvent(Player player, Double money, Integer amount){
-        this.player = player;
-        this.money = money;
-        this.amount = amount;
-        this.isCancelled = false;
-        this.actionMethod = ActionMethod.DEPRECATED_METHOD;
-    }
-
     public WithdrawEvent(Player player, Double money, Integer amount, ActionMethod actionMethod){
         this.player = player;
         this.money = money;
@@ -62,35 +56,67 @@ public class WithdrawEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
+    /**
+     * Get the player who withdrawn money
+     * @return Player
+     */
     public Player getPlayer(){
         return this.player;
     }
 
+    /**
+     * Get the value of one note
+     * @return Double
+     */
     public Double getMoney(){
         return this.money;
     }
 
+    /**
+     * Change the amount of each note withdrawn
+     * @param money Double
+     */
     public void setMoney(Double money){
         this.money = money;
     }
 
+    /**
+     * Get the amount of notes withdrawn in the operation
+     * @return Integer
+     */
     public Integer getAmount(){
         return this.amount;
     }
 
+    /**
+     * Change the amount of notes withdrawn
+     * @param amount Integer
+     */
     public void setAmount(Integer amount){
         this.amount = amount;
     }
 
-    public ActionMethod getWithdrawMethod(Double money){
+    /**
+     * Get the ActionMethod used in this transaction
+     * @return {@see ActionMethod}
+     */
+    public ActionMethod getWithdrawMethod(){
         return actionMethod;
     }
 
+    /**
+     * Get if the event was cancelled or not
+     * @return Boolean
+     */
     @Override
     public boolean isCancelled() {
         return this.isCancelled;
     }
 
+    /**
+     * Cancel the event
+     * @param b Boolean
+     */
     @Override
     public void setCancelled(boolean b) {
         this.isCancelled = b;
