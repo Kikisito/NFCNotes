@@ -39,7 +39,6 @@ import java.util.List;
 
 public class Deposit implements CommandExecutor, TabCompleter {
     private final Main plugin;
-    private double value = 0;
     private DecimalFormat decimalFormat;
 
     public Deposit(Main plugin){
@@ -48,6 +47,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        double value = 0;
         // Only players can execute this command.
         if (!(sender instanceof Player)) {
             sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
@@ -66,7 +66,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                         if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
                             NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
                             value = nfcNote.getValue();
-                            this.depositMoney(nfcNote, p, 1);
+                            this.depositMoney(nfcNote, p, 1, value);
                         } else {
                             p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                         }
@@ -123,7 +123,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                             if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
                                 NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
                                 value = nfcNote.getValue();
-                                this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount());
+                                this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount(), value);
                             } else {
                                 p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                             }
@@ -142,7 +142,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                                 NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
                                 if(nfcNote.getItemStack().getAmount() >= amount){
                                     value = nfcNote.getValue();
-                                    this.depositMoney(nfcNote, p, amount);
+                                    this.depositMoney(nfcNote, p, amount, value);
                                 } else {
                                     p.sendMessage(NFCMessages.INSUFFICIENT_NOTES.getString());
                                 }
@@ -174,7 +174,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    public void depositMoney(NFCNote nfcNote, Player p, int amount){
+    public void depositMoney(NFCNote nfcNote, Player p, int amount, double value){
         DepositEvent depositEvent = new DepositEvent(p, value * amount, ActionMethod.COMMAND);
         if(!depositEvent.isCancelled()) {
             plugin.getServer().getPluginManager().callEvent(depositEvent);
