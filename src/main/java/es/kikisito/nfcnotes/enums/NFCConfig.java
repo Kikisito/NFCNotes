@@ -32,6 +32,9 @@ public enum NFCConfig {
     NOTE_DECIMAL_FORMAT("notes.decimal-format", "#,###.#"),
     NOTE_UUID("notes.identifier", "9a12cb32-1a7e-4e41-be79-9938528b4375"),
 
+    // Use decimals
+    USE_DECIMALS("notes.use-decimals", false),
+
     // Modules
     MODULES_WITHDRAW("modules.withdraw.base", true),
     MODULES_MULTIPLE_WITHDRAW("modules.withdraw.multiple-withdraw", true),

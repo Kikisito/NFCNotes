@@ -17,6 +17,7 @@ not-a-note: "&8[&6NFCNotes&8] &7No notes have been found in your inventory."
 disabled-world: "&8[&6NFCNotes&8] &7Notes are disabled in this world."
 module-disabled: "&8[&6NFCNotes&8] &7This action is currently disabled."
 insufficient-notes: "&8[&6NFCNotes&8] &7You don't have enough notes."
+incorrect-format: "&8[&6NFCNotes&8] &7Incorrect format."
 staff:
   warn-withdraw: "&8[&6NFCNotes&8] &7{player} has withdrawn &6{money}&7$."
   warn-deposit: "&8[&6NFCNotes&8] &7{player} has redeemed &6{money}&7$."
@@ -26,4 +27,4 @@ updates:
   no-updates: "&8[&6NFCNotes&8] &7You are using the latest version."
 
 # Do not touch this unless it is indicated otherwise
-messages-version: 5
+messages-version: 6

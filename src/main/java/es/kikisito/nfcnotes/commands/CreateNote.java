@@ -88,7 +88,7 @@ public class CreateNote implements CommandExecutor, TabExecutor {
                     break;
             }
         } catch (NumberFormatException ex) {
-            sender.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
+            sender.sendMessage(NFCMessages.INCORRECT_FORMAT.getString());
         }
         return true;
     }
@@ -98,12 +98,13 @@ public class CreateNote implements CommandExecutor, TabExecutor {
         if (m <= 0) {
             p.sendMessage(NFCMessages.USE_A_NUMBER_HIGHER_THAN_ZERO.getString());
             return;
-        } else if(!(m % 1 == 0)) {
+        } else if(!(m % 1 == 0) && !NFCConfig.USE_DECIMALS.getBoolean()) {
             p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
             return;
         }
         // Make the amount readable
         DecimalFormat decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
+        decimalFormat.setMaximumFractionDigits(2);
         String formattedMoney = decimalFormat.format(m);
         // Create the note and give it to the player
         ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, m, a);

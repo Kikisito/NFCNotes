@@ -77,6 +77,7 @@ public class Withdraw implements CommandExecutor {
                         if(NFCConfig.MODULES_WITHDRAW.getBoolean()) {
                             if(p.hasPermission("nfcnotes.withdraw.one")) {
                                 money = Double.parseDouble(args[0]);
+                                money = Math.round(money * 100.0) / 100.0;
                                 withdraw(p, money, 1);
                             } else {
                                 p.sendMessage(NFCMessages.NO_PERMISSION.getString());
@@ -91,6 +92,7 @@ public class Withdraw implements CommandExecutor {
                     if(p.hasPermission("nfcnotes.withdraw.multiple")) {
                         if (NFCConfig.MODULES_MULTIPLE_WITHDRAW.getBoolean()) {
                             money = Double.parseDouble(args[0]);
+                            money = Math.round(money * 100.0) / 100.0;
                             amount = Integer.parseInt(args[1]);
                             withdraw(p, money, amount);
                             break;
@@ -103,7 +105,7 @@ public class Withdraw implements CommandExecutor {
                     break;
             }
         } catch (NumberFormatException ex) {
-            p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
+            p.sendMessage(NFCMessages.INCORRECT_FORMAT.getString());
         }
         return true;
     }
@@ -113,7 +115,7 @@ public class Withdraw implements CommandExecutor {
         if (m <= 0) {
             p.sendMessage(NFCMessages.USE_A_NUMBER_HIGHER_THAN_ZERO.getString());
             return;
-        } else if(!(m % 1 == 0)) {
+        } else if(!(m % 1 == 0) && !NFCConfig.USE_DECIMALS.getBoolean()) {
             p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
             return;
         }
@@ -127,12 +129,15 @@ public class Withdraw implements CommandExecutor {
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
             DecimalFormat decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
+            // Apply a maximum of three decimals
+            decimalFormat.setMaximumFractionDigits(2);
             String formattedMoney = decimalFormat.format(money * amount);
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
             // EconomyResponse response = plugin.getVaultEco().withdrawPlayer(player, money * amount);
             if (Utils.getPlayerBalance(plugin, player) >= money * amount) {
                 if(Utils.withdrawSuccessful(plugin, player, money * amount)) {
+                    System.out.println(money * amount);
                     // Create the note and give it to the player
                     ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
                     player.getInventory().addItem(paper);

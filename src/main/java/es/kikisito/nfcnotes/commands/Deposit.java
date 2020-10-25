@@ -59,6 +59,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
             return false;
         }
         decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
+        decimalFormat.setMaximumFractionDigits(2);
         switch(args.length){
             case 0:
                 if(p.hasPermission("nfcnotes.deposit.command.one")) {

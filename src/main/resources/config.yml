@@ -19,9 +19,13 @@ notes:
     - "&7Value: &e{money}$"
     - "&7Issuer: &e{issuer}"
   material: PAPER
+  use-decimals: false
   # -------------------------------------------------------------------------------------------------------- #
   # Do not modify these values unless you know what you're doing. Changing them can break your existing notes.
-  decimal-format: "#,###.#"
+  # More than two decimals is not allowed due to imprecise math operations. Inputs with more than two
+  # decimals will be rounded.
+  #decimal-format: "#,###"
+  decimal-format: "#,###.##"
   # Attribute UUID
   identifier: 9a12cb32-1a7e-4e41-be79-9938528b4375
   # -------------------------------------------------------------------------------------------------------- #
@@ -97,6 +101,6 @@ update-checker:
   notify-on-join: true # If enabled and a new version is available, each time an user with the permission nfcnotes.staff.check-updates connects to the server will be notified of the new version.
 
 # Do not touch this unless it is indicated otherwise.
-config-version: 9
+config-version: 10
 
 # --- This is the end of this file, trust me --- #

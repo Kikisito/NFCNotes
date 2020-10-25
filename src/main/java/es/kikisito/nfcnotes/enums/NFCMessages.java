@@ -45,6 +45,7 @@ public enum NFCMessages {
     UPDATES_NO_UPDATES("updates.no-updates", "&8[&6NFCNotes&8] &7You are using the latest version."),
     MODULE_DISABLED("module-disabled", "&8[&6NFCNotes&8] &7This action is currently disabled."),
     INSUFFICIENT_NOTES("insufficient-notes", "&8[&6NFCNotes&8] &7You don't have enough notes."),
+    INCORRECT_FORMAT("incorrect-format", "&8[&6NFCNotes&8] &7Incorrect format. Use dots &f&o.&7 to separate decimals."),
 
     VERSION("messages-version", 0);
 
