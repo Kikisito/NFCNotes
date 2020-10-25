@@ -78,7 +78,7 @@ public class Withdraw implements CommandExecutor {
                     } else {
                         if(NFCConfig.MODULES_WITHDRAW.getBoolean()) {
                             if(p.hasPermission("nfcnotes.withdraw.one")) {
-                                money = Double.parseDouble(args[0]);
+                                money = Double.parseDouble(args[0].replace(',', '.'));
                                 money = Math.round(money * 100.0) / 100.0;
                                 withdraw(p, money, 1);
                             } else {
@@ -93,7 +93,7 @@ public class Withdraw implements CommandExecutor {
                     // Works only if the multiple withdraw submodule is enabled
                     if(p.hasPermission("nfcnotes.withdraw.multiple")) {
                         if (NFCConfig.MODULES_MULTIPLE_WITHDRAW.getBoolean()) {
-                            money = Double.parseDouble(args[0]);
+                            money = Double.parseDouble(args[0].replace(',', '.'));
                             money = Math.round(money * 100.0) / 100.0;
                             amount = Integer.parseInt(args[1]);
                             withdraw(p, money, amount);
