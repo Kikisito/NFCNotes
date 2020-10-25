@@ -32,10 +32,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 
 public class Deposit implements CommandExecutor, TabCompleter {
     private final Main plugin;
@@ -58,7 +56,12 @@ public class Deposit implements CommandExecutor, TabCompleter {
             sender.sendMessage(NFCMessages.DISABLED_WORLD.getString());
             return false;
         }
-        decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
+        if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
+            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
+            decimalFormatSymbols.setDecimalSeparator(',');
+            decimalFormatSymbols.setGroupingSeparator('.');
+            decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
+        } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
         decimalFormat.setMaximumFractionDigits(2);
         switch(args.length){
             case 0:

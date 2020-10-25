@@ -18,6 +18,8 @@
 package es.kikisito.nfcnotes.commands;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
@@ -128,8 +130,13 @@ public class Withdraw implements CommandExecutor {
             Double money = withdrawEvent.getMoney();
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
-            DecimalFormat decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
-            // Apply a maximum of three decimals
+            DecimalFormat decimalFormat;
+            if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
+                DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
+                decimalFormatSymbols.setDecimalSeparator(',');
+                decimalFormatSymbols.setGroupingSeparator('.');
+                decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
+            } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
             decimalFormat.setMaximumFractionDigits(2);
             String formattedMoney = decimalFormat.format(money * amount);
             // Execute if the event wasn't cancelled

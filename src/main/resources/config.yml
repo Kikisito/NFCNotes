@@ -20,6 +20,8 @@ notes:
     - "&7Issuer: &e{issuer}"
   material: PAPER
   use-decimals: false
+  # This option will use commas instead of dots for decimal values #
+  use-european-format: false
   # -------------------------------------------------------------------------------------------------------- #
   # Do not modify these values unless you know what you're doing. Changing them can break your existing notes.
   # More than two decimals is not allowed due to imprecise math operations. Inputs with more than two

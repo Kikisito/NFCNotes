@@ -32,8 +32,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class InteractListener implements Listener {
     private Main plugin;
@@ -53,7 +55,14 @@ public class InteractListener implements Listener {
                 p.sendMessage(NFCMessages.DISABLED_WORLD.getString());
                 return;
             }
-            DecimalFormat decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
+            DecimalFormat decimalFormat;
+            if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
+                DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
+                decimalFormatSymbols.setDecimalSeparator(',');
+                decimalFormatSymbols.setGroupingSeparator('.');
+                decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
+            } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
+            decimalFormat.setMaximumFractionDigits(2);
             double totalAmount = 0;
             // Mass Deposit
             // Checks if a player is sneaking, the submodule is enabled and if the player is allowed to mass-deposit.

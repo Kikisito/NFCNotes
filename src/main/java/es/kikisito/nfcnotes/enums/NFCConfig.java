@@ -35,6 +35,9 @@ public enum NFCConfig {
     // Use decimals
     USE_DECIMALS("notes.use-decimals", false),
 
+    // Use european format
+    USE_EUROPEAN_FORMAT("notes.use-european-format", false),
+
     // Modules
     MODULES_WITHDRAW("modules.withdraw.base", true),
     MODULES_MULTIPLE_WITHDRAW("modules.withdraw.multiple-withdraw", true),
