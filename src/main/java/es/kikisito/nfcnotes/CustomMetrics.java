@@ -45,10 +45,12 @@ public class CustomMetrics {
             if(NFCConfig.USE_DECIMALS.getBoolean()) return "Yes";
             else return "No";
         }));
-        // Decimal format used
-        metrics.addCustomChart(new Metrics.SimplePie("number_format", () -> {
-            if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) return "European/IS format";
-            else return "American format";
-        }));
+        // Decimal format used (if decimals are used)
+        if(NFCConfig.USE_DECIMALS.getBoolean()) {
+            metrics.addCustomChart(new Metrics.SimplePie("number_format", () -> {
+                if (NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) return "European/IS format";
+                else return "American format";
+            }));
+        }
     }
 }
