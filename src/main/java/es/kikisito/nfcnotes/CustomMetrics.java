@@ -40,5 +40,15 @@ public class CustomMetrics {
         }));
         // Economy Plugin
         metrics.addCustomChart(new Metrics.SimplePie("economy_plugin_used", NFCConfig.ECONOMY_PLUGIN::getString));
+        // Are decimals used?
+        metrics.addCustomChart(new Metrics.SimplePie("use_of_decimals", () -> {
+            if(NFCConfig.USE_DECIMALS.getBoolean()) return "Yes";
+            else return "No";
+        }));
+        // Decimal format used
+        metrics.addCustomChart(new Metrics.SimplePie("number_format", () -> {
+            if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) return "European/IS format";
+            else return "American format";
+        }));
     }
 }

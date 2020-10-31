@@ -149,21 +149,21 @@ public class Withdraw implements CommandExecutor {
                     ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
                     player.getInventory().addItem(paper);
                     player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                    // Warn staff if the note's value is higher than the specified in the configuration file
+                    if (money * amount >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
+                        for (Player pl : plugin.getServer().getOnlinePlayers()) {
+                            if (pl.hasPermission("nfcnotes.staff.warn") && player != pl) {
+                                pl.sendMessage(NFCMessages.STAFF_WARN_WITHDRAW.getString().replace("{player}", player.getName()).replace("{money}", formattedMoney));
+                                plugin.getLogger().info(NFCMessages.STAFF_WARN_WITHDRAW.getString().replace("{player}", player.getName()).replace("{money}", formattedMoney));
+                            }
+                        }
+                    }
                 } else {
                     // Unexpected error
                     player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                 }
             } else {
                 player.sendMessage(NFCMessages.INSUFFICIENT_FUNDS.getString());
-            }
-            // Warn staff if the note's value is higher than the specified in the configuration file
-            if (money * amount >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
-                for (Player pl : plugin.getServer().getOnlinePlayers()) {
-                    if (pl.hasPermission("nfcnotes.staff.warn") && player != pl) {
-                        pl.sendMessage(NFCMessages.STAFF_WARN_WITHDRAW.getString().replace("{player}", player.getName()).replace("{money}", formattedMoney));
-                        plugin.getLogger().info(NFCMessages.STAFF_WARN_WITHDRAW.getString().replace("{player}", player.getName()).replace("{money}", formattedMoney));
-                    }
-                }
             }
         }
     }

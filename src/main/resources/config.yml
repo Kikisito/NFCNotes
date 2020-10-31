@@ -1,5 +1,6 @@
 # --- NFCNotes configuration file --- #
-# If you have any issue, check your configuration is updated before submitting the issue! #
+# If you have any issue, check your configuration is updated before submitting the issue!
+# Do you still have any issue? Report it on GitHub! https://github.com/Kikisito/NFCNotes
 
 # --------------------------------------------------------------------------------------------------------- #
 # [!] This is IMPORTANT if you already have notes created and you want to change any value of this category.
@@ -20,13 +21,14 @@ notes:
     - "&7Issuer: &e{issuer}"
   material: PAPER
   use-decimals: false
-  # This option will use commas instead of dots for decimal values #
+  # This option will use commas instead of dots for decimal values
   use-european-format: false
   # -------------------------------------------------------------------------------------------------------- #
   # Do not modify these values unless you know what you're doing. Changing them can break your existing notes.
+  # -------------------------------------------------------------------------------------------------------- #
   # More than two decimals is not allowed due to imprecise math operations. Inputs with more than two
   # decimals will be rounded.
-  #decimal-format: "#,###"
+  # Separate decimals using a dot. Otherwise, notes won't be able to be created.
   decimal-format: "#,###.##"
   # Attribute UUID
   identifier: 9a12cb32-1a7e-4e41-be79-9938528b4375
@@ -70,12 +72,14 @@ modules:
 economy-plugin: Vault
 
 # This prevents player from withdrawing and redeeming notes in certain worlds.
-# Players with the permission nfcnotes.staff.withdraw.bypass.disabled-world or nfcnotes.staff.deposit.bypass.disabled-world
+# Players with the permission nfcnotes.staff.withdraw.bypass.disabled-world or/and nfcnotes.staff.deposit.bypass.disabled-world
 # won't be affected by this.
 disabled-worlds:
   - disabled_world
 
-# Tables in this list won't be able to work with NFCNotes. This also should be compatible with future tables from new Minecraft versions.
+# Notes will be prevented from being modified or used as ingredient in these tables.
+# If you want to modify this list, keep in mind that NFCNotes only supports names from
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 disabled-tables:
   - ANVIL
   - BEACON
@@ -98,9 +102,10 @@ warn-staff-if-value-is-higher-than: 100000
 show-plugin-info: true
 
 # Update checker
+# Do you want to get notified when you log in and an update is available? Keep notify-on-join as true!
 update-checker:
-  enable: true # If true, each time the server starts you will receive a message if there is a newer version.
-  notify-on-join: true # If enabled and a new version is available, each time an user with the permission nfcnotes.staff.check-updates connects to the server will be notified of the new version.
+  enable: true
+  notify-on-join: true
 
 # Do not touch this unless it is indicated otherwise.
 config-version: 10
