@@ -144,7 +144,6 @@ public class Withdraw implements CommandExecutor {
             // EconomyResponse response = plugin.getVaultEco().withdrawPlayer(player, money * amount);
             if (Utils.getPlayerBalance(plugin, player) >= money * amount) {
                 if(Utils.withdrawSuccessful(plugin, player, money * amount)) {
-                    System.out.println(money * amount);
                     // Create the note and give it to the player
                     ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
                     player.getInventory().addItem(paper);
