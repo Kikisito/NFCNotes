@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-    // EssentialsX's are not used due to compatibility issues
 
     public static boolean depositSuccessful(Main plugin, Player player, double money){
         switch(plugin.getEco()){

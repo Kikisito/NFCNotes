@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class InteractListener implements Listener {
-    private Main plugin;
+    private final Main plugin;
 
     public InteractListener(Main plugin) {
         this.plugin = plugin;

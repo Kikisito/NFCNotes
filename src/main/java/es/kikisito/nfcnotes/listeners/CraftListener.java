@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CraftListener implements Listener {
-    private Main plugin;
+    private final Main plugin;
 
     public CraftListener(Main plugin) {
         this.plugin = plugin;

@@ -30,6 +30,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -44,7 +45,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
         double value = 0;
         // Only players can execute this command.
         if (!(sender instanceof Player)) {
@@ -142,7 +143,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                     if(NFCConfig.MODULES_DEPOSIT_MULTIPLE.getBoolean()){
                         if (p.hasPermission("nfcnotes.deposit.command.multiple")) {
                             if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
-                                Integer amount = Integer.parseInt(args[0]);
+                                int amount = Integer.parseInt(args[0]);
                                 NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
                                 if(nfcNote.getItemStack().getAmount() >= amount){
                                     value = nfcNote.getValue();
@@ -195,7 +196,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         if(args.length != 1) return Collections.emptyList();
         List<String> options = Arrays.asList("all", "stack");
         List<String> tab = new ArrayList<>();

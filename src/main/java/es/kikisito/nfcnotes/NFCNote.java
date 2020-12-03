@@ -35,9 +35,9 @@ public class NFCNote {
     // A converter is also planned.
 
     private final ItemStack itemStack;
-    private String name;
-    private List<String> lore;
-    private Double value;
+    private final String name;
+    private final List<String> lore;
+    private final Double value;
 
     public NFCNote(ItemStack itemStack){
         this.itemStack = itemStack;

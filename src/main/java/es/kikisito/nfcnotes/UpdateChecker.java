@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class UpdateChecker {
-    private Main plugin;
+    private final Main plugin;
 
     public UpdateChecker(Main plugin) {
         this.plugin = plugin;

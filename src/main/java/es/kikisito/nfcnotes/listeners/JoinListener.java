@@ -23,18 +23,15 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.utils.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinListener implements Listener {
-    private Main plugin;
-    private Configuration config;
+    private final Main plugin;
 
     public JoinListener(Main plugin) {
         this.plugin = plugin;
-        this.config = plugin.getConfig();
     }
 
     @EventHandler

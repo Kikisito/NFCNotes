@@ -20,14 +20,13 @@ package es.kikisito.nfcnotes.enums;
 import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.configuration.Configuration;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public enum NFCConfig {
     // Notes
     NOTE_NAME("notes.name", "&aNFCNote"),
-    NOTE_LORE("notes.lore", Arrays.asList("&7Value: &e{money}$")),
+    NOTE_LORE("notes.lore", Collections.singletonList("&7Value: &e{money}$")),
     NOTE_MATERIAL("notes.material", "PAPER"),
     NOTE_DECIMAL_FORMAT("notes.decimal-format", "#,###.#"),
     NOTE_UUID("notes.identifier", "9a12cb32-1a7e-4e41-be79-9938528b4375"),

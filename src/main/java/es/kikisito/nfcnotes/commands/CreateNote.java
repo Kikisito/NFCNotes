@@ -34,6 +34,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateNote implements CommandExecutor, TabExecutor {
     private final Main plugin;
@@ -43,7 +44,7 @@ public class CreateNote implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
         // Check if the player is allowed to withdraw money and its inventory is not full
         if (!sender.hasPermission("nfcnotes.staff.createnote")) {
             sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
@@ -121,7 +122,7 @@ public class CreateNote implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         if(args.length != 1) return Collections.emptyList();
         List<String> tab = new ArrayList<>();
         for(Player p : plugin.getServer().getOnlinePlayers()){

@@ -70,7 +70,7 @@ public class Main extends JavaPlugin implements Listener {
         if(!isEconomy()){
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect any economy plugin in your server.");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Please, download Vault (recommended) from " + ChatColor.GOLD + "https://github.com/MilkBowl/Vault");
+            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "If you are using Vault, check that you have installed an economy plugin from" + ChatColor.GOLD + "https://www.spigotmc.org/resources/categories/economy.23/");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
@@ -103,23 +103,27 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private boolean isEconomy() {
-        if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Vault")) {
-            RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
-            if(rsp == null){
-                return false;
-            } else {
-                eco = rsp.getProvider();
-                economyPlugin = "Vault";
+        try {
+            if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Vault")) {
+                RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
+                if (rsp == null) {
+                    return false;
+                } else {
+                    eco = rsp.getProvider();
+                    economyPlugin = "Vault";
+                    return true;
+                }
+            } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
+                economyPlugin = "Essentials";
+                return true;
+            } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("PlayerPoints")) {
+                economyPlugin = "PlayerPoints";
                 return true;
             }
-        } else if(NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
-            economyPlugin = "Essentials";
-            return true;
-        } else if(NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("PlayerPoints")) {
-            economyPlugin = "PlayerPoints";
-            return true;
+            return false;
+        } catch (NoClassDefFoundError e) {
+            return false;
         }
-        return false;
     }
 
     public Economy getVaultEco() { return this.eco; }
