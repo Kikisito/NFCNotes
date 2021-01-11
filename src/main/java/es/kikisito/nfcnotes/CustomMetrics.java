@@ -29,28 +29,26 @@ public class CustomMetrics {
         // Does the plugin warn staff?
         metrics.addCustomChart(new Metrics.SimplePie("warn_staff_enabled", () -> {
             String warn_staff = "Disabled";
-            if(NFCConfig.MODULES_WARN_STAFF.getBoolean()) warn_staff = "Enabled";
+            if (NFCConfig.MODULES_WARN_STAFF.getBoolean()) warn_staff = "Enabled";
             return warn_staff;
         }));
         // Is Update Checker enabled?
         metrics.addCustomChart(new Metrics.SimplePie("update_checker_enabled", () -> {
             String update_checker = "Disabled";
-            if(NFCConfig.MODULES_WARN_STAFF.getBoolean()) update_checker = "Enabled";
+            if (NFCConfig.MODULES_WARN_STAFF.getBoolean()) update_checker = "Enabled";
             return update_checker;
         }));
         // Economy Plugin
         metrics.addCustomChart(new Metrics.SimplePie("economy_plugin_used", NFCConfig.ECONOMY_PLUGIN::getString));
         // Are decimals used?
         metrics.addCustomChart(new Metrics.SimplePie("use_of_decimals", () -> {
-            if(NFCConfig.USE_DECIMALS.getBoolean()) return "Yes";
+            if (NFCConfig.USE_DECIMALS.getBoolean()) return "Yes";
             else return "No";
         }));
         // Decimal format used (if decimals are used)
-        if(NFCConfig.USE_DECIMALS.getBoolean()) {
-            metrics.addCustomChart(new Metrics.SimplePie("number_format", () -> {
-                if (NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) return "European/IS format";
-                else return "American format";
-            }));
-        }
+        metrics.addCustomChart(new Metrics.SimplePie("number_format", () -> {
+            if (NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) return "European/IS format";
+            else return "American format";
+        }));
     }
 }
