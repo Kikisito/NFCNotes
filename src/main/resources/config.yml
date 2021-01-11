@@ -21,7 +21,7 @@ notes:
     - "&7Issuer: &e{issuer}"
   material: PAPER
   use-decimals: false
-  # This option will use commas instead of dots for decimal values
+  # This option will use a comma for decimal values and a dot as the thousands separator
   use-european-format: false
   # -------------------------------------------------------------------------------------------------------- #
   # Do not modify these values unless you know what you're doing. Changing them can break your existing notes.
