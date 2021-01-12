@@ -19,14 +19,10 @@ package es.kikisito.nfcnotes.listeners;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.enums.NFCConfig;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CraftListener implements Listener {
     private final Main plugin;
@@ -37,12 +33,8 @@ public class CraftListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        List<Object> forbiddeninventories = new ArrayList<>();
-        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
-            forbiddeninventories.add(InventoryType.valueOf(invtype));
-        }
         if(e.getClickedInventory() != null){
-            if(forbiddeninventories.contains(e.getClickedInventory().getType())) {
+            if(plugin.forbiddeninventories.contains(e.getClickedInventory().getType())) {
                 if (NFCNote.isNFCNote(e.getCursor())) {
                     e.setCancelled(true);
                 }
@@ -52,21 +44,13 @@ public class CraftListener implements Listener {
 
     @EventHandler
     public void onShiftClick(InventoryClickEvent e) {
-        List<Object> forbiddeninventories = new ArrayList<>();
-        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
-            forbiddeninventories.add(InventoryType.valueOf(invtype));
-        }
-        if(forbiddeninventories.contains(e.getInventory().getType()) && e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && NFCNote.isNFCNote(e.getCurrentItem())) e.setCancelled(true);
+        if(plugin.forbiddeninventories.contains(e.getInventory().getType()) && e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && NFCNote.isNFCNote(e.getCurrentItem())) e.setCancelled(true);
     }
 
     @EventHandler
     public void onDrag(InventoryDragEvent e) {
-        List<Object> forbiddeninventories = new ArrayList<>();
-        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
-            forbiddeninventories.add(InventoryType.valueOf(invtype));
-        }
         for(int i : e.getRawSlots()){
-            if(i < e.getInventory().getSize() && NFCNote.isNFCNote(e.getOldCursor()) && forbiddeninventories.contains(e.getInventory().getType())){
+            if(i < e.getInventory().getSize() && NFCNote.isNFCNote(e.getOldCursor()) && plugin.forbiddeninventories.contains(e.getInventory().getType())){
                 e.setCancelled(true);
                 return;
             }
@@ -76,22 +60,14 @@ public class CraftListener implements Listener {
     // This prevents hoppers from putting NFCNotes inside disabled tables
     @EventHandler
     public void moveEvent(InventoryMoveItemEvent e){
-        List<Object> forbiddeninventories = new ArrayList<>();
-        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
-            forbiddeninventories.add(InventoryType.valueOf(invtype));
-        }
-        if(forbiddeninventories.contains(e.getDestination().getType()) && NFCNote.isNFCNote(e.getItem())) e.setCancelled(true);
+        if(plugin.forbiddeninventories.contains(e.getDestination().getType()) && NFCNote.isNFCNote(e.getItem())) e.setCancelled(true);
     }
 
     // This event exists because players would still use the crafting table from their inventories.
     @EventHandler
     public void craftEvent(CraftItemEvent e){
-        List<Object> forbiddeninventories = new ArrayList<>();
-        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
-            forbiddeninventories.add(InventoryType.valueOf(invtype));
-        }
         for(ItemStack i : e.getInventory()) {
-            if(NFCNote.isNFCNote(i) && forbiddeninventories.contains(InventoryType.WORKBENCH)){
+            if(NFCNote.isNFCNote(i) && plugin.forbiddeninventories.contains(InventoryType.WORKBENCH)){
                 e.setCancelled(true);
                 return;
             }

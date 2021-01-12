@@ -35,19 +35,23 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends JavaPlugin implements Listener {
-
     private Configuration config;
     private FileConfiguration messages;
     private String economyPlugin;
     // Vault eco API
     private Economy eco;
+
+    public List<Object> forbiddeninventories = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -100,6 +104,11 @@ public class Main extends JavaPlugin implements Listener {
 
         Metrics metrics = new Metrics(this, 8048);
         new CustomMetrics(this, metrics);
+
+        // Set forbidden inventories
+        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+            this.forbiddeninventories.add(InventoryType.valueOf(invtype));
+        }
     }
 
     private boolean isEconomy() {
@@ -156,6 +165,12 @@ public class Main extends JavaPlugin implements Listener {
             }
             this.getConfig().load(config);
             loadMessages();
+
+            // Reset forbidden inventories
+            this.forbiddeninventories = new ArrayList<>();
+            for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+                this.forbiddeninventories.add(InventoryType.valueOf(invtype));
+            }
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }

@@ -29,7 +29,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -46,15 +45,10 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
-        FileConfiguration messages = plugin.getMessages();
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("reload")) {
-                if (sender.hasPermission("nfcnotes.staff.reload")) {
-                    plugin.reloadPlugin();
-                    sender.sendMessage(Utils.parseMessage(NFCMessages.STAFF_PLUGIN_RELOADED.getString()));
-                } else {
-                    sender.sendMessage(Utils.parseMessage(messages.getString("no-permission")));
-                }
+            if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("nfcnotes.staff.reload")) {
+                plugin.reloadPlugin();
+                sender.sendMessage(Utils.parseMessage(NFCMessages.STAFF_PLUGIN_RELOADED.getString()));
             } else if ((args[0].equalsIgnoreCase("check") || args[0].equalsIgnoreCase("update")) && sender.hasPermission("nfcnotes.staff.check-updates")) {
                 new UpdateChecker(plugin).getVersion((version) -> {
                     if (!plugin.getDescription().getVersion().equals(version)) {
@@ -69,13 +63,11 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
             } else {
                 sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
             }
-        } else {
-            if (NFCConfig.SHOW_PLUGIN_INFO.getBoolean()) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Developed by &6Kikisito"));
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Version &6" + plugin.getDescription().getVersion()));
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Get more information at"));
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &6https://github.com/Kikisito/NFCNotes"));
-            }
+        } else if (NFCConfig.SHOW_PLUGIN_INFO.getBoolean()) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Developed by &6Kikisito"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Version &6" + plugin.getDescription().getVersion()));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Get more information at"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &6https://github.com/Kikisito/NFCNotes"));
         }
         return false;
     }
