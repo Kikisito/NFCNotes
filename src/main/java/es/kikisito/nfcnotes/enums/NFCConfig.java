@@ -30,6 +30,7 @@ public enum NFCConfig {
     NOTE_MATERIAL("notes.material", "PAPER"),
     NOTE_DECIMAL_FORMAT("notes.decimal-format", "#,###.#"),
     NOTE_UUID("notes.identifier", "9a12cb32-1a7e-4e41-be79-9938528b4375"),
+    NOTE_CUSTOM_MODEL_DATA_INTEGER("notes.custom-model-data-integer", 2440573),
 
     // Use decimals
     USE_DECIMALS("notes.use-decimals", false),

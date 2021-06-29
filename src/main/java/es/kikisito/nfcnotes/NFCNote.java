@@ -17,6 +17,7 @@
 
 package es.kikisito.nfcnotes;
 
+import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -66,6 +67,9 @@ public class NFCNote {
         // Note value is stored as an Attribute and then it's hidden, so its name and lore can be safely edited or removed
         im.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.fromString(identifier), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        // Custom Model Data for texture packs
+        im.setCustomModelData(NFCConfig.NOTE_CUSTOM_MODEL_DATA_INTEGER.getInt());
+        // Set ItemMeta
         is.setItemMeta(im);
         return is;
     }
