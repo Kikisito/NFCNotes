@@ -79,6 +79,11 @@ permissions:
     default: true
 
   # Count permissions
+  nfcnotes.count.*:
+    description: Allows you to use all count subcommands (excluding the staff ones)
+    default: true
+    children:
+      nfcnotes.count.self: true
   nfcnotes.count.self:
     description: Allows you to see how much money you have in your inventory
     default: true

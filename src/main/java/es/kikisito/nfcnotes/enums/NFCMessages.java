@@ -46,6 +46,10 @@ public enum NFCMessages {
     MODULE_DISABLED("module-disabled", "&8[&6NFCNotes&8] &7This action is currently disabled."),
     INSUFFICIENT_NOTES("insufficient-notes", "&8[&6NFCNotes&8] &7You don't have enough notes."),
     INCORRECT_FORMAT("incorrect-format", "&8[&6NFCNotes&8] &7Incorrect format. Use dots &f&o.&7 to separate decimals."),
+    PLAYER_NOT_FOUND("player-not-found", "&8[&6NFCNotes&8] &7Player {player} could not be found."),
+    COUNT_USAGE("count-usage", "&8[&6NFCNotes&8] &7Usage: /count [player]"),
+    COUNT_SELF("count-self", "&8[&6NFCNotes&8] &7You have &6{money}&7$ in your inventory."),
+    COUNT_OTHER("count-other", "&8[&6NFCNotes&8] &6{player}&7 has &6{money}&7$ in their inventory."),
 
     VERSION("messages-version", 0);
 

@@ -23,9 +23,9 @@ notes:
   use-decimals: false
   # This option will use a comma for decimal values and a dot as the thousands separator
   use-european-format: false
-  # -------------------------------------------------------------------------------------------------------- #
-  # Do not modify these values unless you know what you're doing. Changing them can break your existing notes.
-  # -------------------------------------------------------------------------------------------------------- #
+  # ----------------------------------------------------------------------------------------------------------------- #
+  # Do not modify the following values unless you know what you're doing. Changing them can break your existing notes.
+  # ----------------------------------------------------------------------------------------------------------------- #
   # More than two decimals is not allowed due to imprecise math operations. Inputs with more than two
   # decimals will be rounded.
   # Separate decimals using a dot. Otherwise, notes won't be able to be created.
@@ -34,7 +34,6 @@ notes:
   identifier: 9a12cb32-1a7e-4e41-be79-9938528b4375
   # Custom Model Data Integer
   custom-model-data-integer: 2440573
-  # -------------------------------------------------------------------------------------------------------- #
 
 # ------------------------------------------------------------------------------------------ #
 # "base" value is required to be enabled in order to other modules from the same type to work.
@@ -106,7 +105,7 @@ disabled-tables:
 # If 'warn-staff' is enabled, staff will get a message when a player withdraws or deposits more money than the specified here.
 warn-staff-if-value-is-higher-than: 100000
 
-# This enables /nfcnotes with no arguments.
+# This enables /nfcnotes with no arguments. Leaving this enabled would be appreciated
 show-plugin-info: true
 
 # Update checker

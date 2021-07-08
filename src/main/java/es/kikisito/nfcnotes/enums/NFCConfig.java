@@ -49,6 +49,8 @@ public enum NFCConfig {
     MODULES_DEPOSIT_MULTIPLE("modules.deposit.command.deposit-multiple", true),
     MODULES_DEPOSIT_STACK("modules.deposit.command.deposit-stack", true),
     MODULES_WARN_STAFF("modules.warn-staff", true),
+    MODULES_COUNT_SAME_PLAYER("modules.count.same-player", true),
+    MODULES_COUNT_OTHER_PLAYERS("modules.count.other-players", true),
 
     // Other
     SHOW_PLUGIN_INFO("show-plugin-info", true),
