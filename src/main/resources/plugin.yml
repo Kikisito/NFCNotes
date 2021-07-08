@@ -7,6 +7,8 @@ author: Kikisito
 commands:
   withdraw:
     description: Withdraw your money
+    aliases:
+      - cheque
   createnote:
     description: Create a note
     aliases:
@@ -15,6 +17,8 @@ commands:
     description: Plugin information
   deposit:
     description: Deposit money
+  count:
+    description: Check how much money does the inventory of a player have
 permissions:
   # Withdraw permissions
   nfcnotes.withdraw.*:
@@ -74,6 +78,11 @@ permissions:
     description: Allows you to deposit the stack of notes you're holding.
     default: true
 
+  # Count permissions
+  nfcnotes.count.self:
+    description: Allows you to see how much money you have in your inventory
+    default: true
+
   # Staff permissions
   nfcnotes.staff.*:
     description: Allows you to use any staff command
@@ -102,4 +111,7 @@ permissions:
     default: op
   nfcnotes.staff.deposit.bypass.disabled-world:
     description: Bypass disabled world restriction. Deposit only.
+    default: op
+  nfcnotes.staff.count.others:
+    description: Allows you to see how much money has a player in their inventory
     default: op

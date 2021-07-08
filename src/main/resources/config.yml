@@ -51,6 +51,9 @@ notes:
 # deposit-one - "/deposit"
 # deposit-all - "/deposit all" (inventory)
 # deposit-stack - "/deposit stack"
+# COUNT
+# same-player - "/count"
+# other-players - "/count [player]"
 # ------------------------------------------------------------------------------------------ #
 modules:
   withdraw:
@@ -66,6 +69,9 @@ modules:
       deposit-multiple: true
       deposit-all: true
       deposit-stack: true
+  count:
+    same-player: true
+    other-players: true
   warn-staff: true
 
 # If you want to use a different economy plugin, you can set it here. Default: Vault
