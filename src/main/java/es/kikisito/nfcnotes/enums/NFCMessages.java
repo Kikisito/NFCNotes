@@ -25,7 +25,7 @@ public enum NFCMessages {
     FULL_INVENTORY("full-inventory", "&8[&6NFCNotes&8] &7Your inventory is full. Store some items and try again."),
     NO_PERMISSION("no-permission", "&8[&6NFCNotes&8] &7You're not allowed to do that."),
     WITHDRAW_USAGE("withdraw-usage", "&8[&6NFCNotes&8] &7Usage: /withdraw <money> [amount]"),
-    CREATENOTE_USAGE("createnote-usage", "&8[&6NFCNotes&8] &7Usage: /withdraw <money> [amount]"),
+    CREATENOTE_USAGE("createnote-usage", "&8[&6NFCNotes&8] &7Usage: /createnote [player] <money> [amount]"),
     ONLY_INTEGERS("only-integers", "&8[&6NFCNotes&8] &7Use an integer number."),
     USE_A_NUMBER_HIGHER_THAN_ZERO("use-a-number-higher-than-zero", "&8[&6NFCNotes&8] &7Use a number higher than &60&7."),
     WITHDRAW_SUCCESSFUL("withdraw-successful", "&8[&6NFCNotes&8] &7You withdrawn &6{money}&7$."),

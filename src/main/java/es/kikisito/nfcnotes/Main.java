@@ -17,10 +17,7 @@
 
 package es.kikisito.nfcnotes;
 
-import es.kikisito.nfcnotes.commands.CreateNote;
-import es.kikisito.nfcnotes.commands.Deposit;
-import es.kikisito.nfcnotes.commands.NFCNotes;
-import es.kikisito.nfcnotes.commands.Withdraw;
+import es.kikisito.nfcnotes.commands.*;
 import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.listeners.CraftListener;
 import es.kikisito.nfcnotes.listeners.InteractListener;
@@ -80,15 +77,15 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        if(NFCConfig.VERSION.getInt() < 10) {
-            String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, regenerate it, otherwise you won't receive any support.";
+        if(NFCConfig.VERSION.getInt() < 11) {
+            String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, update it or some features will be missed and support won't be provided.";
             this.getServer().getConsoleSender().sendMessage(outdatedconfig);
             // In case of this plugin being reloaded using Plugman.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
-        if(NFCMessages.VERSION.getInt() < 6) {
-            String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, regenerate it, otherwise you won't receive any support.";
+        if(NFCMessages.VERSION.getInt() < 7) {
+            String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, update it or some features will be missed and support won't be provided.";
             this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
             // In case of this plugin being reloaded using Plugman.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsgs);
@@ -101,6 +98,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getCommand("createnote").setExecutor(new CreateNote(this));
         this.getCommand("nfcnotes").setExecutor(new NFCNotes(this));
         this.getCommand("deposit").setExecutor(new Deposit(this));
+        this.getCommand("count").setExecutor(new Count(this));
 
         Metrics metrics = new Metrics(this, 8048);
         new CustomMetrics(this, metrics);
