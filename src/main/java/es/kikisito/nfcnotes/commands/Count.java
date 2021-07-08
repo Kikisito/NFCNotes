@@ -27,9 +27,11 @@ import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -38,15 +40,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Count implements CommandExecutor {
+public class Count implements CommandExecutor, TabExecutor {
     private final Main plugin;
 
     public Count(Main plugin){
         this.plugin = plugin;
     }
 
-
-    // HACER MODULE.DISABLED Y PERMISOS
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {                List<ItemStack> notes = new ArrayList<>();
         if(args.length == 0 && !(sender instanceof Player)){
@@ -91,7 +91,6 @@ public class Count implements CommandExecutor {
                 sender.sendMessage(NFCMessages.MODULE_DISABLED.getString());
             }
         } else {
-            // Usage
             sender.sendMessage(NFCMessages.COUNT_USAGE.getString());
         }
         return true;
@@ -128,5 +127,19 @@ public class Count implements CommandExecutor {
         DecimalFormat decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
         decimalFormat.setMaximumFractionDigits(2);
         return decimalFormat.format(value);
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+        List<String> tab = new ArrayList<>();
+        if(args.length == 1 && NFCConfig.MODULES_COUNT_OTHER_PLAYERS.getBoolean() && sender.hasPermission("nfcnotes.staff.count.others")){
+            for(Player p : plugin.getServer().getOnlinePlayers()){
+                if(p.getName().toLowerCase().startsWith(args[0].toLowerCase())){
+                    tab.add(p.getName());
+                }
+            }
+        }
+        return tab;
     }
 }
