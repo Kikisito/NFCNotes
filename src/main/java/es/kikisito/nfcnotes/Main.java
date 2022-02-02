@@ -80,14 +80,14 @@ public class Main extends JavaPlugin implements Listener {
         if(NFCConfig.VERSION.getInt() < 11) {
             String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, update it or some features will be missed and support won't be provided.";
             this.getServer().getConsoleSender().sendMessage(outdatedconfig);
-            // In case of this plugin being reloaded using Plugman.
+            // In case of this plugin being reloaded using Plugman or ServerUtils.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
         if(NFCMessages.VERSION.getInt() < 7) {
             String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, update it or some features will be missed and support won't be provided.";
             this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
-            // In case of this plugin being reloaded using Plugman.
+            // In case of this plugin being reloaded using Plugman or ServerUtils.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsgs);
         }
 
@@ -121,9 +121,11 @@ public class Main extends JavaPlugin implements Listener {
                     return true;
                 }
             } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
+                this.getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "Essentials Economy won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.");
                 economyPlugin = "Essentials";
                 return true;
             } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("PlayerPoints")) {
+                this.getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "PlayerPoints won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.");
                 economyPlugin = "PlayerPoints";
                 return true;
             }
@@ -135,6 +137,7 @@ public class Main extends JavaPlugin implements Listener {
 
     public Economy getVaultEco() { return this.eco; }
 
+    @Deprecated
     public String getEco() { return this.economyPlugin; }
 
     public FileConfiguration getMessages() { return this.messages; }
