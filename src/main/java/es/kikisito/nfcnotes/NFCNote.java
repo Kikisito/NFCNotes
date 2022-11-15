@@ -44,7 +44,7 @@ public class NFCNote {
         this.itemStack = itemStack;
         this.name = itemStack.getItemMeta().getDisplayName();
         this.lore = itemStack.getItemMeta().getLore();
-        this.value = itemStack.getItemMeta().getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount();
+        this.value = itemStack.getItemMeta().getAttributeModifiers(Attribute.GENERIC_FOLLOW_RANGE).iterator().next().getAmount();
     }
 
     public ItemStack getItemStack(){ return this.itemStack; }
@@ -65,7 +65,7 @@ public class NFCNote {
         for(String s : lore) finallore.add(Utils.parseMessage(s).replace("{money}", formattedMoney).replace("{issuer}", playername));
         im.setLore(finallore);
         // Note value is stored as an Attribute and then it's hidden, so its name and lore can be safely edited or removed
-        im.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.fromString(identifier), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
+        im.addAttributeModifier(Attribute.GENERIC_FOLLOW_RANGE, new AttributeModifier(UUID.fromString(identifier), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         // Custom Model Data for texture packs
         im.setCustomModelData(NFCConfig.NOTE_CUSTOM_MODEL_DATA_INTEGER.getInt());
@@ -77,7 +77,7 @@ public class NFCNote {
     public static boolean isNFCNote(ItemStack itemStack){
         if(itemStack == null || !itemStack.hasItemMeta()) return false;
         ItemMeta im = itemStack.getItemMeta();
-        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.GENERIC_LUCK) == null || im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next() == null) return false;
-        return im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase("noteValue");
+        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.GENERIC_FOLLOW_RANGE) == null || im.getAttributeModifiers(Attribute.GENERIC_FOLLOW_RANGE).iterator().next() == null) return false;
+        return im.getAttributeModifiers(Attribute.GENERIC_FOLLOW_RANGE).iterator().next().getName().equalsIgnoreCase("noteValue");
     }
 }
