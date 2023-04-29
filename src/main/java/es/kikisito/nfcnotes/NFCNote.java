@@ -64,7 +64,7 @@ public class NFCNote {
         List<String> finallore = new ArrayList<>();
         for(String s : lore) finallore.add(Utils.parseMessage(s).replace("{money}", formattedMoney).replace("{issuer}", playername));
         im.setLore(finallore);
-        // Note value is stored as an Attribute and then it's hidden, so its name and lore can be safely edited or removed
+        // Note value is stored as an Attribute, and then it's hidden, so its name and lore can be safely edited or removed
         im.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.fromString(identifier), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         // Custom Model Data for texture packs

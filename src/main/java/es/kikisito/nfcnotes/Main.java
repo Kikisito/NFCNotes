@@ -19,6 +19,7 @@ package es.kikisito.nfcnotes;
 
 import es.kikisito.nfcnotes.commands.*;
 import es.kikisito.nfcnotes.enums.NFCConfig;
+import es.kikisito.nfcnotes.listeners.BlockPlaceListener;
 import es.kikisito.nfcnotes.listeners.CraftListener;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import es.kikisito.nfcnotes.listeners.JoinListener;
@@ -93,6 +94,7 @@ public class Main extends JavaPlugin implements Listener {
 
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
         this.getServer().getPluginManager().registerEvents(new CraftListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         if(NFCConfig.UPDATE_CHECKER_NOTIFY_ON_JOIN.getBoolean()) this.getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         this.getCommand("withdraw").setExecutor(new Withdraw(this));
         this.getCommand("createnote").setExecutor(new CreateNote(this));
@@ -123,10 +125,6 @@ public class Main extends JavaPlugin implements Listener {
             } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
                 this.getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "Essentials Economy won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.");
                 economyPlugin = "Essentials";
-                return true;
-            } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("PlayerPoints")) {
-                this.getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "PlayerPoints won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.");
-                economyPlugin = "PlayerPoints";
                 return true;
             }
             return false;

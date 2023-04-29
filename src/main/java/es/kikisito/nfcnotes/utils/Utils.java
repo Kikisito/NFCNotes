@@ -20,7 +20,6 @@ package es.kikisito.nfcnotes.utils;
 import es.kikisito.nfcnotes.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
-import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -45,9 +44,6 @@ public class Utils {
                     ex.printStackTrace();
                     return false;
                 }
-            case "PlayerPoints":
-                PlayerPoints playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");
-                return playerPoints.getAPI().give(playerPoints.translateNameToUUID(player.getName()), (int) money);
         }
         return false;
     }
@@ -66,9 +62,6 @@ public class Utils {
                     ex.printStackTrace();
                     return false;
                 }
-            case "PlayerPoints":
-                PlayerPoints playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");
-                return playerPoints.getAPI().take(playerPoints.translateNameToUUID(player.getName()), (int) money);
         }
         return false;
     }
@@ -86,16 +79,13 @@ public class Utils {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            case "PlayerPoints":
-                PlayerPoints playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");
-                return (double) playerPoints.getAPI().look(playerPoints.translateNameToUUID(player.getName()));
         }
         return 0.0;
     }
 
     public static String parseMessage(String string){
         String finalmessage;
-        Integer version = null;
+        int version = 0;
         // Check version
         Pattern n = Pattern.compile("^(\\d)\\.(\\d+)");
         Matcher nm = n.matcher(Bukkit.getServer().getBukkitVersion());

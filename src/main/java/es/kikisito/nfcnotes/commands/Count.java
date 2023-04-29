@@ -19,11 +19,8 @@ package es.kikisito.nfcnotes.commands;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
-import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
-import es.kikisito.nfcnotes.events.WithdrawEvent;
-import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

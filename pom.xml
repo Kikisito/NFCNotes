@@ -6,7 +6,7 @@
 
     <groupId>es.kikisito</groupId>
     <artifactId>NFCNotes</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
@@ -62,16 +62,8 @@
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
         <repository>
-            <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
-        </repository>
-        <repository>
             <id>ess-repo</id>
             <url>https://repo.essentialsx.net/releases/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -79,7 +71,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -91,25 +83,20 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>1.7</version>
+            <version>3.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>16.0.1</version>
+            <version>24.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.ess3</groupId>
+            <groupId>net.essentialsx</groupId>
             <artifactId>EssentialsX</artifactId>
-            <version>2.18.2</version>
+            <version>2.19.7</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.Mitsugaru</groupId>
-            <artifactId>PlayerPoints</artifactId>
-            <version>6102a94</version>
         </dependency>
     </dependencies>
 </project>
