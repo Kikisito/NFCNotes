@@ -74,7 +74,7 @@ modules:
   warn-staff: true
 
 # If you want to use a different economy plugin, you can set it here. Default: Vault
-# Supported economy plugins: Vault, PlayerPoints, Essentials.
+# Supported economy plugins: Vault, Essentials.
 # Recommended plugin: Vault
 economy-plugin: Vault
 

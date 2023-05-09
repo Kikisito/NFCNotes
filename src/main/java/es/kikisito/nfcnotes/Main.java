@@ -45,6 +45,7 @@ import java.util.List;
 public class Main extends JavaPlugin implements Listener {
     private Configuration config;
     private FileConfiguration messages;
+    @Deprecated
     private String economyPlugin;
     // Vault eco API
     private Economy eco;
