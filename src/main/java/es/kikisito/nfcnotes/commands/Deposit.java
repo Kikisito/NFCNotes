@@ -24,6 +24,8 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import es.kikisito.nfcnotes.utils.Utils;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -111,6 +113,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                                 if (Utils.depositSuccessful(plugin, player, money)) {
                                     for (ItemStack i : notes) i.setAmount(0);
                                     player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                                    Deposit.playRedeemSound(player);
                                 } else {
                                     player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                                 }
@@ -188,10 +191,21 @@ public class Deposit implements CommandExecutor, TabCompleter {
             String formattedMoney = decimalFormat.format(value);
             if (Utils.depositSuccessful(plugin, player, value)) {
                 player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                Deposit.playRedeemSound(player);
                 nfcNote.getItemStack().setAmount(nfcNote.getItemStack().getAmount() - amount);
             } else {
                 p.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
             }
+        }
+    }
+
+    public static void playRedeemSound(Player player) {
+        if(NFCConfig.REDEEM_SOUND_ENABLED.getBoolean()){
+            Sound sound = Sound.valueOf(NFCConfig.REDEEM_SOUND.getString());
+            SoundCategory soundCategory = SoundCategory.valueOf(NFCConfig.REDEEM_SOUND_CATEGORY.getString());
+            float volume = NFCConfig.REDEEM_SOUND_VOLUME.getDouble().floatValue();
+            float pitch = NFCConfig.REDEEM_SOUND_PITCH.getDouble().floatValue();
+            player.playSound(player.getLocation(), sound, soundCategory, volume, pitch);
         }
     }
 

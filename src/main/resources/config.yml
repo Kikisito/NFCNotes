@@ -43,6 +43,18 @@ notes:
   # Custom Model Data Integer
   custom-model-data-integer: 2440573
 
+# If you want to change the sound or the category, only values from these pages are allowed:
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/SoundCategory.html
+redeem-sound:
+  enabled: true
+  sound: BLOCK_CHAIN_BREAK
+  sound-category: AMBIENT
+  # The maximum value for volume is 1. Higher values will be equivalent to 1.
+  volume: 1
+  # Pitch range goes from 0 to 2
+  pitch: 2
+
 # ------------------------------------------------------------------------------------------ #
 # "base" value is required to be enabled in order to other modules from the same type to work.
 # For example, if modules.deposit.action.base is disabled, "massdeposit" will also be, but

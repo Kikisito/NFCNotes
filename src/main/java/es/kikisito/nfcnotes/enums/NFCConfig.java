@@ -43,6 +43,13 @@ public enum NFCConfig {
     // Use european format
     USE_EUROPEAN_FORMAT("notes.use-european-format", false),
 
+    // Redeem sound
+    REDEEM_SOUND_ENABLED("redeem-sound.enabled", true),
+    REDEEM_SOUND("redeem-sound.sound", "BLOCK_CHAIN_BREAK"),
+    REDEEM_SOUND_CATEGORY("redeem-sound.sound-category", "AMBIENT"),
+    REDEEM_SOUND_VOLUME("redeem-sound.volume", 1d),
+    REDEEM_SOUND_PITCH("redeem-sound.pitch", 2d),
+
     // Modules
     MODULES_WITHDRAW("modules.withdraw.base", true),
     MODULES_MULTIPLE_WITHDRAW("modules.withdraw.multiple-withdraw", true),
@@ -94,6 +101,11 @@ public enum NFCConfig {
         this.def = def;
     }
 
+    NFCConfig(String value, double def){
+        this.value = value;
+        this.def = def;
+    }
+
     NFCConfig(String value, boolean def){
         this.value = value;
         this.def = def;
@@ -109,6 +121,8 @@ public enum NFCConfig {
     }
 
     public int getInt(){ return config.getInt((String) this.value, (int) this.def); }
+
+    public Double getDouble(){ return config.getDouble((String) this.value, (double) this.def); }
 
     public boolean getBoolean(){ return config.getBoolean((String) this.value, (boolean) this.def); }
 
