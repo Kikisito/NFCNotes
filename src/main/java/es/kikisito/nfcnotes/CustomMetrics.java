@@ -25,27 +25,47 @@ public class CustomMetrics {
     public CustomMetrics(Main plugin, Metrics metrics) {
         // Material used
         metrics.addCustomChart(new SimplePie("material_used", NFCConfig.NOTE_MATERIAL::getString));
+
         // Decimal Format
         metrics.addCustomChart(new SimplePie("decimal_format", NFCConfig.NOTE_DECIMAL_FORMAT::getString));
+
+        // Is the redeem sound enabled?
+        metrics.addCustomChart(new SimplePie("redeem_sound_enabled", () -> {
+            String redeem_sound_enabled = "Disabled";
+            if (NFCConfig.REDEEM_SOUND_ENABLED.getBoolean()) redeem_sound_enabled = "Enabled";
+            return redeem_sound_enabled;
+        }));
+
+        // Is the glint enabled?
+        metrics.addCustomChart(new SimplePie("glint_enabled", () -> {
+            String glint_enabled = "Disabled";
+            if (NFCConfig.NOTE_GLINT_ENABLED.getBoolean()) glint_enabled = "Enabled";
+            return glint_enabled;
+        }));
+
         // Does the plugin warn staff?
         metrics.addCustomChart(new SimplePie("warn_staff_enabled", () -> {
             String warn_staff = "Disabled";
             if (NFCConfig.MODULES_WARN_STAFF.getBoolean()) warn_staff = "Enabled";
             return warn_staff;
         }));
+
         // Is Update Checker enabled?
         metrics.addCustomChart(new SimplePie("update_checker_enabled", () -> {
             String update_checker = "Disabled";
             if (NFCConfig.MODULES_WARN_STAFF.getBoolean()) update_checker = "Enabled";
             return update_checker;
         }));
+
         // Economy Plugin
         metrics.addCustomChart(new SimplePie("economy_plugin_used", NFCConfig.ECONOMY_PLUGIN::getString));
+
         // Are decimals used?
         metrics.addCustomChart(new SimplePie("use_of_decimals", () -> {
             if (NFCConfig.USE_DECIMALS.getBoolean()) return "Yes";
             else return "No";
         }));
+
         // Decimal format used (if decimals are used)
         metrics.addCustomChart(new SimplePie("number_format", () -> {
             if (NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) return "European/IS format";

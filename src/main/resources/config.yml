@@ -3,8 +3,8 @@
 # Do you still have any issue? Report it on GitHub! https://github.com/Kikisito/NFCNotes
 
 # --------------------------------------------------------------------------------------------------------- #
-# [!] This is IMPORTANT if you already have notes created and you want to change any value of this category.
-# [!] Remember that if you change any of these options and a plugin is using your old notes,
+# [!] This is IMPORTANT if you already have notes created, and you want to change any value of this category.
+# [!] Remember that if you change any of these options and *a plugin* is using your old notes,
 # [!] these must be changed or newer notes won't work on that plugin.
 # --------------------------------------------------------------------------------------------------------- #
 # Available placeholders for name and lore: {money}, {issuer}
@@ -13,7 +13,7 @@
 # --------------------------------------------------------------------------------------------------------- #
 # If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 # For enchantments check https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/enchantments/Enchantment.html
-# before modifying the value, otherwise it may break.
+# If you set a material that does not appear on these lists the plugin may break.
 # --------------------------------------------------------------------------------------------------------- #
 notes:
   name: "&aNFCNote"
@@ -31,12 +31,13 @@ notes:
   use-decimals: false
   # This option will use a comma for decimal values and a dot as the thousands separator
   use-european-format: false
-  # ----------------------------------------------------------------------------------------------------------------- #
-  # Do not modify the following values unless you know what you're doing. Changing them can break your existing notes.
-  # ----------------------------------------------------------------------------------------------------------------- #
-  # More than two decimals is not allowed due to imprecise math operations. Inputs with more than two
-  # decimals will be rounded.
+  # ---------------------------------------------------------------------------------------------------------------------- #
+  # Do not modify the following values unless you know what you're doing. Changing them can break *all* your existing notes.
+  # ---------------------------------------------------------------------------------------------------------------------- #
+  # More than two decimals is not allowed due to imprecise math operations.
+  # Inputs with more than two decimals will be rounded.
   # Separate decimals using a dot. Otherwise, notes won't be able to be created.
+  # If you want to use the european format, please use the use-european-format option above.
   decimal-format: "#,###.##"
   # Attribute UUID
   identifier: 9a12cb32-1a7e-4e41-be79-9938528b4375
@@ -47,7 +48,7 @@ notes:
 # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/SoundCategory.html
 redeem-sound:
-  enabled: true
+  enabled: false
   sound: BLOCK_CHAIN_BREAK
   sound-category: AMBIENT
   # The maximum value for volume is 1. Higher values will be equivalent to 1.
@@ -135,6 +136,6 @@ update-checker:
   notify-on-join: true
 
 # Do not touch this unless it is indicated otherwise.
-config-version: 11
+config-version: 12
 
 # --- This is the end of this file, trust me --- #
