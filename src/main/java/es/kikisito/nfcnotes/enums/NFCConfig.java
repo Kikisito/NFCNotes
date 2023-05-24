@@ -28,6 +28,11 @@ public enum NFCConfig {
     NOTE_NAME("notes.name", "&aNFCNote"),
     NOTE_LORE("notes.lore", Collections.singletonList("&7Value: &e{money}$")),
     NOTE_MATERIAL("notes.material", "PAPER"),
+
+    NOTE_GLINT_ENABLED("notes.glint.enabled", false),
+    NOTE_GLINT_HIDE_ENCHANTMENT_FLAG("notes.glint.hide-enchantment-flag", false),
+    NOTE_GLINT_ENCHANTMENT("notes.glint.enchantment", "MENDING"),
+    NOTE_GLINT_ENCHANTMENT_LEVEL("notes.glint.enchantment-level", 1),
     NOTE_DECIMAL_FORMAT("notes.decimal-format", "#,###.#"),
     NOTE_UUID("notes.identifier", "9a12cb32-1a7e-4e41-be79-9938528b4375"),
     NOTE_CUSTOM_MODEL_DATA_INTEGER("notes.custom-model-data-integer", 2440573),

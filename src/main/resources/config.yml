@@ -12,6 +12,7 @@
 # placeholder.
 # --------------------------------------------------------------------------------------------------------- #
 # If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# For enchantments check https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/enchantments/Enchantment.html
 # before modifying the value, otherwise it may break.
 # --------------------------------------------------------------------------------------------------------- #
 notes:
@@ -20,6 +21,13 @@ notes:
     - "&7Value: &e{money}$"
     - "&7Issuer: &e{issuer}"
   material: PAPER
+  glint:
+    enabled: false
+    # The glint requires the object to be enchanted, so here you have some settings related to the enchantment
+    # This option hides the enchantment name shown when you hover over the note
+    hide-enchantment-flag: true
+    enchantment: MENDING
+    enchantment-level: 1
   use-decimals: false
   # This option will use a comma for decimal values and a dot as the thousands separator
   use-european-format: false

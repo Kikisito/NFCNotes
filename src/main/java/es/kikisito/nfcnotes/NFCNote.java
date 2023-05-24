@@ -20,8 +20,10 @@ package es.kikisito.nfcnotes;
 import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -56,19 +58,40 @@ public class NFCNote {
     public Double getValue(){ return this.value; }
 
     public static ItemStack createNFCNoteItem(String identifier, String name, List<String> lore, String material, String playername, DecimalFormat decimalFormat, Double money, Integer amount){
+        // Note value as string
         String formattedMoney = decimalFormat.format(money);
+
+        // Note item
         ItemStack is = new ItemStack(Material.valueOf(material.toUpperCase()), amount);
         ItemMeta im = is.getItemMeta();
+
+        // Note display name
         im.setDisplayName(Utils.parseMessage(name).replace("{money}", formattedMoney).replace("{issuer}", playername));
+
         // Parse lore
-        List<String> finallore = new ArrayList<>();
-        for(String s : lore) finallore.add(Utils.parseMessage(s).replace("{money}", formattedMoney).replace("{issuer}", playername));
-        im.setLore(finallore);
+        List<String> loreList = new ArrayList<>();
+        for(String s : lore) loreList.add(Utils.parseMessage(s).replace("{money}", formattedMoney).replace("{issuer}", playername));
+        im.setLore(loreList);
+
         // Note value is stored as an Attribute, and then it's hidden, so its name and lore can be safely edited or removed
         im.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.fromString(identifier), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+
+        // Glint
+        if(NFCConfig.NOTE_GLINT_ENABLED.getBoolean()){
+            Enchantment enchant = Enchantment.getByKey(NamespacedKey.minecraft(NFCConfig.NOTE_GLINT_ENCHANTMENT.getString().toLowerCase()));
+            int enchantLevel = NFCConfig.NOTE_GLINT_ENCHANTMENT_LEVEL.getInt();
+            im.addEnchant(enchant, enchantLevel, true);
+
+            // If set, hide enchant flag
+            if(NFCConfig.NOTE_GLINT_HIDE_ENCHANTMENT_FLAG.getBoolean()){
+                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+        }
+
         // Custom Model Data for texture packs
         im.setCustomModelData(NFCConfig.NOTE_CUSTOM_MODEL_DATA_INTEGER.getInt());
+
         // Set ItemMeta
         is.setItemMeta(im);
         return is;
