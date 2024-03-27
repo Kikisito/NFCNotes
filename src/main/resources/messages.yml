@@ -1,5 +1,6 @@
 only-players: "&8[&6NFCNotes&8] &7Only players can execute this command."
 full-inventory: "&8[&6NFCNotes&8] &7Your inventory is full. Store some items and try again."
+not-enough-space: "&8[&6NFCNotes&8] &7You don't have enough space in your inventory."
 no-permission: "&8[&6NFCNotes&8] &7You're not allowed to do that."
 withdraw-usage: "&8[&6NFCNotes&8] &7Usage: /withdraw <money> [amount]"
 createnote-usage: "&8[&6NFCNotes&8] &7Usage: /createnote [player] <money> [amount]"

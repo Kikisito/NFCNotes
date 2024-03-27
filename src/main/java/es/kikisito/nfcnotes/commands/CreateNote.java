@@ -34,6 +34,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 public class CreateNote implements CommandExecutor, TabExecutor {
@@ -105,6 +106,14 @@ public class CreateNote implements CommandExecutor, TabExecutor {
             p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
             return;
         }
+
+        // Check if the player has enough space in the inventory when withdrawing more than one stack
+        int freeSlots = this.countFreeSlots(p.getInventory());
+        if (a > 64 && freeSlots < (int) Math.ceil(a / 64.0)) {
+            p.sendMessage(NFCMessages.NOT_ENOUGH_SPACE.getString());
+            return;
+        }
+
         // Make the amount readable
         DecimalFormat decimalFormat;
         if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
@@ -129,5 +138,13 @@ public class CreateNote implements CommandExecutor, TabExecutor {
             if(p.getName().startsWith(args[0])) tab.add(p.getName());
         }
         return tab;
+    }
+
+    private int countFreeSlots(PlayerInventory inventory) {
+        int freeSlots = 0;
+        for (ItemStack item : inventory.getStorageContents()) {
+            if (item == null) freeSlots++;
+        }
+        return freeSlots;
     }
 }

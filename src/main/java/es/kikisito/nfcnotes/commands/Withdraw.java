@@ -33,6 +33,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 public class Withdraw implements CommandExecutor {
@@ -122,6 +123,14 @@ public class Withdraw implements CommandExecutor {
             p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
             return;
         }
+
+        // Check if the player has enough space in the inventory when withdrawing more than one stack
+        int freeSlots = this.countFreeSlots(p.getInventory());
+        if (a > 64 && freeSlots < (int) Math.ceil(a / 64.0)) {
+            p.sendMessage(NFCMessages.NOT_ENOUGH_SPACE.getString());
+            return;
+        }
+
         // Call WithdrawEvent and check if it was cancelled
         WithdrawEvent withdrawEvent = new WithdrawEvent(p, m, a, ActionMethod.COMMAND);
         plugin.getServer().getPluginManager().callEvent(withdrawEvent);
@@ -166,5 +175,13 @@ public class Withdraw implements CommandExecutor {
                 player.sendMessage(NFCMessages.INSUFFICIENT_FUNDS.getString());
             }
         }
+    }
+
+    private int countFreeSlots(PlayerInventory inventory) {
+        int freeSlots = 0;
+        for (ItemStack item : inventory.getStorageContents()) {
+            if (item == null) freeSlots++;
+        }
+        return freeSlots;
     }
 }

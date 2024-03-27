@@ -23,6 +23,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public enum NFCMessages {
     ONLY_PLAYERS("only-players", "&8[&6NFCNotes&8] &7Only players can execute this command."),
     FULL_INVENTORY("full-inventory", "&8[&6NFCNotes&8] &7Your inventory is full. Store some items and try again."),
+    NOT_ENOUGH_SPACE("not-enough-space", "&8[&6NFCNotes&8] &7You don't have enough space in your inventory."),
     NO_PERMISSION("no-permission", "&8[&6NFCNotes&8] &7You're not allowed to do that."),
     WITHDRAW_USAGE("withdraw-usage", "&8[&6NFCNotes&8] &7Usage: /withdraw <money> [amount]"),
     CREATENOTE_USAGE("createnote-usage", "&8[&6NFCNotes&8] &7Usage: /createnote [player] <money> [amount]"),
