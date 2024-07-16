@@ -59,23 +59,21 @@ public class CreateNote implements CommandExecutor, TabExecutor {
         try {
             switch (args.length) {
                 case 1:
-                    if(sender instanceof Player) {
-                        Player p = (Player) sender;
+                    if(sender instanceof Player p) {
                         money = Double.parseDouble(args[0]);
-                        createNote(p, money, 1);
+                        createNote(sender, p, money, 1);
                     } else sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
                     break;
                 case 2:
                     if(plugin.getServer().getOnlinePlayers().contains(plugin.getServer().getPlayer(args[0]))) {
                         Player player = plugin.getServer().getPlayer(args[0]);
                         money = Double.parseDouble(args[1]);
-                        createNote(player, money, 1);
+                        createNote(sender, player, money, 1);
                     } else {
-                        if(sender instanceof Player) {
-                            Player p = (Player) sender;
+                        if(sender instanceof Player p) {
                             money = Double.parseDouble(args[0]);
                             amount = Integer.parseInt(args[1]);
-                            createNote(p, money, amount);
+                            createNote(sender, p, money, amount);
                         } else sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
                     }
                     break;
@@ -84,7 +82,7 @@ public class CreateNote implements CommandExecutor, TabExecutor {
                         Player player = plugin.getServer().getPlayer(args[0]);
                         money = Double.parseDouble(args[1]);
                         amount = Integer.parseInt(args[2]);
-                        createNote(player, money, amount);
+                        createNote(sender, player, money, amount);
                         break;
                     }
                 default:
@@ -97,20 +95,20 @@ public class CreateNote implements CommandExecutor, TabExecutor {
         return true;
     }
 
-    private void createNote(Player p, Double m, Integer a){
+    private void createNote(CommandSender sender, Player p, Double m, Integer a){
         // Check if given number is positive and is an integer.
         if (m <= 0) {
-            p.sendMessage(NFCMessages.USE_A_NUMBER_HIGHER_THAN_ZERO.getString());
+            sender.sendMessage(NFCMessages.USE_A_NUMBER_HIGHER_THAN_ZERO.getString());
             return;
         } else if(!(m % 1 == 0) && !NFCConfig.USE_DECIMALS.getBoolean()) {
-            p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
+            sender.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
             return;
         }
 
         // Check if the player has enough space in the inventory when withdrawing more than one stack
         int freeSlots = this.countFreeSlots(p.getInventory());
         if (a > 64 && freeSlots < (int) Math.ceil(a / 64.0)) {
-            p.sendMessage(NFCMessages.NOT_ENOUGH_SPACE.getString());
+            sender.sendMessage(NFCMessages.NOT_ENOUGH_SPACE.getString());
             return;
         }
 
@@ -125,9 +123,9 @@ public class CreateNote implements CommandExecutor, TabExecutor {
         decimalFormat.setMaximumFractionDigits(2);
         String formattedMoney = decimalFormat.format(m);
         // Create the note and give it to the player
-        ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, m, a);
+        ItemStack paper = NFCNote.createNFCNoteItem(this.plugin, NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, m, a);
         p.getInventory().addItem(paper);
-        p.sendMessage(NFCMessages.CREATENOTE_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+        sender.sendMessage(NFCMessages.CREATENOTE_SUCCESSFUL.getString().replace("{money}", formattedMoney));
     }
 
     @Override

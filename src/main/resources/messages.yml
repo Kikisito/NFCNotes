@@ -23,6 +23,7 @@ player-not-found: "&8[&6NFCNotes&8] &7Player &6{player}&7 could not be found."
 count-usage: "&8[&6NFCNotes&8] &7Usage: /count [player]"
 count-self: "&8[&6NFCNotes&8] &7You have &6{money}&7$ in your inventory."
 count-other: "&8[&6NFCNotes&8] &6{player}&7 has &6{money}&7$ in their inventory."
+note-converted: "&8[&6NFCNotes&8] &6You tried to use an outdated note, but we have automatically updated it for you! If you want to redeem it, click it again."
 staff:
   warn-withdraw: "&8[&6NFCNotes&8] &7{player} has withdrawn &6{money}&7$."
   warn-deposit: "&8[&6NFCNotes&8] &7{player} has redeemed &6{money}&7$."
@@ -32,4 +33,4 @@ updates:
   no-updates: "&8[&6NFCNotes&8] &7You are using the latest version."
 
 # Do not touch this unless it is indicated otherwise
-messages-version: 8
+messages-version: 9

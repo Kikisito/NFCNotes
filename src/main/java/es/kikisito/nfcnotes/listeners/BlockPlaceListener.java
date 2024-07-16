@@ -32,7 +32,7 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onClick(BlockPlaceEvent e) {
-        if(NFCNote.isNFCNote(e.getItemInHand())){
+        if(NFCNote.isNFCNote(this.plugin, e.getItemInHand())){
             e.setCancelled(true);
         }
     }

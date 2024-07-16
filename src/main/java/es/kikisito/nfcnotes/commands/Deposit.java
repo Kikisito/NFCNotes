@@ -70,8 +70,8 @@ public class Deposit implements CommandExecutor, TabCompleter {
             case 0:
                 if(p.hasPermission("nfcnotes.deposit.command.one")) {
                     if (NFCConfig.MODULES_DEPOSIT_COMMAND.getBoolean()) {
-                        if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
-                            NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                        if (NFCNote.isNFCNote(this.plugin, p.getInventory().getItemInMainHand())) {
+                            NFCNote nfcNote = new NFCNote(this.plugin, p.getInventory().getItemInMainHand());
                             value = nfcNote.getValue();
                             this.depositMoney(nfcNote, p, 1, value);
                         } else {
@@ -89,8 +89,8 @@ public class Deposit implements CommandExecutor, TabCompleter {
                             List<ItemStack> notes = new ArrayList<>();
                             // Checks for notes in player's inventory
                             for (ItemStack i : p.getInventory()) {
-                                if (NFCNote.isNFCNote(i)) {
-                                    NFCNote nfcNote = new NFCNote(i);
+                                if (NFCNote.isNFCNote(this.plugin, i)) {
+                                    NFCNote nfcNote = new NFCNote(this.plugin, i);
                                     double amount = nfcNote.getValue() * i.getAmount();
                                     value = value + amount;
                                     notes.add(i);
@@ -128,8 +128,8 @@ public class Deposit implements CommandExecutor, TabCompleter {
                 } else if(args[0].equals("stack")) {
                     if(NFCConfig.MODULES_DEPOSIT_STACK.getBoolean()) {
                         if (p.hasPermission("nfcnotes.deposit.command.stack")) {
-                            if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
-                                NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                            if (NFCNote.isNFCNote(this.plugin, p.getInventory().getItemInMainHand())) {
+                                NFCNote nfcNote = new NFCNote(this.plugin, p.getInventory().getItemInMainHand());
                                 value = nfcNote.getValue();
                                 this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount(), value);
                             } else {
@@ -145,9 +145,9 @@ public class Deposit implements CommandExecutor, TabCompleter {
                 } else if(Utils.isInteger(args[0])) {
                     if(NFCConfig.MODULES_DEPOSIT_MULTIPLE.getBoolean()){
                         if (p.hasPermission("nfcnotes.deposit.command.multiple")) {
-                            if (NFCNote.isNFCNote(p.getInventory().getItemInMainHand())) {
+                            if (NFCNote.isNFCNote(this.plugin, p.getInventory().getItemInMainHand())) {
                                 int amount = Integer.parseInt(args[0]);
-                                NFCNote nfcNote = new NFCNote(p.getInventory().getItemInMainHand());
+                                NFCNote nfcNote = new NFCNote(this.plugin, p.getInventory().getItemInMainHand());
                                 if(nfcNote.getItemStack().getAmount() >= amount){
                                     value = nfcNote.getValue();
                                     this.depositMoney(nfcNote, p, amount, value);

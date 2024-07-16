@@ -39,7 +39,7 @@ notes:
   # Separate decimals using a dot. Otherwise, notes won't be able to be created.
   # If you want to use the european format, please use the use-european-format option above.
   decimal-format: "#,###.##"
-  # Attribute UUID
+  # Notes UUID
   identifier: 9a12cb32-1a7e-4e41-be79-9938528b4375
   # Custom Model Data Integer
   custom-model-data-integer: 2440573

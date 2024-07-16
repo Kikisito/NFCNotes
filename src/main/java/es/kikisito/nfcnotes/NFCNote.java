@@ -22,31 +22,30 @@ import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class NFCNote {
-    // Attributes will be changed into Namespaces in a major update in the future.
-    // A converter is also planned.
-
     private final ItemStack itemStack;
     private final String name;
     private final List<String> lore;
     private final Double value;
 
-    public NFCNote(ItemStack itemStack){
+    public NFCNote(Main plugin, ItemStack itemStack){
         this.itemStack = itemStack;
         this.name = itemStack.getItemMeta().getDisplayName();
         this.lore = itemStack.getItemMeta().getLore();
-        this.value = itemStack.getItemMeta().getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount();
+
+        NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
+        this.value = itemStack.getItemMeta().getPersistentDataContainer().get(noteValue, PersistentDataType.DOUBLE);
     }
 
     public ItemStack getItemStack(){ return this.itemStack; }
@@ -57,7 +56,7 @@ public class NFCNote {
 
     public Double getValue(){ return this.value; }
 
-    public static ItemStack createNFCNoteItem(String identifier, String name, List<String> lore, String material, String playername, DecimalFormat decimalFormat, Double money, Integer amount){
+    public static ItemStack createNFCNoteItem(Main plugin, String name, List<String> lore, String material, String playername, DecimalFormat decimalFormat, Double money, Integer amount){
         // Note value as string
         String formattedMoney = decimalFormat.format(money);
 
@@ -73,9 +72,11 @@ public class NFCNote {
         for(String s : lore) loreList.add(Utils.parseMessage(s).replace("{money}", formattedMoney).replace("{issuer}", playername));
         im.setLore(loreList);
 
-        // Note value is stored as an Attribute, and then it's hidden, so its name and lore can be safely edited or removed
-        im.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.fromString(identifier), "noteValue", money, AttributeModifier.Operation.ADD_NUMBER));
-        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        // Note value is stored using the item's persistent data container, so its internal data its hidden and all note's public values can be modified
+        NamespacedKey noteIdentifier = new NamespacedKey(plugin, "noteIdentifier");
+        NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
+        im.getPersistentDataContainer().set(noteIdentifier, PersistentDataType.STRING, NFCConfig.NOTE_UUID.getString());
+        im.getPersistentDataContainer().set(noteValue, PersistentDataType.DOUBLE, money);
 
         // Glint
         if(NFCConfig.NOTE_GLINT_ENABLED.getBoolean()){
@@ -97,10 +98,33 @@ public class NFCNote {
         return is;
     }
 
-    public static boolean isNFCNote(ItemStack itemStack){
+    public static boolean isNFCNote(Main plugin, ItemStack itemStack){
+        NamespacedKey noteIdentifier = new NamespacedKey(plugin, "noteIdentifier");
+        NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
+
+        // If the item has no meta, it's not a note
+        // If itemStack is null, the user has clicked something with its hand empty
+        if(itemStack == null || itemStack.getItemMeta() == null) return false;
+
+        // Get item's persistent data container and check its values
+        PersistentDataContainer pdc = itemStack.getItemMeta().getPersistentDataContainer();
+        if(!pdc.has(noteIdentifier) || !pdc.has(noteValue)) {
+            return false;
+        }
+
+        // It's a note, but it's an updated note? (User may have changed notes uuid)
+        return pdc.get(noteIdentifier, PersistentDataType.STRING).equals(NFCConfig.NOTE_UUID.getString());
+    }
+
+    public static boolean isLegacyNFCNote(ItemStack itemStack){
+        // No hay item o no tiene meta
         if(itemStack == null || !itemStack.hasItemMeta()) return false;
+
         ItemMeta im = itemStack.getItemMeta();
-        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.GENERIC_LUCK) == null || im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next() == null) return false;
-        return im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase("noteValue");
+        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.GENERIC_LUCK) == null || im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next() == null) {
+            return false;
+        }
+
+        return im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase(NFCConfig.NOTE_UUID.getString());
     }
 }

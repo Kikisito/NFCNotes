@@ -35,7 +35,7 @@ public class CraftListener implements Listener {
     public void onClick(InventoryClickEvent e) {
         if(e.getClickedInventory() != null){
             if(plugin.forbiddeninventories.contains(e.getClickedInventory().getType())) {
-                if (NFCNote.isNFCNote(e.getCursor())) {
+                if (NFCNote.isNFCNote(this.plugin, e.getCursor())) {
                     e.setCancelled(true);
                 }
             }
@@ -44,13 +44,13 @@ public class CraftListener implements Listener {
 
     @EventHandler
     public void onShiftClick(InventoryClickEvent e) {
-        if(plugin.forbiddeninventories.contains(e.getInventory().getType()) && e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && NFCNote.isNFCNote(e.getCurrentItem())) e.setCancelled(true);
+        if(plugin.forbiddeninventories.contains(e.getInventory().getType()) && e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && NFCNote.isNFCNote(this.plugin, e.getCurrentItem())) e.setCancelled(true);
     }
 
     @EventHandler
     public void onDrag(InventoryDragEvent e) {
         for(int i : e.getRawSlots()){
-            if(i < e.getInventory().getSize() && NFCNote.isNFCNote(e.getOldCursor()) && plugin.forbiddeninventories.contains(e.getInventory().getType())){
+            if(i < e.getInventory().getSize() && NFCNote.isNFCNote(this.plugin, e.getOldCursor()) && plugin.forbiddeninventories.contains(e.getInventory().getType())){
                 e.setCancelled(true);
                 return;
             }
@@ -60,14 +60,14 @@ public class CraftListener implements Listener {
     // This prevents hoppers from putting NFCNotes inside disabled tables
     @EventHandler
     public void moveEvent(InventoryMoveItemEvent e){
-        if(plugin.forbiddeninventories.contains(e.getDestination().getType()) && NFCNote.isNFCNote(e.getItem())) e.setCancelled(true);
+        if(plugin.forbiddeninventories.contains(e.getDestination().getType()) && NFCNote.isNFCNote(this.plugin, e.getItem())) e.setCancelled(true);
     }
 
     // This event exists because players would still use the crafting table from their inventories.
     @EventHandler
     public void craftEvent(CraftItemEvent e){
         for(ItemStack i : e.getInventory()) {
-            if(NFCNote.isNFCNote(i) && plugin.forbiddeninventories.contains(InventoryType.WORKBENCH)){
+            if(NFCNote.isNFCNote(this.plugin, i) && plugin.forbiddeninventories.contains(InventoryType.WORKBENCH)){
                 e.setCancelled(true);
                 return;
             }

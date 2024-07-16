@@ -155,7 +155,7 @@ public class Withdraw implements CommandExecutor {
             if (Utils.getPlayerBalance(plugin, player) >= money * amount) {
                 if(Utils.withdrawSuccessful(plugin, player, money * amount)) {
                     // Create the note and give it to the player
-                    ItemStack paper = NFCNote.createNFCNoteItem(NFCConfig.NOTE_UUID.getString(), NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
+                    ItemStack paper = NFCNote.createNFCNoteItem(this.plugin, NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
                     player.getInventory().addItem(paper);
                     player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString().replace("{money}", formattedMoney));
                     // Warn staff if the note's value is higher than the specified in the configuration file

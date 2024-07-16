@@ -25,18 +25,22 @@ import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import es.kikisito.nfcnotes.utils.Utils;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class InteractListener implements Listener {
     private final Main plugin;
@@ -45,11 +49,19 @@ public class InteractListener implements Listener {
         this.plugin = plugin;
     }
 
+    // For some reason this event is being called twice... and the last one is always getItem() = null 🤨
     @EventHandler(priority = EventPriority.LOWEST)
     private void redeem(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        // Check if the item's material is Paper
-        if (NFCNote.isNFCNote(e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
+
+        // Check if the item is a LEGACY NFCNote (uses attributes instead of the persistent data container)
+        if(NFCNote.isLegacyNFCNote(e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
+            this.convertLegacyNote(p, e.getItem());
+            return;
+        }
+
+        // Check if the item is an NFCNote
+        if(NFCNote.isNFCNote(this.plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
             // Check if player is allowed to deposit money
             if (!p.hasPermission("nfcnotes.deposit.action.deposit") || !NFCConfig.MODULES_DEPOSIT_ACTION.getBoolean()) return;
             else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
@@ -76,8 +88,8 @@ public class InteractListener implements Listener {
                 double value = 0;
                 // Checks for notes in player's inventory
                 for (ItemStack i : e.getPlayer().getInventory()) {
-                    if (NFCNote.isNFCNote(i)) {
-                        NFCNote nfcNote = new NFCNote(i);
+                    if (NFCNote.isNFCNote(this.plugin, i)) {
+                        NFCNote nfcNote = new NFCNote(this.plugin, i);
                         double amount = nfcNote.getValue() * i.getAmount();
                         value = value + amount;
                         notes.add(i);
@@ -108,7 +120,7 @@ public class InteractListener implements Listener {
                 }
             } else {
                 // Deposit
-                NFCNote nfcNote = new NFCNote(e.getItem());
+                NFCNote nfcNote = new NFCNote(this.plugin, e.getItem());
                 double m = nfcNote.getValue();
                 // Calls DepositEvent
                 DepositEvent depositEvent = new DepositEvent(p, m, ActionMethod.RIGHT_CLICK);
@@ -147,5 +159,37 @@ public class InteractListener implements Listener {
 
     private void playRedeemSound(Player player) {
         Deposit.playRedeemSound(player);
+    }
+
+    @SuppressWarnings("all")
+    private void convertLegacyNote(Player p, ItemStack note) {
+        // Legacy note, let's convert it to a modern note
+        double money = note.getItemMeta().getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount();
+
+        ItemMeta itemMeta = new ItemStack(note.getType()).getItemMeta();
+        // Store note values into the PDC
+        NamespacedKey noteIdentifier = new NamespacedKey(plugin, "noteIdentifier");
+        NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
+        itemMeta.getPersistentDataContainer().set(noteIdentifier, PersistentDataType.STRING, NFCConfig.NOTE_UUID.getString());
+        itemMeta.getPersistentDataContainer().set(noteValue, PersistentDataType.DOUBLE, money);
+
+        // Add display name, lore and Custom Model Data identifier
+        itemMeta.setDisplayName(note.getItemMeta().getDisplayName());
+        itemMeta.setLore(note.getItemMeta().getLore());
+        itemMeta.setCustomModelData(note.getItemMeta().getCustomModelData());
+
+        // Add previous enchants
+        for(Map.Entry<Enchantment, Integer> enchant : note.getEnchantments().entrySet()) {
+            itemMeta.addEnchant(enchant.getKey(), enchant.getValue(), true);
+        }
+
+        // Add previous flags
+        for(ItemFlag flag : note.getItemMeta().getItemFlags()) {
+            itemMeta.addItemFlags(flag);
+        }
+
+        // Set the new data to the itemstack
+        note.setItemMeta(itemMeta);
+        p.sendMessage(NFCMessages.NOTE_CONVERTED.getString());
     }
 }

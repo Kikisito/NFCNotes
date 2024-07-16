@@ -102,8 +102,8 @@ public class Count implements CommandExecutor, TabExecutor {
         double value = 0;
         // Checks for notes in player's inventory
         for (ItemStack i : player.getInventory()) {
-            if (NFCNote.isNFCNote(i)) {
-                NFCNote nfcNote = new NFCNote(i);
+            if (NFCNote.isNFCNote(this.plugin, i)) {
+                NFCNote nfcNote = new NFCNote(this.plugin, i);
                 double amount = nfcNote.getValue() * i.getAmount();
                 value += amount;
             }

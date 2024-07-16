@@ -51,6 +51,7 @@ public enum NFCMessages {
     COUNT_USAGE("count-usage", "&8[&6NFCNotes&8] &7Usage: /count [player]"),
     COUNT_SELF("count-self", "&8[&6NFCNotes&8] &7You have &6{money}&7$ in your inventory."),
     COUNT_OTHER("count-other", "&8[&6NFCNotes&8] &6{player}&7 has &6{money}&7$ in their inventory."),
+    NOTE_CONVERTED("note-converted", "&8[&6NFCNotes&8] &6You tried to use an outdated note, but we have automatically updated it for you! If you want to redeem it, click it again."),
 
     VERSION("messages-version", 0);
 
