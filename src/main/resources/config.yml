@@ -31,6 +31,10 @@ notes:
   use-decimals: false
   # This option will use a comma for decimal values and a dot as the thousands separator
   use-european-format: false
+  # Players can only withdraw notes of a specific value
+  withdraw-only-allows-a-specific-value: false
+  # Decimals MUST be specified, even if it's zero. Example: 100.0, 25.5, 75.75
+  withdraw-value: 100.0
   # ---------------------------------------------------------------------------------------------------------------------- #
   # Do not modify the following values unless you know what you're doing. Changing them can break *all* your existing notes.
   # ---------------------------------------------------------------------------------------------------------------------- #

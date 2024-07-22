@@ -63,35 +63,62 @@ public class Withdraw implements CommandExecutor {
         int amount;
         try {
             switch (args.length) {
+                case 0:
+                    if(!NFCConfig.WITHDRAW_ONLY_ALLOWS_A_SPECIFIC_VALUE.getBoolean()) {
+                        p.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
+                    } else {
+                        if(p.hasPermission("nfcnotes.withdraw.one")) {
+                            money = NFCConfig.WITHDRAW_VALUE.getDouble();
+                            withdraw(p, money, 1);
+                        } else {
+                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                        }
+                    }
+                    break;
                 case 1:
-                    // Check if "withdraw all" submodule is enabled and te first argument is "all"
-                    if (args[0].equalsIgnoreCase("all")) {
-                        if(NFCConfig.MODULES_WITHDRAW_ALL.getBoolean()) {
-                            if (p.hasPermission("nfcnotes.withdraw.all")) {
-                                money = Utils.getPlayerBalance(plugin, p);
-                                withdraw(p, money, 1);
-                                return true;
+                    if(!NFCConfig.WITHDRAW_ONLY_ALLOWS_A_SPECIFIC_VALUE.getBoolean()) {
+                        // Check if "withdraw all" submodule is enabled and te first argument is "all"
+                        if (args[0].equalsIgnoreCase("all")) {
+                            if(NFCConfig.MODULES_WITHDRAW_ALL.getBoolean()) {
+                                if (p.hasPermission("nfcnotes.withdraw.all")) {
+                                    money = Utils.getPlayerBalance(plugin, p);
+                                    withdraw(p, money, 1);
+                                    return true;
+                                } else {
+                                    p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                                }
                             } else {
-                                p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                                p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                             }
                         } else {
-                            p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                            if(NFCConfig.MODULES_WITHDRAW.getBoolean()) {
+                                if(p.hasPermission("nfcnotes.withdraw.one")) {
+                                    money = Double.parseDouble(args[0].replace(',', '.'));
+                                    money = Math.round(money * 100.0) / 100.0;
+                                    withdraw(p, money, 1);
+                                } else {
+                                    p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                                }
+                            } else {
+                                p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                            }
                         }
                     } else {
-                        if(NFCConfig.MODULES_WITHDRAW.getBoolean()) {
-                            if(p.hasPermission("nfcnotes.withdraw.one")) {
-                                money = Double.parseDouble(args[0].replace(',', '.'));
-                                money = Math.round(money * 100.0) / 100.0;
-                                withdraw(p, money, 1);
-                            } else {
-                                p.sendMessage(NFCMessages.NO_PERMISSION.getString());
-                            }
+                        if(p.hasPermission("nfcnotes.withdraw.one")) {
+                            money = NFCConfig.WITHDRAW_VALUE.getDouble();
+                            amount = Integer.parseInt(args[0]);
+                            withdraw(p, money, amount);
                         } else {
-                            p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
                         }
                     }
                     break;
                 case 2:
+                    if(NFCConfig.WITHDRAW_ONLY_ALLOWS_A_SPECIFIC_VALUE.getBoolean()) {
+                        p.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
+                        break;
+                    }
+
                     // Works only if the multiple withdraw submodule is enabled
                     if(p.hasPermission("nfcnotes.withdraw.multiple")) {
                         if (NFCConfig.MODULES_MULTIPLE_WITHDRAW.getBoolean()) {
@@ -99,11 +126,11 @@ public class Withdraw implements CommandExecutor {
                             money = Math.round(money * 100.0) / 100.0;
                             amount = Integer.parseInt(args[1]);
                             withdraw(p, money, amount);
-                            break;
                         }
                     } else {
                         p.sendMessage(NFCMessages.NO_PERMISSION.getString());
                     }
+                    break;
                 default:
                     p.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
                     break;

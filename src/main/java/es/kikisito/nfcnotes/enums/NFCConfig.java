@@ -43,6 +43,10 @@ public enum NFCConfig {
     // Use european format
     USE_EUROPEAN_FORMAT("notes.use-european-format", false),
 
+    // Players can only withdraw notes of a specific value
+    WITHDRAW_ONLY_ALLOWS_A_SPECIFIC_VALUE("notes.withdraw-only-allows-a-specific-value", false),
+    WITHDRAW_VALUE("notes.withdraw-value", 100.0),
+
     // Redeem sound
     REDEEM_SOUND_ENABLED("redeem-sound.enabled", true),
     REDEEM_SOUND("redeem-sound.sound", "BLOCK_CHAIN_BREAK"),
