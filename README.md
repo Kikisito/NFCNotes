@@ -1,12 +1,12 @@
 # NFCNotes
 
-NFCNotes is a Spigot 1.21+ plugin that allows you to withdraw money using notes. Those notes can also be used to redeem money.
+NFCNotes is a PaperMC plugin compatible with Spigot that allows you to withdraw money using notes. Those notes can also be used to redeem money.
 
 ## Requirements
 
 - [Java 21](https://www.azul.com/downloads/)
 - [Vault](https://github.com/MilkBowl/Vault)
-- [Spigot 1.21](https://www.spigotmc.org/) or a newer version. If you want to use NFCNotes in a 1.13+ server use [NFCNotes 2.4.1](https://github.com/Kikisito/NFCNotes/releases/tag/2.4.1) (these versions are **NOT** supported anymore). We recommend [PaperMC](https://papermc.io/) for a better server performance, it also works with Spigot plugins.
+- [PaperMC](https://papermc.io/). Older versions up to 1.13 may work, but they are not supported. Only the latest Minecraft version is supported.
 
 ## Build NFCNotes
 
