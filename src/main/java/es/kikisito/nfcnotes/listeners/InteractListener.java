@@ -164,7 +164,7 @@ public class InteractListener implements Listener {
     @SuppressWarnings("all")
     private void convertLegacyNote(Player p, ItemStack note) {
         // Legacy note, let's convert it to a modern note
-        double money = note.getItemMeta().getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getAmount();
+        double money = note.getItemMeta().getAttributeModifiers(Attribute.LUCK).iterator().next().getAmount();
 
         ItemMeta itemMeta = new ItemStack(note.getType()).getItemMeta();
         // Store note values into the PDC

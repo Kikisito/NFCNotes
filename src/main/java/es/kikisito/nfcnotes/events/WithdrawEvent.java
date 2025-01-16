@@ -22,14 +22,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class WithdrawEvent extends Event implements Cancellable {
 
-    private Player player;
+    private final Player player;
     private Double money;
     private Integer amount;
     private boolean isCancelled;
-    private ActionMethod actionMethod;
+    private final ActionMethod actionMethod;
 
     /**
      * This constructor is used to create a new WithdrawEvent with given parameters
@@ -48,7 +49,7 @@ public class WithdrawEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

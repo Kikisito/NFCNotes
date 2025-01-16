@@ -44,7 +44,7 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("nfcnotes.staff.reload")) {
                 plugin.reloadPlugin();

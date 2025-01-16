@@ -45,7 +45,7 @@ public class CreateNote implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         // Check if the player is allowed to withdraw money and its inventory is not full
         if (!sender.hasPermission("nfcnotes.staff.createnote")) {
             sender.sendMessage(NFCMessages.NO_PERMISSION.getString());

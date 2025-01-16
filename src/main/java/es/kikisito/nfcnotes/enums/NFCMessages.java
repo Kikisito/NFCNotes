@@ -57,8 +57,8 @@ public enum NFCMessages {
 
 
     private static FileConfiguration messages;
-    private Object message;
-    private Object def;
+    private final Object message;
+    private final Object def;
 
     NFCMessages(String message, String def) {
         this.message = message;

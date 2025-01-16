@@ -93,8 +93,8 @@ public enum NFCConfig {
 
 
     private static Configuration config;
-    private Object value;
-    private Object def;
+    private final Object value;
+    private final Object def;
 
     NFCConfig(String value, String def) {
         this.value = value;

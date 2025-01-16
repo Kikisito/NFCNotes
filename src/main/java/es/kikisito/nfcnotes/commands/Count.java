@@ -128,7 +128,7 @@ public class Count implements CommandExecutor, TabExecutor {
 
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         List<String> tab = new ArrayList<>();
         if(args.length == 1 && NFCConfig.MODULES_COUNT_OTHER_PLAYERS.getBoolean() && sender.hasPermission("nfcnotes.staff.count.others")){
             for(Player p : plugin.getServer().getOnlinePlayers()){

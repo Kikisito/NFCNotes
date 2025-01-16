@@ -47,7 +47,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         double value = 0;
         // Only players can execute this command.
         if (!(sender instanceof Player)) {

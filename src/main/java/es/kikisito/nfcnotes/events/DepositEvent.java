@@ -22,13 +22,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class DepositEvent extends Event implements Cancellable {
 
-    private Player player;
+    private final Player player;
     private Double money;
     private boolean isCancelled;
-    private ActionMethod depositMethod;
+    private final ActionMethod depositMethod;
 
     /**
      * This constructor is used to create a new DepositEvent with given parameters
@@ -45,7 +46,7 @@ public class DepositEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

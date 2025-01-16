@@ -44,13 +44,12 @@ public class Withdraw implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         // Only players can execute this command. Console, get away!
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player p)) {
             sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
             return false;
         }
-        Player p = (Player) sender;
         // Check if the player is allowed to withdraw money and its inventory is not full
         if (p.getInventory().firstEmpty() == -1) {
             p.sendMessage(NFCMessages.FULL_INVENTORY.getString());
