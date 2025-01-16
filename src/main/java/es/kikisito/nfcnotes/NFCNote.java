@@ -90,6 +90,9 @@ public class NFCNote {
             }
         }
 
+        // Max stack size
+        im.setMaxStackSize(NFCConfig.NOTE_MAX_STACK_SIZE.getInt());
+
         // Custom Model Data for texture packs
         im.setCustomModelData(NFCConfig.NOTE_CUSTOM_MODEL_DATA_INTEGER.getInt());
 

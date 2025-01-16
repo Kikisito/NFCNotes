@@ -21,6 +21,7 @@ notes:
     - "&7Value: &e{money}$"
     - "&7Issuer: &e{issuer}"
   material: PAPER
+  max-stack-size: 64
   glint:
     enabled: false
     # The glint requires the object to be enchanted, so here you have some settings related to the enchantment
