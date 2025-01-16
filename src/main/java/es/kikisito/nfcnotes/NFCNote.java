@@ -124,10 +124,10 @@ public class NFCNote {
         if(itemStack == null || !itemStack.hasItemMeta()) return false;
 
         ItemMeta im = itemStack.getItemMeta();
-        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.GENERIC_LUCK) == null || im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next() == null) {
+        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.LUCK) == null || im.getAttributeModifiers(Attribute.LUCK).iterator().next() == null) {
             return false;
         }
 
-        return im.getAttributeModifiers(Attribute.GENERIC_LUCK).iterator().next().getName().equalsIgnoreCase(NFCConfig.NOTE_UUID.getString());
+        return im.getAttributeModifiers(Attribute.LUCK).iterator().next().getName().equalsIgnoreCase(NFCConfig.NOTE_UUID.getString());
     }
 }
