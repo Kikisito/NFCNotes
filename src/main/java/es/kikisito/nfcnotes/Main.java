@@ -86,14 +86,14 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        if(NFCConfig.VERSION.getInt() < 12) {
+        if(NFCConfig.VERSION.getInt() < 13) {
             String outdatedconfig = "<red>Your NFCNotes configuration is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
             this.getServer().getConsoleSender().sendMessage(outdatedconfig);
             // In case of this plugin being reloaded using Plugman or ServerUtils.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
-        if(NFCMessages.VERSION.getInt() < 7) {
+        if(NFCMessages.VERSION.getInt() < 10) {
             String outdatedmsgs = "<red>Your NFCNotes messages file is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
             this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
             // In case of this plugin being reloaded using Plugman or ServerUtils.
