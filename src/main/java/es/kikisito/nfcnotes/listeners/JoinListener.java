@@ -20,6 +20,7 @@ package es.kikisito.nfcnotes.listeners;
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
 import es.kikisito.nfcnotes.enums.NFCMessages;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -36,7 +37,8 @@ public class JoinListener implements Listener {
         if (e.getPlayer().hasPermission("nfcnotes.staff.check-updates")) {
             new UpdateChecker(plugin).getVersion((version) -> {
                 if (!plugin.getDescription().getVersion().equals(version)) {
-                    e.getPlayer().sendMessage(NFCMessages.getClickableComponent("open_url", "https://github.com/Kikisito/NFCNotes/releases/", NFCMessages.UPDATES_UPDATE_AVAILABLE.getString("{version}", version)));
+                    Audience audience = plugin.getAdventure().player(e.getPlayer());
+                    audience.sendMessage(NFCMessages.getClickableComponent("open_url", "https://github.com/Kikisito/NFCNotes/releases/", NFCMessages.UPDATES_UPDATE_AVAILABLE.getString("{version}", version)));
                 }
             });
         }

@@ -18,7 +18,9 @@
 package es.kikisito.nfcnotes;
 
 import es.kikisito.nfcnotes.enums.NFCConfig;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -34,19 +36,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// Once Spigot is deprecated, this class must be rewritten to use the new Adventure API
 public class NFCNote {
     private final ItemStack itemStack;
     private final Component name;
     private final List<Component> lore;
     private final Double value;
 
-    public NFCNote(Main plugin, ItemStack itemStack){
+    public NFCNote(Main plugin, ItemStack itemStack) {
         this.itemStack = itemStack;
-        this.name = itemStack.getItemMeta().displayName();
-        this.lore = itemStack.getItemMeta().lore();
+        ItemMeta meta = itemStack.getItemMeta();
+        // Convertir el nombre del item a Component
+        this.name = meta.hasDisplayName() ?
+                LegacyComponentSerializer.legacyAmpersand().deserialize(meta.getDisplayName()) :
+                Component.empty();
+
+        // Convertir el lore a Component
+        if (meta.hasLore()) {
+            List<Component> loreComponents = new ArrayList<>();
+            for (String line : meta.getLore()) {
+                loreComponents.add(LegacyComponentSerializer.legacyAmpersand().deserialize(line));
+            }
+            this.lore = loreComponents;
+        } else {
+            this.lore = new ArrayList<>();
+        }
 
         NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
-        this.value = itemStack.getItemMeta().getPersistentDataContainer().get(noteValue, PersistentDataType.DOUBLE);
+        this.value = meta.getPersistentDataContainer().get(noteValue, PersistentDataType.DOUBLE);
     }
 
     public ItemStack getItemStack(){ return this.itemStack; }
@@ -65,55 +82,55 @@ public class NFCNote {
         ItemStack is = new ItemStack(Material.valueOf(material.toUpperCase()), amount);
         ItemMeta im = is.getItemMeta();
 
-        // Note display name
-        Component displayName = name.replaceText(configurer -> {
-            configurer.match("{player}").replacement(playername);
-            configurer.match("{money}").replacement(formattedMoney);
+        // Note display name with Adventure API
+        Component displayName = name.replaceText(builder -> {
+            builder.match("\\{issuer\\}").replacement(playername);
+            builder.match("\\{money\\}").replacement(formattedMoney);
         });
-        im.displayName(displayName);
 
-        // Parse lore
-        List<Component> loreList = new ArrayList<>();
-        for(Component line : lore){
-            loreList.add(line.replaceText(configurer -> {
-                configurer.match("{player}").replacement(playername);
-                configurer.match("{money}").replacement(formattedMoney);
-            }));
+        // Convert Component to legacy string for ItemMeta
+        im.setDisplayName(LegacyComponentSerializer.legacyAmpersand().serialize(displayName));
+
+        // Parse lore with Adventure API
+        List<String> legacyLore = new ArrayList<>();
+        for (Component line : lore) {
+            Component processedLine = line.replaceText(builder -> {
+                builder.match("\\{issuer\\}").replacement(playername);
+                builder.match("\\{money\\}").replacement(formattedMoney);
+            });
+            legacyLore.add(LegacyComponentSerializer.legacyAmpersand().serialize(processedLine));
         }
-        im.lore(loreList);
+        im.setLore(legacyLore);
 
-        // Note value is stored using the item's persistent data container, so its internal data its hidden and all note's public values can be modified
+        // Note value storage
         NamespacedKey noteIdentifier = new NamespacedKey(plugin, "noteIdentifier");
         NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
         im.getPersistentDataContainer().set(noteIdentifier, PersistentDataType.STRING, NFCConfig.NOTE_UUID.getString());
         im.getPersistentDataContainer().set(noteValue, PersistentDataType.DOUBLE, money);
 
-        // Glint
-        if(NFCConfig.NOTE_GLINT_ENABLED.getBoolean()){
+        // Glint configuration
+        if (NFCConfig.NOTE_GLINT_ENABLED.getBoolean()) {
             Enchantment enchant = Enchantment.getByKey(NamespacedKey.minecraft(NFCConfig.NOTE_GLINT_ENCHANTMENT.getString().toLowerCase()));
             int enchantLevel = NFCConfig.NOTE_GLINT_ENCHANTMENT_LEVEL.getInt();
             im.addEnchant(enchant, enchantLevel, true);
 
-            // If set, hide enchant flag
-            if(NFCConfig.NOTE_GLINT_HIDE_ENCHANTMENT_FLAG.getBoolean()){
+            if (NFCConfig.NOTE_GLINT_HIDE_ENCHANTMENT_FLAG.getBoolean()) {
                 im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
         }
 
         // Max stack size
-        // If the max stack size is 64, the component is not set for compatibility with older notes
         int maxStackSize = NFCConfig.NOTE_MAX_STACK_SIZE.getInt();
-        if(maxStackSize != 64) im.setMaxStackSize(maxStackSize);
+        if (maxStackSize != 64) im.setMaxStackSize(maxStackSize);
 
-        // Custom Model Data for texture packs
+        // Custom Model Data
         im.setCustomModelData(NFCConfig.NOTE_CUSTOM_MODEL_DATA_INTEGER.getInt());
 
-        // Set ItemMeta
         is.setItemMeta(im);
         return is;
     }
 
-    public static boolean isNFCNote(Main plugin, ItemStack itemStack){
+    public static boolean isNFCNote(Main plugin, ItemStack itemStack) {
         NamespacedKey noteIdentifier = new NamespacedKey(plugin, "noteIdentifier");
         NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
 
@@ -134,7 +151,7 @@ public class NFCNote {
         return noteUuidString.equals(NFCConfig.NOTE_UUID.getString());
     }
 
-    public static boolean isLegacyNFCNote(ItemStack itemStack){
+    public static boolean isLegacyNFCNote(ItemStack itemStack) {
         // No hay item o no tiene meta
         if(itemStack == null || !itemStack.hasItemMeta()) return false;
 

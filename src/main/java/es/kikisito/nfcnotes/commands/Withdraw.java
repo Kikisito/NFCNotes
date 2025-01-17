@@ -26,6 +26,7 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.WithdrawEvent;
 import es.kikisito.nfcnotes.utils.Utils;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -44,16 +45,20 @@ public class Withdraw implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         // Only players can execute this command. Console, get away!
-        if (!(sender instanceof Player p)) {
-            sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
+        if (!(sender instanceof Player player)) {
+            plugin.getAdventure().sender(sender).sendMessage(NFCMessages.ONLY_PLAYERS.getString());
             return false;
         }
+
+        // Cast to Adventure Audience
+        Audience audience = plugin.getAdventure().sender(player);
+
         // Check if the player is allowed to withdraw money and its inventory is not full
-        if (p.getInventory().firstEmpty() == -1) {
-            p.sendMessage(NFCMessages.FULL_INVENTORY.getString());
+        if (player.getInventory().firstEmpty() == -1) {
+            audience.sendMessage(NFCMessages.FULL_INVENTORY.getString());
             return false;
-        } else if(NFCConfig.DISABLED_WORLDS.getStrings().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.withdraw.bypass.disabled-world")){
-            p.sendMessage(NFCMessages.DISABLED_WORLD.getString());
+        } else if(NFCConfig.DISABLED_WORLDS.getStrings().contains(player.getWorld().getName()) && !player.hasPermission("nfcnotes.staff.withdraw.bypass.disabled-world")){
+            audience.sendMessage(NFCMessages.DISABLED_WORLD.getString());
             return false;
         }
         double money;
@@ -62,13 +67,13 @@ public class Withdraw implements CommandExecutor {
             switch (args.length) {
                 case 0:
                     if(!NFCConfig.WITHDRAW_ONLY_ALLOWS_A_SPECIFIC_VALUE.getBoolean()) {
-                        p.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
+                        audience.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
                     } else {
-                        if(p.hasPermission("nfcnotes.withdraw.one")) {
+                        if(player.hasPermission("nfcnotes.withdraw.one")) {
                             money = NFCConfig.WITHDRAW_VALUE.getDouble();
-                            withdraw(p, money, 1);
+                            withdraw(player, money, 1);
                         } else {
-                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                            audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                         }
                     }
                     break;
@@ -77,81 +82,84 @@ public class Withdraw implements CommandExecutor {
                         // Check if "withdraw all" submodule is enabled and te first argument is "all"
                         if (args[0].equalsIgnoreCase("all")) {
                             if(NFCConfig.MODULES_WITHDRAW_ALL.getBoolean()) {
-                                if (p.hasPermission("nfcnotes.withdraw.all")) {
-                                    money = Utils.getPlayerBalance(plugin, p);
-                                    withdraw(p, money, 1);
+                                if (player.hasPermission("nfcnotes.withdraw.all")) {
+                                    money = Utils.getPlayerBalance(plugin, player);
+                                    withdraw(player, money, 1);
                                     return true;
                                 } else {
-                                    p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                                    audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                                 }
                             } else {
-                                p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                                audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                             }
                         } else {
                             if(NFCConfig.MODULES_WITHDRAW.getBoolean()) {
-                                if(p.hasPermission("nfcnotes.withdraw.one")) {
+                                if(player.hasPermission("nfcnotes.withdraw.one")) {
                                     money = Double.parseDouble(args[0].replace(',', '.'));
                                     money = Math.round(money * 100.0) / 100.0;
-                                    withdraw(p, money, 1);
+                                    withdraw(player, money, 1);
                                 } else {
-                                    p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                                    audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                                 }
                             } else {
-                                p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                                audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                             }
                         }
                     } else {
-                        if(p.hasPermission("nfcnotes.withdraw.one")) {
+                        if(player.hasPermission("nfcnotes.withdraw.one")) {
                             money = NFCConfig.WITHDRAW_VALUE.getDouble();
                             amount = Integer.parseInt(args[0]);
-                            withdraw(p, money, amount);
+                            withdraw(player, money, amount);
                         } else {
-                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                            audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                         }
                     }
                     break;
                 case 2:
                     if(NFCConfig.WITHDRAW_ONLY_ALLOWS_A_SPECIFIC_VALUE.getBoolean()) {
-                        p.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
+                        audience.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
                         break;
                     }
 
                     // Works only if the multiple withdraw submodule is enabled
-                    if(p.hasPermission("nfcnotes.withdraw.multiple")) {
+                    if(player.hasPermission("nfcnotes.withdraw.multiple")) {
                         if (NFCConfig.MODULES_MULTIPLE_WITHDRAW.getBoolean()) {
                             money = Double.parseDouble(args[0].replace(',', '.'));
                             money = Math.round(money * 100.0) / 100.0;
                             amount = Integer.parseInt(args[1]);
-                            withdraw(p, money, amount);
+                            withdraw(player, money, amount);
                         }
                     } else {
-                        p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                        audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                     }
                     break;
                 default:
-                    p.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
+                    audience.sendMessage(NFCMessages.WITHDRAW_USAGE.getString());
                     break;
             }
         } catch (NumberFormatException ex) {
-            p.sendMessage(NFCMessages.INCORRECT_FORMAT.getString());
+            audience.sendMessage(NFCMessages.INCORRECT_FORMAT.getString());
         }
         return true;
     }
 
     private void withdraw(Player p, double m, int a){
+        // Cast to Adventure Audience
+        Audience audience = plugin.getAdventure().sender(p);
+
         // Check if given number is positive and is an integer.
         if (m <= 0) {
-            p.sendMessage(NFCMessages.USE_A_NUMBER_HIGHER_THAN_ZERO.getString());
+            audience.sendMessage(NFCMessages.USE_A_NUMBER_HIGHER_THAN_ZERO.getString());
             return;
         } else if(!(m % 1 == 0) && !NFCConfig.USE_DECIMALS.getBoolean()) {
-            p.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
+            audience.sendMessage(NFCMessages.ONLY_INTEGERS.getString());
             return;
         }
 
         // Check if the player has enough space in the inventory when withdrawing more than one stack
         int freeSlots = this.countFreeSlots(p.getInventory());
         if (a > 64 && freeSlots < (int) Math.ceil(a / 64.0)) {
-            p.sendMessage(NFCMessages.NOT_ENOUGH_SPACE.getString());
+            audience.sendMessage(NFCMessages.NOT_ENOUGH_SPACE.getString());
             return;
         }
 
@@ -161,6 +169,7 @@ public class Withdraw implements CommandExecutor {
         if(!withdrawEvent.isCancelled()) {
             // Get variables from event
             Player player = withdrawEvent.getPlayer();
+            Audience playerAudience = plugin.getAdventure().sender(player);
             Double money = withdrawEvent.getMoney();
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
@@ -174,22 +183,23 @@ public class Withdraw implements CommandExecutor {
                     // Create the note and give it to the player
                     ItemStack paper = NFCNote.createNFCNoteItem(this.plugin, NFCConfig.NOTE_NAME.getMessage(), NFCConfig.NOTE_LORE.getMessages(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
                     player.getInventory().addItem(paper);
-                    player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString("{money}", formattedMoney));
+                    playerAudience.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString("{money}", formattedMoney));
                     // Warn staff if the note's value is higher than the specified in the configuration file
                     if (money * amount >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
                         for (Player pl : plugin.getServer().getOnlinePlayers()) {
                             if (pl.hasPermission("nfcnotes.staff.warn") && player != pl) {
-                                pl.sendMessage(NFCMessages.STAFF_WARN_WITHDRAW.getString("{player}", player.getName(), "{money}", formattedMoney));
+                                Audience staffAudience = plugin.getAdventure().sender(pl);
+                                staffAudience.sendMessage(NFCMessages.STAFF_WARN_WITHDRAW.getString("{player}", player.getName(), "{money}", formattedMoney));
                                 plugin.getLogger().info(NFCMessages.STAFF_WARN_WITHDRAW.getLegacyString("{player}", player.getName(), "{money}", formattedMoney));
                             }
                         }
                     }
                 } else {
                     // Unexpected error
-                    player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                    playerAudience.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                 }
             } else {
-                player.sendMessage(NFCMessages.INSUFFICIENT_FUNDS.getString());
+                playerAudience.sendMessage(NFCMessages.INSUFFICIENT_FUNDS.getString());
             }
         }
     }

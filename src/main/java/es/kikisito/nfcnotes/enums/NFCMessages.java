@@ -89,7 +89,7 @@ public enum NFCMessages {
 
         // Replace placeholders
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            text = text.replace("{" + entry.getKey() + "}", entry.getValue());
+            text = text.replace("\\{" + entry.getKey() + "\\}", entry.getValue());
         }
 
         return mm.deserialize(text);

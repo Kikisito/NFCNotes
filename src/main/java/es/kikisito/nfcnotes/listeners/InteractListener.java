@@ -25,6 +25,7 @@ import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import es.kikisito.nfcnotes.utils.Utils;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
@@ -52,6 +53,7 @@ public class InteractListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private void redeem(PlayerInteractEvent e) {
         Player p = e.getPlayer();
+        Audience audience = plugin.getAdventure().player(p);
 
         // Check if the item is a LEGACY NFCNote (uses attributes instead of the persistent data container)
         if(NFCNote.isLegacyNFCNote(e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
@@ -64,7 +66,7 @@ public class InteractListener implements Listener {
             // Check if player is allowed to deposit money
             if (!p.hasPermission("nfcnotes.deposit.action.deposit") || !NFCConfig.MODULES_DEPOSIT_ACTION.getBoolean()) return;
             else if(NFCConfig.DISABLED_WORLDS.getStrings().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
-                p.sendMessage(NFCMessages.DISABLED_WORLD.getString());
+                audience.sendMessage(NFCMessages.DISABLED_WORLD.getString());
                 return;
             }
 
@@ -94,6 +96,7 @@ public class InteractListener implements Listener {
 
                 // Get variables from called event
                 Player player = depositEvent.getPlayer();
+                Audience playerAudience = plugin.getAdventure().player(player);
                 double money = depositEvent.getMoney();
                 String formattedMoney = decimalFormat.format(money);
 
@@ -101,13 +104,13 @@ public class InteractListener implements Listener {
                 if (!depositEvent.isCancelled()) {
                     if (Utils.depositSuccessful(plugin, player, money)) {
                         for (ItemStack i : notes) i.setAmount(0);
-                        player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
+                        playerAudience.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
 
                         // If enabled, play sound
                         playRedeemSound(player);
                         totalAmount = money;
                     } else {
-                        player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                        playerAudience.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                     }
                 }
             } else {
@@ -121,10 +124,11 @@ public class InteractListener implements Listener {
                 if (!depositEvent.isCancelled()) {
                     // Get variables from called event
                     Player player = depositEvent.getPlayer();
+                    Audience playerAudience = plugin.getAdventure().player(player);
                     double money = depositEvent.getMoney();
                     String formattedMoney = decimalFormat.format(money);
                     if (Utils.depositSuccessful(plugin, player, money)) {
-                        player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
+                        playerAudience.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
 
                         // If enabled, play sound
                         playRedeemSound(player);
@@ -132,7 +136,7 @@ public class InteractListener implements Listener {
                         e.getItem().setAmount(e.getItem().getAmount() - 1);
                         totalAmount = money;
                     } else {
-                        player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                        playerAudience.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                     }
                 }
             }
@@ -141,7 +145,8 @@ public class InteractListener implements Listener {
                 String formattedMoney = decimalFormat.format(totalAmount);
                 for (Player pl : plugin.getServer().getOnlinePlayers()) {
                     if (pl.hasPermission("nfcnotes.staff.warn") && e.getPlayer() != pl) {
-                        pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString("{player}", e.getPlayer().getName(), "{money}", formattedMoney));
+                        Audience playerAudience = plugin.getAdventure().player(pl);
+                        playerAudience.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString("{player}", e.getPlayer().getName(), "{money}", formattedMoney));
                         plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getLegacyString("{player}", e.getPlayer().getName(), "{money}", formattedMoney));
                     }
                 }
@@ -182,6 +187,8 @@ public class InteractListener implements Listener {
 
         // Set the new data to the itemstack
         note.setItemMeta(itemMeta);
-        p.sendMessage(NFCMessages.NOTE_CONVERTED.getString());
+
+        Audience audience = plugin.getAdventure().player(p);
+        audience.sendMessage(NFCMessages.NOTE_CONVERTED.getString());
     }
 }

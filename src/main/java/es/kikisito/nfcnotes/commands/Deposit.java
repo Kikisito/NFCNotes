@@ -24,6 +24,7 @@ import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
 import es.kikisito.nfcnotes.utils.Utils;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.Command;
@@ -47,10 +48,13 @@ public class Deposit implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
+        // Cast to Adventure Audience
+        Audience audience = plugin.getAdventure().sender(sender);
+
         double value = 0;
         // Only players can execute this command.
         if (!(sender instanceof Player p)) {
-            sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
+            audience.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
             return false;
         }
         if(NFCConfig.DISABLED_WORLDS.getStrings().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
@@ -66,10 +70,10 @@ public class Deposit implements CommandExecutor, TabCompleter {
                             value = nfcNote.getValue();
                             this.depositMoney(nfcNote, p, 1, value);
                         } else {
-                            p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                            audience.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                         }
                     } else {
-                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                        audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                     }
                 }
                 break;
@@ -89,7 +93,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                             }
                             // Check if any note has been found
                             if (value == 0) {
-                                p.sendMessage(NFCMessages.NO_NOTES_FOUND.getString());
+                                audience.sendMessage(NFCMessages.NO_NOTES_FOUND.getString());
                                 return false;
                             }
                             // Calls DepositEvent
@@ -99,21 +103,22 @@ public class Deposit implements CommandExecutor, TabCompleter {
                             if (!depositEvent.isCancelled()) {
                                 // Get variables from called event
                                 Player player = depositEvent.getPlayer();
+                                Audience playerAudience = plugin.getAdventure().player(player);
                                 double money = depositEvent.getMoney();
                                 String formattedMoney = decimalFormat.format(money);
                                 if (Utils.depositSuccessful(plugin, player, money)) {
                                     for (ItemStack i : notes) i.setAmount(0);
-                                    player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
+                                    playerAudience.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
                                     Deposit.playRedeemSound(player);
                                 } else {
-                                    player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                                    playerAudience.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
                                 }
                             }
                         } else {
-                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                            audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                         }
                     } else {
-                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                        audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                     }
                     break;
                 } else if(args[0].equals("stack")) {
@@ -124,13 +129,13 @@ public class Deposit implements CommandExecutor, TabCompleter {
                                 value = nfcNote.getValue();
                                 this.depositMoney(nfcNote, p, nfcNote.getItemStack().getAmount(), value);
                             } else {
-                                p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                                audience.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                             }
                         } else {
-                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                            audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                         }
                     } else {
-                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                        audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                     }
                     break;
                 } else if(Utils.isInteger(args[0])) {
@@ -143,29 +148,30 @@ public class Deposit implements CommandExecutor, TabCompleter {
                                     value = nfcNote.getValue();
                                     this.depositMoney(nfcNote, p, amount, value);
                                 } else {
-                                    p.sendMessage(NFCMessages.INSUFFICIENT_NOTES.getString());
+                                    audience.sendMessage(NFCMessages.INSUFFICIENT_NOTES.getString());
                                 }
                             } else {
-                                p.sendMessage(NFCMessages.NOT_A_NOTE.getString());
+                                audience.sendMessage(NFCMessages.NOT_A_NOTE.getString());
                             }
                         } else {
-                            p.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                            audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                         }
                     } else {
-                        p.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                        audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
                     }
                     break;
                 }
             default:
-                sender.sendMessage(NFCMessages.DEPOSIT_USAGE.getString());
+                audience.sendMessage(NFCMessages.DEPOSIT_USAGE.getString());
                 break;
         }
         // Warn staff if the note's value is higher than the specified in the configuration file
         if (value >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
             String formattedMoney = decimalFormat.format(value);
             for (Player pl : plugin.getServer().getOnlinePlayers()) {
+                Audience playerAudience = plugin.getAdventure().player(pl);
                 if (pl.hasPermission("nfcnotes.staff.warn") && p != pl) {
-                    pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString("{player}", p.getName(), "{money}", formattedMoney));
+                    playerAudience.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString("{player}", p.getName(), "{money}", formattedMoney));
                     plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getLegacyString("{player}", p.getName(), "{money}", formattedMoney));
                 }
             }
@@ -178,14 +184,16 @@ public class Deposit implements CommandExecutor, TabCompleter {
         if(!depositEvent.isCancelled()) {
             plugin.getServer().getPluginManager().callEvent(depositEvent);
             Player player = depositEvent.getPlayer();
+            Audience playerAudience = plugin.getAdventure().player(player);
             value = depositEvent.getMoney();
             String formattedMoney = decimalFormat.format(value);
             if (Utils.depositSuccessful(plugin, player, value)) {
-                player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
+                playerAudience.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
                 Deposit.playRedeemSound(player);
                 nfcNote.getItemStack().setAmount(nfcNote.getItemStack().getAmount() - amount);
             } else {
-                p.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
+                Audience senderAudience = plugin.getAdventure().player(p);
+                senderAudience.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
             }
         }
     }

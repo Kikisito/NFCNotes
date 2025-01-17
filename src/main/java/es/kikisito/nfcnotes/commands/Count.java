@@ -21,6 +21,7 @@ import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
 import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,24 +47,28 @@ public class Count implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
+        // Cast to Adventure Audience
+        Audience audience = plugin.getAdventure().sender(sender);
+
         if(args.length == 0 && !(sender instanceof Player)){
             // Only players are allowed to use /count
-            sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
+            audience.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
         } else if (args.length == 0){
             // Check if this module is enabled
             if(NFCConfig.MODULES_COUNT_SAME_PLAYER.getBoolean()){
                 // If sender instanceof Player
                 Player player = (Player) sender;
+                Audience playerAudience = plugin.getAdventure().player(player);
                 // Check if player is allowed to do this
                 if(player.hasPermission("nfcnotes.count.self")){
                     double value = this.checkNotes(Objects.requireNonNull(player, "Player must not be null"));
                     // Send value to sender
-                    player.sendMessage(NFCMessages.COUNT_SELF.getString("{money}", this.getFormattedValue(value)));
+                    playerAudience.sendMessage(NFCMessages.COUNT_SELF.getString("{money}", this.getFormattedValue(value)));
                 } else {
-                    player.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                    playerAudience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                 }
             } else {
-                sender.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
             }
         } else if (args.length == 1){
             // Check if this module is enabled
@@ -76,19 +81,19 @@ public class Count implements CommandExecutor, TabExecutor {
                         Player player = plugin.getServer().getPlayer(args[0]);
                         double value = this.checkNotes(Objects.requireNonNull(player, "Player must not be null"));
                         // Send value to sender
-                        sender.sendMessage(NFCMessages.COUNT_OTHER.getString("{money}", this.getFormattedValue(value), "{player}", player.getName()));
+                        audience.sendMessage(NFCMessages.COUNT_OTHER.getString("{money}", this.getFormattedValue(value), "{player}", player.getName()));
                     } else {
                         // No online player could be found
-                        sender.sendMessage(NFCMessages.PLAYER_NOT_FOUND.getString("{player}", args[0]));
+                        audience.sendMessage(NFCMessages.PLAYER_NOT_FOUND.getString("{player}", args[0]));
                     }
                 } else {
-                    sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                    audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
                 }
             } else {
-                sender.sendMessage(NFCMessages.MODULE_DISABLED.getString());
+                audience.sendMessage(NFCMessages.MODULE_DISABLED.getString());
             }
         } else {
-            sender.sendMessage(NFCMessages.COUNT_USAGE.getString());
+            audience.sendMessage(NFCMessages.COUNT_USAGE.getString());
         }
         return true;
     }

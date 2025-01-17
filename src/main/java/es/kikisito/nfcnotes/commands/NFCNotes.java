@@ -21,6 +21,7 @@ import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
 import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,27 +44,30 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
+        // Cast to Adventure Audience
+        Audience audience = plugin.getAdventure().sender(sender);
+
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("nfcnotes.staff.reload")) {
                 plugin.reloadPlugin();
-                sender.sendMessage(NFCMessages.STAFF_PLUGIN_RELOADED.getString());
+                audience.sendMessage(NFCMessages.STAFF_PLUGIN_RELOADED.getString());
             } else if ((args[0].equalsIgnoreCase("check") || args[0].equalsIgnoreCase("update")) && sender.hasPermission("nfcnotes.staff.check-updates")) {
                 new UpdateChecker(plugin).getVersion((version) -> {
                     if (!plugin.getDescription().getVersion().equals(version)) {
-                        sender.sendMessage(NFCMessages.getClickableComponent("open_url", "https://github.com/Kikisito/NFCNotes/releases/", NFCMessages.UPDATES_UPDATE_AVAILABLE.getString("{version}", version)));
+                        audience.sendMessage(NFCMessages.getClickableComponent("open_url", "https://github.com/Kikisito/NFCNotes/releases/", NFCMessages.UPDATES_UPDATE_AVAILABLE.getString("{version}", version)));
                     } else {
-                        sender.sendMessage(NFCMessages.UPDATES_NO_UPDATES.getString());
+                        audience.sendMessage(NFCMessages.UPDATES_NO_UPDATES.getString());
                     }
 
                 });
             } else {
-                sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
+                audience.sendMessage(NFCMessages.NO_PERMISSION.getString());
             }
         } else if (NFCConfig.SHOW_PLUGIN_INFO.getBoolean()) {
-            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Developed by</gray> <gold>Kikisito</gold>"));
-            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Version</gray> <gold>" + plugin.getDescription().getVersion() + "</gold>"));
-            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Get more information at</gray>"));
-            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gold>https://github.com/Kikisito/NFCNotes</gold>"));
+            audience.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Developed by</gray> <gold>Kikisito</gold>"));
+            audience.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Version</gray> <gold>" + plugin.getDescription().getVersion() + "</gold>"));
+            audience.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Get more information at</gray>"));
+            audience.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gold>https://github.com/Kikisito/NFCNotes</gold>"));
         }
         return false;
     }

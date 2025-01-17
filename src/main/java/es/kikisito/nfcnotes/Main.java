@@ -24,6 +24,7 @@ import es.kikisito.nfcnotes.listeners.CraftListener;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import es.kikisito.nfcnotes.listeners.JoinListener;
 import es.kikisito.nfcnotes.enums.NFCMessages;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
@@ -67,35 +68,39 @@ public class Main extends JavaPlugin implements Listener {
         // Adventure Chat API
         this.adventure = BukkitAudiences.create(this);
         mm = MiniMessage.miniMessage();
+
+        // Console as audience
+        Audience console = adventure.console();
+
         if(NFCConfig.UPDATE_CHECKER_IS_ENABLED.getBoolean()) {
             new UpdateChecker(this).getVersion((version) -> {
                 if (!getDescription().getVersion().equals(version)) {
-                    this.getServer().getConsoleSender().sendMessage(mm.deserialize("<yellow>A new version of NFCNotes is available.</yellow>"));
-                    this.getServer().getConsoleSender().sendMessage(mm.deserialize("<yellow>Version installed: <gold>" + this.getDescription().getVersion() + "</gold>. Latest version: <gold>" + version + "</gold></yellow>"));
-                    this.getServer().getConsoleSender().sendMessage(mm.deserialize("<yellow>Download it from</yellow> <gold>https://github.com/Kikisito/NFCNotes/releases</gold>"));
+                    console.sendMessage(mm.deserialize("<yellow>A new version of NFCNotes is available.</yellow>"));
+                    console.sendMessage(mm.deserialize("<yellow>Version installed: <gold>" + this.getDescription().getVersion() + "</gold>. Latest version: <gold>" + version + "</gold></yellow>"));
+                    console.sendMessage(mm.deserialize("<yellow>Download it from</yellow> <gold>https://github.com/Kikisito/NFCNotes/releases</gold>"));
                 }
             });
         }
 
         if(!isEconomy()){
-            this.getServer().getConsoleSender().sendMessage("<red>-------------------------------------------------------------</red>");
-            this.getServer().getConsoleSender().sendMessage("<red>NFCNotes couldn't detect any economy plugin in your server.</red>");
-            this.getServer().getConsoleSender().sendMessage("<red>If you are using Vault, check that you have installed an economy plugin</red>");
-            this.getServer().getConsoleSender().sendMessage("<red>-------------------------------------------------------------</red>");
+            console.sendMessage(mm.deserialize("<red>-------------------------------------------------------------</red>"));
+            console.sendMessage(mm.deserialize("<red>NFCNotes couldn't detect any economy plugin in your server.</red>"));
+            console.sendMessage(mm.deserialize("<red>If you are using Vault, check that you have installed an economy plugin</red>"));
+            console.sendMessage(mm.deserialize("<red>-------------------------------------------------------------</red>"));
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         if(NFCConfig.VERSION.getInt() < 13) {
             String outdatedconfig = "<red>Your NFCNotes configuration is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
-            this.getServer().getConsoleSender().sendMessage(outdatedconfig);
+            console.sendMessage(mm.deserialize(outdatedconfig));
             // In case of this plugin being reloaded using Plugman or ServerUtils.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
         if(NFCMessages.VERSION.getInt() < 10) {
             String outdatedmsgs = "<red>Your NFCNotes messages file is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
-            this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
+            console.sendMessage(mm.deserialize(outdatedmsgs));
             // In case of this plugin being reloaded using Plugman or ServerUtils.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsgs);
         }
@@ -139,7 +144,7 @@ public class Main extends JavaPlugin implements Listener {
                     return true;
                 }
             } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
-                this.getServer().getConsoleSender().sendMessage("<gold>Essentials Economy won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.</gold>");
+                adventure.console().sendMessage(mm.deserialize("<gold>Essentials Economy won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.</gold>"));
                 economyPlugin = "Essentials";
                 return true;
             }
