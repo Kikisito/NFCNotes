@@ -40,7 +40,7 @@ public class JoinListener implements Listener {
             new UpdateChecker(plugin).getVersion((version) -> {
                 if (!plugin.getDescription().getVersion().equals(version)) {
                     TextComponent msg = new TextComponent(Utils.parseMessage(NFCMessages.UPDATES_UPDATE_AVAILABLE.getString().replace("{version}", version)));
-                    msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/"));
+                    msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Kikisito/NFCNotes/releases"));
                     e.getPlayer().spigot().sendMessage(msg);
                 }
             });

@@ -17,13 +17,16 @@
 
 package es.kikisito.nfcnotes;
 
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Consumer;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class UpdateChecker {
     private final Main plugin;
@@ -33,15 +36,42 @@ public class UpdateChecker {
     }
 
     public void getVersion(final Consumer<String> consumer) {
-        try (
-                InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=80976").openStream();
-                Scanner scanner = new Scanner(inputStream)
-        ) {
-            if (scanner.hasNext()) {
-                consumer.accept(scanner.next());
+        String api = "https://api.github.com/repos/Kikisito/NFCNotes/releases";
+
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api))
+                .header("Accept", "application/json")
+                .build();
+
+        httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenAccept(body -> {
+                    try {
+                        String latestVersion = parseLatestVersion(body);
+                        consumer.accept(latestVersion);
+                    } catch(Exception e) {
+                        plugin.getLogger().warning("Failed to check for updates: " + e.getMessage());
+                    }
+                }).exceptionally(e -> {
+                    plugin.getLogger().warning("Failed to check for updates: " + e.getMessage());
+                    return null;
+                });
+    }
+
+    private String parseLatestVersion(String json) {
+        int currentIndex = 0;
+        while ((currentIndex = json.indexOf("\"prerelease\":false", currentIndex)) != -1) {
+            int nameIndex = json.lastIndexOf("\"tag_name\":", currentIndex);
+            if (nameIndex != -1) {
+                int start = json.indexOf('"', nameIndex + 11) + 1;
+                int end = json.indexOf('"', start);
+                if (start != -1 && end != -1) {
+                    return json.substring(start, end);
+                }
             }
-        } catch (IOException exception) {
-            plugin.getLogger().info("Cannot look for updates: " + exception.getMessage());
+            currentIndex += 20; // Advance index to avoid infinite loops
         }
+        return null;
     }
 }

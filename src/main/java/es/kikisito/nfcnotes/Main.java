@@ -65,7 +65,7 @@ public class Main extends JavaPlugin implements Listener {
                 if (!getDescription().getVersion().equals(version)) {
                     this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "A new version of NFCNotes is available.");
                     this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Version installed: " + this.getDescription().getVersion() + ". Latest version: " + version);
-                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Download it from " + ChatColor.GOLD + "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/");
+                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Download it from " + ChatColor.GOLD + "https://github.com/Kikisito/NFCNotes/releases");
                 }
             });
         }
@@ -73,7 +73,7 @@ public class Main extends JavaPlugin implements Listener {
         if(!isEconomy()){
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect any economy plugin in your server.");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "If you are using Vault, check that you have installed an economy plugin from" + ChatColor.GOLD + "https://www.spigotmc.org/resources/categories/economy.23/");
+            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "If you are using Vault, check that you have installed an economy plugin");
             this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
