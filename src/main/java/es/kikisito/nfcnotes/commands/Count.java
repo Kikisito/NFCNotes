@@ -45,7 +45,7 @@ public class Count implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {                List<ItemStack> notes = new ArrayList<>();
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
         if(args.length == 0 && !(sender instanceof Player)){
             // Only players are allowed to use /count
             sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
@@ -58,7 +58,7 @@ public class Count implements CommandExecutor, TabExecutor {
                 if(player.hasPermission("nfcnotes.count.self")){
                     double value = this.checkNotes(Objects.requireNonNull(player, "Player must not be null"));
                     // Send value to sender
-                    player.sendMessage(NFCMessages.COUNT_SELF.getString().replace("{money}", this.getFormattedValue(value)));
+                    player.sendMessage(NFCMessages.COUNT_SELF.getString("{money}", this.getFormattedValue(value)));
                 } else {
                     player.sendMessage(NFCMessages.NO_PERMISSION.getString());
                 }
@@ -76,10 +76,10 @@ public class Count implements CommandExecutor, TabExecutor {
                         Player player = plugin.getServer().getPlayer(args[0]);
                         double value = this.checkNotes(Objects.requireNonNull(player, "Player must not be null"));
                         // Send value to sender
-                        sender.sendMessage(NFCMessages.COUNT_OTHER.getString().replace("{money}", this.getFormattedValue(value)).replace("{player}", player.getName()));
+                        sender.sendMessage(NFCMessages.COUNT_OTHER.getString("{money}", this.getFormattedValue(value), "{player}", player.getName()));
                     } else {
                         // No online player could be found
-                        sender.sendMessage(NFCMessages.PLAYER_NOT_FOUND.getString().replace("{player}", args[0]));
+                        sender.sendMessage(NFCMessages.PLAYER_NOT_FOUND.getString("{player}", args[0]));
                     }
                 } else {
                     sender.sendMessage(NFCMessages.NO_PERMISSION.getString());

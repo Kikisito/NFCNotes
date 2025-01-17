@@ -18,8 +18,6 @@
 package es.kikisito.nfcnotes.commands;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
@@ -54,7 +52,7 @@ public class Withdraw implements CommandExecutor {
         if (p.getInventory().firstEmpty() == -1) {
             p.sendMessage(NFCMessages.FULL_INVENTORY.getString());
             return false;
-        } else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.withdraw.bypass.disabled-world")){
+        } else if(NFCConfig.DISABLED_WORLDS.getStrings().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.withdraw.bypass.disabled-world")){
             p.sendMessage(NFCMessages.DISABLED_WORLD.getString());
             return false;
         }
@@ -166,14 +164,7 @@ public class Withdraw implements CommandExecutor {
             Double money = withdrawEvent.getMoney();
             Integer amount = withdrawEvent.getAmount();
             // Make the amount readable
-            DecimalFormat decimalFormat;
-            if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
-                DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
-                decimalFormatSymbols.setDecimalSeparator(',');
-                decimalFormatSymbols.setGroupingSeparator('.');
-                decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
-            } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
-            decimalFormat.setMaximumFractionDigits(2);
+            DecimalFormat decimalFormat = Utils.getDecimalFormat();
             String formattedMoney = decimalFormat.format(money * amount);
             // Execute if the event wasn't cancelled
             // Execute withdraw and get Vault's response
@@ -181,15 +172,15 @@ public class Withdraw implements CommandExecutor {
             if (Utils.getPlayerBalance(plugin, player) >= money * amount) {
                 if(Utils.withdrawSuccessful(plugin, player, money * amount)) {
                     // Create the note and give it to the player
-                    ItemStack paper = NFCNote.createNFCNoteItem(this.plugin, NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
+                    ItemStack paper = NFCNote.createNFCNoteItem(this.plugin, NFCConfig.NOTE_NAME.getMessage(), NFCConfig.NOTE_LORE.getMessages(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, money, amount);
                     player.getInventory().addItem(paper);
-                    player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                    player.sendMessage(NFCMessages.WITHDRAW_SUCCESSFUL.getString("{money}", formattedMoney));
                     // Warn staff if the note's value is higher than the specified in the configuration file
                     if (money * amount >= NFCConfig.WARN_VALUE_LIMIT.getInt() && NFCConfig.MODULES_WARN_STAFF.getBoolean()) {
                         for (Player pl : plugin.getServer().getOnlinePlayers()) {
                             if (pl.hasPermission("nfcnotes.staff.warn") && player != pl) {
-                                pl.sendMessage(NFCMessages.STAFF_WARN_WITHDRAW.getString().replace("{player}", player.getName()).replace("{money}", formattedMoney));
-                                plugin.getLogger().info(NFCMessages.STAFF_WARN_WITHDRAW.getString().replace("{player}", player.getName()).replace("{money}", formattedMoney));
+                                pl.sendMessage(NFCMessages.STAFF_WARN_WITHDRAW.getString("{player}", player.getName(), "{money}", formattedMoney));
+                                plugin.getLogger().info(NFCMessages.STAFF_WARN_WITHDRAW.getLegacyString("{player}", player.getName(), "{money}", formattedMoney));
                             }
                         }
                     }

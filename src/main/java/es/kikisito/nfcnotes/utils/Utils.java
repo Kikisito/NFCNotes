@@ -18,15 +18,15 @@
 package es.kikisito.nfcnotes.utils;
 
 import es.kikisito.nfcnotes.Main;
-import net.md_5.bungee.api.ChatColor;
+import es.kikisito.nfcnotes.enums.NFCConfig;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class Utils {
 
@@ -83,32 +83,6 @@ public class Utils {
         return 0.0;
     }
 
-    public static String parseMessage(String string){
-        String finalmessage;
-        int version = 0;
-        // Check version
-        Pattern n = Pattern.compile("^(\\d)\\.(\\d+)");
-        Matcher nm = n.matcher(Bukkit.getServer().getBukkitVersion());
-        while(nm.find()){
-            version = Integer.parseInt(nm.group(2));
-        }
-        // Minimum version: 1.16
-        if(version >= 16){
-            Pattern pattern = Pattern.compile("&#([0-9a-fA-F]){6}");
-            Matcher matcher = pattern.matcher(string);
-            StringBuffer sb = new StringBuffer();
-            while(matcher.find()){
-                String hex = matcher.group();
-                matcher.appendReplacement(sb, ChatColor.of(hex.substring(1)).toString());
-            }
-            matcher.appendTail(sb);
-            finalmessage = ChatColor.translateAlternateColorCodes('&', sb.toString());
-        } else {
-            finalmessage = org.bukkit.ChatColor.translateAlternateColorCodes('&', string);
-        }
-        return finalmessage;
-    }
-
     public static boolean isInteger(Object o){
         boolean isInteger = false;
         try {
@@ -116,5 +90,17 @@ public class Utils {
             isInteger = true;
         } catch (NumberFormatException ignored) {}
         return isInteger;
+    }
+
+    public static DecimalFormat getDecimalFormat(){
+        DecimalFormat decimalFormat;
+        if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
+            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
+            decimalFormatSymbols.setDecimalSeparator(',');
+            decimalFormatSymbols.setGroupingSeparator('.');
+            decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
+        } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
+        decimalFormat.setMaximumFractionDigits(2);
+        return decimalFormat;
     }
 }

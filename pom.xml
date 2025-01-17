@@ -37,13 +37,7 @@
                     </relocations>
                     <filters>
                         <filter>
-                            <artifact>org.json:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.MF</exclude>
-                            </excludes>
-                        </filter>
-                        <filter>
-                            <artifact>org.bstats:*</artifact>
+                            <artifact>*:*</artifact>
                             <excludes>
                                 <exclude>META-INF/*.MF</exclude>
                             </excludes>
@@ -115,6 +109,11 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20250107</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.3.4</version>
         </dependency>
     </dependencies>
 </project>

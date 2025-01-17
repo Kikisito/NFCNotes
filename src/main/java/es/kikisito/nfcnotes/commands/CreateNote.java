@@ -18,16 +18,15 @@
 package es.kikisito.nfcnotes.commands;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.NFCNote;
 import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
+import es.kikisito.nfcnotes.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -113,19 +112,12 @@ public class CreateNote implements CommandExecutor, TabExecutor {
         }
 
         // Make the amount readable
-        DecimalFormat decimalFormat;
-        if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
-            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
-            decimalFormatSymbols.setDecimalSeparator(',');
-            decimalFormatSymbols.setGroupingSeparator('.');
-            decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
-        } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
-        decimalFormat.setMaximumFractionDigits(2);
+        DecimalFormat decimalFormat = Utils.getDecimalFormat();
         String formattedMoney = decimalFormat.format(m);
         // Create the note and give it to the player
-        ItemStack paper = NFCNote.createNFCNoteItem(this.plugin, NFCConfig.NOTE_NAME.getString(), NFCConfig.NOTE_LORE.getList(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, m, a);
+        ItemStack paper = NFCNote.createNFCNoteItem(this.plugin, NFCConfig.NOTE_NAME.getMessage(), NFCConfig.NOTE_LORE.getMessages(), NFCConfig.NOTE_MATERIAL.getString(), p.getName(), decimalFormat, m, a);
         p.getInventory().addItem(paper);
-        sender.sendMessage(NFCMessages.CREATENOTE_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+        sender.sendMessage(NFCMessages.CREATENOTE_SUCCESSFUL.getString("{money}", formattedMoney));
     }
 
     @Override

@@ -39,7 +39,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 public class InteractListener implements Listener {
@@ -64,20 +63,13 @@ public class InteractListener implements Listener {
         if(NFCNote.isNFCNote(this.plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
             // Check if player is allowed to deposit money
             if (!p.hasPermission("nfcnotes.deposit.action.deposit") || !NFCConfig.MODULES_DEPOSIT_ACTION.getBoolean()) return;
-            else if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
+            else if(NFCConfig.DISABLED_WORLDS.getStrings().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
                 p.sendMessage(NFCMessages.DISABLED_WORLD.getString());
                 return;
             }
 
             // Parse note value to a formatted string
-            DecimalFormat decimalFormat;
-            if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
-                DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
-                decimalFormatSymbols.setDecimalSeparator(',');
-                decimalFormatSymbols.setGroupingSeparator('.');
-                decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
-            } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
-            decimalFormat.setMaximumFractionDigits(2);
+            DecimalFormat decimalFormat = Utils.getDecimalFormat();
 
             // Redeem note
             double totalAmount = 0;
@@ -109,7 +101,7 @@ public class InteractListener implements Listener {
                 if (!depositEvent.isCancelled()) {
                     if (Utils.depositSuccessful(plugin, player, money)) {
                         for (ItemStack i : notes) i.setAmount(0);
-                        player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                        player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
 
                         // If enabled, play sound
                         playRedeemSound(player);
@@ -132,7 +124,7 @@ public class InteractListener implements Listener {
                     double money = depositEvent.getMoney();
                     String formattedMoney = decimalFormat.format(money);
                     if (Utils.depositSuccessful(plugin, player, money)) {
-                        player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                        player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
 
                         // If enabled, play sound
                         playRedeemSound(player);
@@ -149,8 +141,8 @@ public class InteractListener implements Listener {
                 String formattedMoney = decimalFormat.format(totalAmount);
                 for (Player pl : plugin.getServer().getOnlinePlayers()) {
                     if (pl.hasPermission("nfcnotes.staff.warn") && e.getPlayer() != pl) {
-                        pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
-                        plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", e.getPlayer().getName()).replace("{money}", formattedMoney));
+                        pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString("{player}", e.getPlayer().getName(), "{money}", formattedMoney));
+                        plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getLegacyString("{player}", e.getPlayer().getName(), "{money}", formattedMoney));
                     }
                 }
             }

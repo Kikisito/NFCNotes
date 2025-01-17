@@ -20,9 +20,6 @@ package es.kikisito.nfcnotes.listeners;
 import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
 import es.kikisito.nfcnotes.enums.NFCMessages;
-import es.kikisito.nfcnotes.utils.Utils;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -39,9 +36,7 @@ public class JoinListener implements Listener {
         if (e.getPlayer().hasPermission("nfcnotes.staff.check-updates")) {
             new UpdateChecker(plugin).getVersion((version) -> {
                 if (!plugin.getDescription().getVersion().equals(version)) {
-                    TextComponent msg = new TextComponent(Utils.parseMessage(NFCMessages.UPDATES_UPDATE_AVAILABLE.getString().replace("{version}", version)));
-                    msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Kikisito/NFCNotes/releases"));
-                    e.getPlayer().spigot().sendMessage(msg);
+                    e.getPlayer().sendMessage(NFCMessages.getClickableComponent("open_url", "https://github.com/Kikisito/NFCNotes/releases/", NFCMessages.UPDATES_UPDATE_AVAILABLE.getString("{version}", version)));
                 }
             });
         }

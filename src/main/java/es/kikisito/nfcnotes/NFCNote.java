@@ -18,7 +18,7 @@
 package es.kikisito.nfcnotes;
 
 import es.kikisito.nfcnotes.enums.NFCConfig;
-import es.kikisito.nfcnotes.utils.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -32,17 +32,18 @@ import org.bukkit.persistence.PersistentDataType;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class NFCNote {
     private final ItemStack itemStack;
-    private final String name;
-    private final List<String> lore;
+    private final Component name;
+    private final List<Component> lore;
     private final Double value;
 
     public NFCNote(Main plugin, ItemStack itemStack){
         this.itemStack = itemStack;
-        this.name = itemStack.getItemMeta().getDisplayName();
-        this.lore = itemStack.getItemMeta().getLore();
+        this.name = itemStack.getItemMeta().displayName();
+        this.lore = itemStack.getItemMeta().lore();
 
         NamespacedKey noteValue = new NamespacedKey(plugin, "noteValue");
         this.value = itemStack.getItemMeta().getPersistentDataContainer().get(noteValue, PersistentDataType.DOUBLE);
@@ -50,13 +51,13 @@ public class NFCNote {
 
     public ItemStack getItemStack(){ return this.itemStack; }
 
-    public String getDisplayName(){ return this.name; }
+    public Component getDisplayName(){ return this.name; }
 
-    public List<String> getLore(){ return this.lore; }
+    public List<Component> getLore(){ return this.lore; }
 
     public Double getValue(){ return this.value; }
 
-    public static ItemStack createNFCNoteItem(Main plugin, String name, List<String> lore, String material, String playername, DecimalFormat decimalFormat, Double money, Integer amount){
+    public static ItemStack createNFCNoteItem(Main plugin, Component name, List<Component> lore, String material, String playername, DecimalFormat decimalFormat, Double money, Integer amount) {
         // Note value as string
         String formattedMoney = decimalFormat.format(money);
 
@@ -65,12 +66,21 @@ public class NFCNote {
         ItemMeta im = is.getItemMeta();
 
         // Note display name
-        im.setDisplayName(Utils.parseMessage(name).replace("{money}", formattedMoney).replace("{issuer}", playername));
+        Component displayName = name.replaceText(configurer -> {
+            configurer.match("{player}").replacement(playername);
+            configurer.match("{money}").replacement(formattedMoney);
+        });
+        im.displayName(displayName);
 
         // Parse lore
-        List<String> loreList = new ArrayList<>();
-        for(String s : lore) loreList.add(Utils.parseMessage(s).replace("{money}", formattedMoney).replace("{issuer}", playername));
-        im.setLore(loreList);
+        List<Component> loreList = new ArrayList<>();
+        for(Component line : lore){
+            loreList.add(line.replaceText(configurer -> {
+                configurer.match("{player}").replacement(playername);
+                configurer.match("{money}").replacement(formattedMoney);
+            }));
+        }
+        im.lore(loreList);
 
         // Note value is stored using the item's persistent data container, so its internal data its hidden and all note's public values can be modified
         NamespacedKey noteIdentifier = new NamespacedKey(plugin, "noteIdentifier");
@@ -118,7 +128,10 @@ public class NFCNote {
         }
 
         // It's a note, but it's an updated note? (User may have changed notes uuid)
-        return pdc.get(noteIdentifier, PersistentDataType.STRING).equals(NFCConfig.NOTE_UUID.getString());
+        String noteUuidString = pdc.get(noteIdentifier, PersistentDataType.STRING);
+
+        if(noteUuidString == null) return false;
+        return noteUuidString.equals(NFCConfig.NOTE_UUID.getString());
     }
 
     public static boolean isLegacyNFCNote(ItemStack itemStack){
@@ -126,10 +139,10 @@ public class NFCNote {
         if(itemStack == null || !itemStack.hasItemMeta()) return false;
 
         ItemMeta im = itemStack.getItemMeta();
-        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.LUCK) == null || im.getAttributeModifiers(Attribute.LUCK).iterator().next() == null) {
+        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.LUCK) == null || Objects.requireNonNull(im.getAttributeModifiers(Attribute.LUCK)).iterator().next() == null) {
             return false;
         }
 
-        return im.getAttributeModifiers(Attribute.LUCK).iterator().next().getName().equalsIgnoreCase(NFCConfig.NOTE_UUID.getString());
+        return Objects.requireNonNull(im.getAttributeModifiers(Attribute.LUCK)).iterator().next().getName().equalsIgnoreCase(NFCConfig.NOTE_UUID.getString());
     }
 }

@@ -18,7 +18,14 @@
 package es.kikisito.nfcnotes.enums;
 
 import es.kikisito.nfcnotes.utils.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum NFCMessages {
     ONLY_PLAYERS("only-players", "&8[&6NFCNotes&8] &7Only players can execute this command."),
@@ -55,10 +62,11 @@ public enum NFCMessages {
 
     VERSION("messages-version", 0);
 
-
     private static FileConfiguration messages;
     private final Object message;
     private final Object def;
+
+    private final MiniMessage mm = MiniMessage.miniMessage();
 
     NFCMessages(String message, String def) {
         this.message = message;
@@ -70,8 +78,56 @@ public enum NFCMessages {
         this.def = def;
     }
 
-    public String getString(){
-        return Utils.parseMessage(messages.getString((String) this.message, (String) this.def));
+    // No placeholders
+    public Component getString(){
+        return mm.deserialize(messages.getString((String) this.message, (String) this.def));
+    }
+
+    // With placeholders
+    public Component getString(Map<String, String> placeholders) {
+        String text = messages.getString((String) this.message, (String) this.def);
+
+        // Replace placeholders
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            text = text.replace("{" + entry.getKey() + "}", entry.getValue());
+        }
+
+        return mm.deserialize(text);
+    }
+
+    public Component getString(String... keyValuePairs){
+        if (keyValuePairs.length % 2 != 0) {
+            throw new IllegalArgumentException("Must provide pairs of placeholder keys and values");
+        }
+
+        Map<String, String> placeholders = new HashMap<>();
+        for (int i = 0; i < keyValuePairs.length; i += 2) {
+            placeholders.put(keyValuePairs[i], keyValuePairs[i + 1]);
+        }
+
+        return getString(placeholders);
+    }
+
+    public String getLegacyString(){
+        return LegacyComponentSerializer.legacySection().serialize(getString());
+    }
+
+    public String getLegacyString(Map<String, String> placeholders){
+        return LegacyComponentSerializer.legacySection().serialize(getString(placeholders));
+    }
+
+    public String getLegacyString(String... keyValuePairs) {
+        return LegacyComponentSerializer.legacySection().serialize(getString(keyValuePairs));
+    }
+
+    public static Component getClickableComponent(String action, String url, Component component) {
+        return switch (action) {
+            case "open_url" -> component.clickEvent(ClickEvent.openUrl(url));
+            case "run_command" -> component.clickEvent(ClickEvent.runCommand(url));
+            case "suggest_command" -> component.clickEvent(ClickEvent.suggestCommand(url));
+            case "copy_to_clipboard" -> component.clickEvent(ClickEvent.copyToClipboard(url));
+            default -> component;
+        };
     }
 
     public int getInt(){ return messages.getInt((String) this.message, (int) this.def);}

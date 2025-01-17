@@ -17,16 +17,18 @@
 
 package es.kikisito.nfcnotes.enums;
 
-import es.kikisito.nfcnotes.utils.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.Configuration;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public enum NFCConfig {
     // Notes
-    NOTE_NAME("notes.name", "&aNFCNote"),
-    NOTE_LORE("notes.lore", Collections.singletonList("&7Value: &e{money}$")),
+    NOTE_NAME("notes.name", "<green>NFCNote</green>"),
+    NOTE_LORE("notes.lore", Collections.singletonList("<gray>Value:</gray> <yellow>{money}$</yellow>")),
     NOTE_MATERIAL("notes.material", "PAPER"),
 
     NOTE_GLINT_ENABLED("notes.glint.enabled", false),
@@ -91,6 +93,7 @@ public enum NFCConfig {
     // Config version
     VERSION("config-version", 0);
 
+    private final MiniMessage mm = MiniMessage.miniMessage();
 
     private static Configuration config;
     private final Object value;
@@ -122,7 +125,11 @@ public enum NFCConfig {
     }
 
     public String getString(){
-        return Utils.parseMessage(config.getString((String) this.value, (String) this.def));
+        return config.getString((String) this.value, (String) this.def);
+    }
+
+    public Component getMessage(){
+        return mm.deserialize(config.getString((String) this.value, (String) this.def));
     }
 
     public int getInt(){ return config.getInt((String) this.value, (int) this.def); }
@@ -131,7 +138,19 @@ public enum NFCConfig {
 
     public boolean getBoolean(){ return config.getBoolean((String) this.value, (boolean) this.def); }
 
-    public List<String> getList(){ return config.getStringList((String) this.value); }
+    public List<String> getStrings() {
+        return config.getStringList((String) this.value);
+    }
+
+    public List<Component> getMessages(){
+        List<Component> components = new ArrayList<>();
+
+        for (String s : config.getStringList((String) this.value)) {
+            components.add(mm.deserialize(s));
+        }
+
+        return components;
+    }
 
     public static void setConfig(Configuration config){
         NFCConfig.config = config;

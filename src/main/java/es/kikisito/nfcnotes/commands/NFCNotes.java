@@ -21,10 +21,7 @@ import es.kikisito.nfcnotes.Main;
 import es.kikisito.nfcnotes.UpdateChecker;
 import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
-import es.kikisito.nfcnotes.utils.Utils;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,6 +35,7 @@ import java.util.List;
 
 public class NFCNotes implements CommandExecutor, TabCompleter {
     private final Main plugin;
+    private final MiniMessage mm = MiniMessage.miniMessage();
 
     public NFCNotes(Main plugin){
         this.plugin = plugin;
@@ -48,13 +46,11 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("nfcnotes.staff.reload")) {
                 plugin.reloadPlugin();
-                sender.sendMessage(Utils.parseMessage(NFCMessages.STAFF_PLUGIN_RELOADED.getString()));
+                sender.sendMessage(NFCMessages.STAFF_PLUGIN_RELOADED.getString());
             } else if ((args[0].equalsIgnoreCase("check") || args[0].equalsIgnoreCase("update")) && sender.hasPermission("nfcnotes.staff.check-updates")) {
                 new UpdateChecker(plugin).getVersion((version) -> {
                     if (!plugin.getDescription().getVersion().equals(version)) {
-                        TextComponent msg = new TextComponent(Utils.parseMessage(NFCMessages.UPDATES_UPDATE_AVAILABLE.getString().replace("{version}", version)));
-                        msg.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/1-13-1-16-nfcnotes.80976/"));
-                        sender.spigot().sendMessage(msg);
+                        sender.sendMessage(NFCMessages.getClickableComponent("open_url", "https://github.com/Kikisito/NFCNotes/releases/", NFCMessages.UPDATES_UPDATE_AVAILABLE.getString("{version}", version)));
                     } else {
                         sender.sendMessage(NFCMessages.UPDATES_NO_UPDATES.getString());
                     }
@@ -64,10 +60,10 @@ public class NFCNotes implements CommandExecutor, TabCompleter {
                 sender.sendMessage(NFCMessages.NO_PERMISSION.getString());
             }
         } else if (NFCConfig.SHOW_PLUGIN_INFO.getBoolean()) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Developed by &6Kikisito"));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Version &6" + plugin.getDescription().getVersion()));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &7Get more information at"));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6NFCNotes&8] &6https://github.com/Kikisito/NFCNotes"));
+            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Developed by</gray> <gold>Kikisito</gold>"));
+            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Version</gray> <gold>" + plugin.getDescription().getVersion() + "</gold>"));
+            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gray>Get more information at</gray>"));
+            sender.sendMessage(mm.deserialize("<dark_gray>[</dark_gray><gold>NFCNotes</gold><dark_gray>]</dark_gray> <gold>https://github.com/Kikisito/NFCNotes</gold>"));
         }
         return false;
     }

@@ -35,12 +35,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 public class Deposit implements CommandExecutor, TabCompleter {
     private final Main plugin;
-    private DecimalFormat decimalFormat;
+    private final DecimalFormat decimalFormat = Utils.getDecimalFormat();
 
     public Deposit(Main plugin){
         this.plugin = plugin;
@@ -54,17 +53,10 @@ public class Deposit implements CommandExecutor, TabCompleter {
             sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
             return false;
         }
-        if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
+        if(NFCConfig.DISABLED_WORLDS.getStrings().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
             sender.sendMessage(NFCMessages.DISABLED_WORLD.getString());
             return false;
         }
-        if(NFCConfig.USE_EUROPEAN_FORMAT.getBoolean()) {
-            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMANY);
-            decimalFormatSymbols.setDecimalSeparator(',');
-            decimalFormatSymbols.setGroupingSeparator('.');
-            decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString(), decimalFormatSymbols);
-        } else decimalFormat = new DecimalFormat(NFCConfig.NOTE_DECIMAL_FORMAT.getString());
-        decimalFormat.setMaximumFractionDigits(2);
         switch(args.length){
             case 0:
                 if(p.hasPermission("nfcnotes.deposit.command.one")) {
@@ -111,7 +103,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
                                 String formattedMoney = decimalFormat.format(money);
                                 if (Utils.depositSuccessful(plugin, player, money)) {
                                     for (ItemStack i : notes) i.setAmount(0);
-                                    player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                                    player.sendMessage(NFCMessages.MASSDEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
                                     Deposit.playRedeemSound(player);
                                 } else {
                                     player.sendMessage(NFCMessages.UNEXPECTED_ERROR.getString());
@@ -173,8 +165,8 @@ public class Deposit implements CommandExecutor, TabCompleter {
             String formattedMoney = decimalFormat.format(value);
             for (Player pl : plugin.getServer().getOnlinePlayers()) {
                 if (pl.hasPermission("nfcnotes.staff.warn") && p != pl) {
-                    pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", p.getName()).replace("{money}", formattedMoney));
-                    plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getString().replace("{player}", p.getName()).replace("{money}", formattedMoney));
+                    pl.sendMessage(NFCMessages.STAFF_WARN_DEPOSIT.getString("{player}", p.getName(), "{money}", formattedMoney));
+                    plugin.getLogger().info(NFCMessages.STAFF_WARN_DEPOSIT.getLegacyString("{player}", p.getName(), "{money}", formattedMoney));
                 }
             }
         }
@@ -189,7 +181,7 @@ public class Deposit implements CommandExecutor, TabCompleter {
             value = depositEvent.getMoney();
             String formattedMoney = decimalFormat.format(value);
             if (Utils.depositSuccessful(plugin, player, value)) {
-                player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString().replace("{money}", formattedMoney));
+                player.sendMessage(NFCMessages.DEPOSIT_SUCCESSFUL.getString("{money}", formattedMoney));
                 Deposit.playRedeemSound(player);
                 nfcNote.getItemStack().setAmount(nfcNote.getItemStack().getAmount() - amount);
             } else {

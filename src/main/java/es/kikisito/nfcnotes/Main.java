@@ -24,7 +24,8 @@ import es.kikisito.nfcnotes.listeners.CraftListener;
 import es.kikisito.nfcnotes.listeners.InteractListener;
 import es.kikisito.nfcnotes.listeners.JoinListener;
 import es.kikisito.nfcnotes.enums.NFCMessages;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.Configuration;
@@ -50,6 +51,9 @@ public class Main extends JavaPlugin implements Listener {
     // Vault eco API
     private Economy eco;
 
+    private BukkitAudiences adventure;
+    private MiniMessage mm;
+
     public List<Object> forbiddeninventories = new ArrayList<>();
 
     @Override
@@ -60,34 +64,37 @@ public class Main extends JavaPlugin implements Listener {
         NFCConfig.setConfig(config);
         NFCMessages.setMessagesFile(messages);
 
+        // Adventure Chat API
+        this.adventure = BukkitAudiences.create(this);
+        mm = MiniMessage.miniMessage();
         if(NFCConfig.UPDATE_CHECKER_IS_ENABLED.getBoolean()) {
             new UpdateChecker(this).getVersion((version) -> {
                 if (!getDescription().getVersion().equals(version)) {
-                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "A new version of NFCNotes is available.");
-                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Version installed: " + this.getDescription().getVersion() + ". Latest version: " + version);
-                    this.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Download it from " + ChatColor.GOLD + "https://github.com/Kikisito/NFCNotes/releases");
+                    this.getServer().getConsoleSender().sendMessage(mm.deserialize("<yellow>A new version of NFCNotes is available.</yellow>"));
+                    this.getServer().getConsoleSender().sendMessage(mm.deserialize("<yellow>Version installed: <gold>" + this.getDescription().getVersion() + "</gold>. Latest version: <gold>" + version + "</gold></yellow>"));
+                    this.getServer().getConsoleSender().sendMessage(mm.deserialize("<yellow>Download it from</yellow> <gold>https://github.com/Kikisito/NFCNotes/releases</gold>"));
                 }
             });
         }
 
         if(!isEconomy()){
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "NFCNotes couldn't detect any economy plugin in your server.");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "If you are using Vault, check that you have installed an economy plugin");
-            this.getServer().getConsoleSender().sendMessage(ChatColor.RED + "-------------------------------------------------------------");
+            this.getServer().getConsoleSender().sendMessage("<red>-------------------------------------------------------------</red>");
+            this.getServer().getConsoleSender().sendMessage("<red>NFCNotes couldn't detect any economy plugin in your server.</red>");
+            this.getServer().getConsoleSender().sendMessage("<red>If you are using Vault, check that you have installed an economy plugin</red>");
+            this.getServer().getConsoleSender().sendMessage("<red>-------------------------------------------------------------</red>");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         if(NFCConfig.VERSION.getInt() < 12) {
-            String outdatedconfig = ChatColor.RED + "Your NFCNotes configuration is outdated. Please, update it or some features will be missed and support won't be provided.";
+            String outdatedconfig = "<red>Your NFCNotes configuration is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
             this.getServer().getConsoleSender().sendMessage(outdatedconfig);
             // In case of this plugin being reloaded using Plugman or ServerUtils.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
         }
 
         if(NFCMessages.VERSION.getInt() < 7) {
-            String outdatedmsgs = ChatColor.RED + "Your NFCNotes messages file is outdated. Please, update it or some features will be missed and support won't be provided.";
+            String outdatedmsgs = "<red>Your NFCNotes messages file is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
             this.getServer().getConsoleSender().sendMessage(outdatedmsgs);
             // In case of this plugin being reloaded using Plugman or ServerUtils.
             for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsgs);
@@ -107,8 +114,16 @@ public class Main extends JavaPlugin implements Listener {
         new CustomMetrics(this, metrics);
 
         // Set forbidden inventories
-        for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+        for(String invtype : NFCConfig.DISABLED_TABLES.getStrings()){
             this.forbiddeninventories.add(InventoryType.valueOf(invtype));
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        if(this.adventure != null) {
+            this.adventure.close();
+            this.adventure = null;
         }
     }
 
@@ -124,7 +139,7 @@ public class Main extends JavaPlugin implements Listener {
                     return true;
                 }
             } else if (NFCConfig.ECONOMY_PLUGIN.getString().equalsIgnoreCase("Essentials")) {
-                this.getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "Essentials Economy won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.");
+                this.getServer().getConsoleSender().sendMessage("<gold>Essentials Economy won't be supported anymore soon in the future. Please, switch to a Vault compatible economy plugin as soon as possible.</gold>");
                 economyPlugin = "Essentials";
                 return true;
             }
@@ -168,11 +183,15 @@ public class Main extends JavaPlugin implements Listener {
 
             // Reset forbidden inventories
             this.forbiddeninventories = new ArrayList<>();
-            for(String invtype : NFCConfig.DISABLED_TABLES.getList()){
+            for(String invtype : NFCConfig.DISABLED_TABLES.getStrings()){
                 this.forbiddeninventories.add(InventoryType.valueOf(invtype));
             }
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
+
+    public BukkitAudiences getAdventure() { return this.adventure; }
+
+    public MiniMessage getMiniMessage() { return this.mm; }
 }
