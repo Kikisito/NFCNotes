@@ -61,7 +61,7 @@ public class UpdateChecker {
             if (nameIndex != -1) {
                 int start = json.indexOf('"', nameIndex + 11) + 1;
                 int end = json.indexOf('"', start);
-                if (start != -1 && end != -1) {
+                if (end != -1) {
                     return json.substring(start, end);
                 }
             }

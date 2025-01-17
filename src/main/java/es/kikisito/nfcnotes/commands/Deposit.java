@@ -50,11 +50,10 @@ public class Deposit implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         double value = 0;
         // Only players can execute this command.
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player p)) {
             sender.sendMessage(NFCMessages.ONLY_PLAYERS.getString());
             return false;
         }
-        Player p = (Player) sender;
         if(NFCConfig.DISABLED_WORLDS.getList().contains(p.getWorld().getName()) && !p.hasPermission("nfcnotes.staff.deposit.bypass.disabled-world")){
             sender.sendMessage(NFCMessages.DISABLED_WORLD.getString());
             return false;
