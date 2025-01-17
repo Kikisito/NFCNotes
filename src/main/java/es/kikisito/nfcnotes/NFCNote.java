@@ -91,7 +91,9 @@ public class NFCNote {
         }
 
         // Max stack size
-        im.setMaxStackSize(NFCConfig.NOTE_MAX_STACK_SIZE.getInt());
+        // If the max stack size is 64, the component is not set for compatibility with older notes
+        int maxStackSize = NFCConfig.NOTE_MAX_STACK_SIZE.getInt();
+        if(maxStackSize != 64) im.setMaxStackSize(maxStackSize);
 
         // Custom Model Data for texture packs
         im.setCustomModelData(NFCConfig.NOTE_CUSTOM_MODEL_DATA_INTEGER.getInt());
