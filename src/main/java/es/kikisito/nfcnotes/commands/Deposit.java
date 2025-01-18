@@ -23,8 +23,11 @@ import es.kikisito.nfcnotes.enums.NFCConfig;
 import es.kikisito.nfcnotes.enums.NFCMessages;
 import es.kikisito.nfcnotes.enums.ActionMethod;
 import es.kikisito.nfcnotes.events.DepositEvent;
+import es.kikisito.nfcnotes.enums.SoundConversor;
 import es.kikisito.nfcnotes.utils.Utils;
 import net.kyori.adventure.audience.Audience;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.Command;
@@ -200,7 +203,19 @@ public class Deposit implements CommandExecutor, TabCompleter {
 
     public static void playRedeemSound(Player player) {
         if(NFCConfig.REDEEM_SOUND_ENABLED.getBoolean()){
-            Sound sound = Sound.valueOf(NFCConfig.REDEEM_SOUND.getString());
+            String soundRaw = NFCConfig.REDEEM_SOUND.getString();
+
+            NamespacedKey soundKey;
+            // Backwards compatibility start
+            int configVersion = NFCConfig.VERSION.getInt();
+            if(configVersion < 13) {
+                soundKey = NamespacedKey.minecraft(SoundConversor.valueOf(soundRaw).getKey());
+            } else {
+                soundKey = NamespacedKey.minecraft(soundRaw);
+            }
+            // Backwards compatibility end
+
+            Sound sound = Registry.SOUNDS.get(soundKey);
             SoundCategory soundCategory = SoundCategory.valueOf(NFCConfig.REDEEM_SOUND_CATEGORY.getString());
             float volume = NFCConfig.REDEEM_SOUND_VOLUME.getDouble().floatValue();
             float pitch = NFCConfig.REDEEM_SOUND_PITCH.getDouble().floatValue();
