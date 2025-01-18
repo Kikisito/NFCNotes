@@ -79,7 +79,11 @@ public enum NFCMessages {
 
     // No placeholders
     public Component getString(){
-        return mm.deserialize(messages.getString((String) this.message, (String) this.def));
+        int version = NFCConfig.VERSION.getInt();
+
+        // Messages files from version 10 use components. Below that, they use legacy strings. COMPATIBILITY MODE, this will be removed.
+        if(version < 10) return LegacyComponentSerializer.legacyAmpersand().deserialize(messages.getString((String) this.message, (String) this.def));
+        else return mm.deserialize(messages.getString((String) this.message, (String) this.def));
     }
 
     // With placeholders
@@ -91,7 +95,9 @@ public enum NFCMessages {
             text = text.replace(entry.getKey(), entry.getValue());
         }
 
-        return mm.deserialize(text);
+        // Messages files from version 10 use components. Below that, they use legacy strings. COMPATIBILITY MODE, this will be removed.
+        if(NFCConfig.VERSION.getInt() < 10) return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
+        else return mm.deserialize(text);
     }
 
     public Component getString(String... keyValuePairs){

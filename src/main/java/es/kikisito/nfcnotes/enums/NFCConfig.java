@@ -19,6 +19,7 @@ package es.kikisito.nfcnotes.enums;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.Configuration;
 
 import java.util.ArrayList;
@@ -129,7 +130,9 @@ public enum NFCConfig {
     }
 
     public Component getMessage(){
-        return mm.deserialize(config.getString((String) this.value, (String) this.def));
+        // Messages files from version 13 use components. Below that, they use legacy strings. COMPATIBILITY MODE, this will be removed.
+        if(NFCConfig.VERSION.getInt() < 13) return LegacyComponentSerializer.legacyAmpersand().deserialize(config.getString((String) this.value, (String) this.def));
+        else return mm.deserialize(config.getString((String) this.value, (String) this.def));
     }
 
     public int getInt(){ return config.getInt((String) this.value, (int) this.def); }
@@ -146,7 +149,9 @@ public enum NFCConfig {
         List<Component> components = new ArrayList<>();
 
         for (String s : config.getStringList((String) this.value)) {
-            components.add(mm.deserialize(s));
+            // Messages files from version 13 use components. Below that, they use legacy strings. COMPATIBILITY MODE, this will be removed.
+            if(NFCConfig.VERSION.getInt() < 13) components.add(LegacyComponentSerializer.legacyAmpersand().deserialize(s));
+            else components.add(mm.deserialize(s));
         }
 
         return components;
