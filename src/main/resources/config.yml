@@ -16,10 +16,10 @@
 # If you set a material that does not appear on these lists the plugin may break.
 # --------------------------------------------------------------------------------------------------------- #
 notes:
-  name: "&aNFCNote"
+  name: "<green>NFCNote</green>"
   lore:
-    - "&7Value: &e{money}$"
-    - "&7Issuer: &e{issuer}"
+    - "<gray>Value:</gray> <yellow>{money}$</yellow>"
+    - "<gray>Issuer:</gray> <yellow>{issuer}</yellow>"
   material: PAPER
   max-stack-size: 64
   glint:
