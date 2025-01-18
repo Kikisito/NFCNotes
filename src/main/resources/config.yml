@@ -11,8 +11,9 @@
 # If you use any plugin that requires notes to be identical like Shopkeepers, you can remove the {issuer}
 # placeholder.
 # --------------------------------------------------------------------------------------------------------- #
-# If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
-# For enchantments check https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/enchantments/Enchantment.html
+# If you want to change the material, check https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html
+# For enchantments check https://jd.papermc.io/paper/1.21.4/org/bukkit/enchantments/Enchantment.htmlº
+# Feel free to change the version in the URL to match your server's version.
 # If you set a material that does not appear on these lists the plugin may break.
 # --------------------------------------------------------------------------------------------------------- #
 notes:
@@ -50,11 +51,12 @@ notes:
   custom-model-data-integer: 2440573
 
 # If you want to change the sound or the category, only values from these pages are allowed:
-# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
-# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/SoundCategory.html
+# https://minecraft.wiki/w/Sounds.json#Sound_events (Column Sound Event, in Java Edition values)
+# https://jd.papermc.io/paper/1.21.4/org/bukkit/SoundCategory.html
+# Feel free to change the version in the URL to match your server's version.
 redeem-sound:
   enabled: false
-  sound: BLOCK_CHAIN_BREAK
+  sound: block.chain.break
   sound-category: AMBIENT
   # The maximum value for volume is 1. Higher values will be equivalent to 1.
   volume: 1
@@ -112,7 +114,8 @@ disabled-worlds:
 
 # Notes will be prevented from being modified or used as ingredient in these tables.
 # If you want to modify this list, keep in mind that NFCNotes only supports names from
-# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html
+# Feel free to change the version in the URL to match your server's version.
 disabled-tables:
   - ANVIL
   - BEACON
