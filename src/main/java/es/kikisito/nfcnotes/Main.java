@@ -95,14 +95,20 @@ public class Main extends JavaPlugin implements Listener {
             String outdatedconfig = "<red>Your NFCNotes configuration is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
             console.sendMessage(mm.deserialize(outdatedconfig));
             // In case of this plugin being reloaded using Plugman or ServerUtils.
-            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedconfig);
+            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) {
+                Audience audience = adventure.player(player);
+                audience.sendMessage(mm.deserialize(outdatedconfig));
+            }
         }
 
         if(NFCMessages.VERSION.getInt() < 10) {
             String outdatedmsgs = "<red>Your NFCNotes messages file is outdated. Please, update it or some features will be missed and support won't be provided.</red>";
             console.sendMessage(mm.deserialize(outdatedmsgs));
             // In case of this plugin being reloaded using Plugman or ServerUtils.
-            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) player.sendMessage(outdatedmsgs);
+            for(Player player : this.getServer().getOnlinePlayers()) if(player.isOp()) {
+                Audience audience = adventure.player(player);
+                audience.sendMessage(mm.deserialize(outdatedmsgs));
+            }
         }
 
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
