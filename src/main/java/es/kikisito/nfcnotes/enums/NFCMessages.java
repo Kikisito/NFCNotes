@@ -79,10 +79,8 @@ public enum NFCMessages {
 
     // No placeholders
     public Component getString(){
-        int version = NFCConfig.VERSION.getInt();
-
         // Messages files from version 10 use components. Below that, they use legacy strings. COMPATIBILITY MODE, this will be removed.
-        if(version < 10) return LegacyComponentSerializer.legacyAmpersand().deserialize(messages.getString((String) this.message, (String) this.def));
+        if(NFCMessages.VERSION.getInt() < 10) return LegacyComponentSerializer.legacyAmpersand().deserialize(messages.getString((String) this.message, (String) this.def));
         else return mm.deserialize(messages.getString((String) this.message, (String) this.def));
     }
 
@@ -96,7 +94,7 @@ public enum NFCMessages {
         }
 
         // Messages files from version 10 use components. Below that, they use legacy strings. COMPATIBILITY MODE, this will be removed.
-        if(NFCConfig.VERSION.getInt() < 10) return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
+        if(NFCMessages.VERSION.getInt() < 10) return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
         else return mm.deserialize(text);
     }
 
