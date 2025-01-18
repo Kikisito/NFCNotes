@@ -44,7 +44,7 @@ public enum NFCMessages {
     UNEXPECTED_ERROR("unexpected-error", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>An unexpected error has occurred. This action has been cancelled.</gray>"),
     DEPOSIT_USAGE("deposit-usage", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>Usage: /deposit [all/stack/amount of notes]</gray>"),
     NO_NOTES_FOUND("no-notes-found", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>No notes have been found in your inventory.</gray>"),
-    NOT_A_NOTE("not-a-note", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>No notes have been found in your inventory.</gray>"),
+    NOT_A_NOTE("not-a-note", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>This item is not a note. You can't redeem it.</gray>"),
     DISABLED_WORLD("disabled-world", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>Notes are disabled in this world.</gray>"),
     STAFF_WARN_WITHDRAW("staff.warn-withdraw", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>{player} has withdrawn <gold>{money}</gold>$.</gray>"),
     STAFF_WARN_DEPOSIT("staff.warn-deposit", "<dark_gray>[<gold>NFCNotes</gold>]</dark_gray> <gray>{player} has redeemed <gold>{money}</gold>$.</gray>"),
@@ -89,7 +89,7 @@ public enum NFCMessages {
 
         // Replace placeholders
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            text = text.replace("\\{" + entry.getKey() + "\\}", entry.getValue());
+            text = text.replace(entry.getKey(), entry.getValue());
         }
 
         return mm.deserialize(text);

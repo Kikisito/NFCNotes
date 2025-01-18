@@ -48,14 +48,14 @@ public class NFCNote {
         ItemMeta meta = itemStack.getItemMeta();
         // Convertir el nombre del item a Component
         this.name = meta.hasDisplayName() ?
-                LegacyComponentSerializer.legacyAmpersand().deserialize(meta.getDisplayName()) :
+                LegacyComponentSerializer.legacySection().deserialize(meta.getDisplayName()) :
                 Component.empty();
 
         // Convertir el lore a Component
         if (meta.hasLore()) {
             List<Component> loreComponents = new ArrayList<>();
             for (String line : meta.getLore()) {
-                loreComponents.add(LegacyComponentSerializer.legacyAmpersand().deserialize(line));
+                loreComponents.add(LegacyComponentSerializer.legacySection().deserialize(line));
             }
             this.lore = loreComponents;
         } else {
@@ -83,22 +83,20 @@ public class NFCNote {
         ItemMeta im = is.getItemMeta();
 
         // Note display name with Adventure API
-        Component displayName = name.replaceText(builder -> {
-            builder.match("\\{issuer\\}").replacement(playername);
-            builder.match("\\{money\\}").replacement(formattedMoney);
-        });
+        Component displayName = name
+                .replaceText(builder -> builder.match("\\{issuer\\}").replacement(playername))
+                .replaceText(builder -> builder.match("\\{money\\}").replacement(formattedMoney));
 
         // Convert Component to legacy string for ItemMeta
-        im.setDisplayName(LegacyComponentSerializer.legacyAmpersand().serialize(displayName));
+        im.setDisplayName(LegacyComponentSerializer.legacySection().serialize(displayName));
 
         // Parse lore with Adventure API
         List<String> legacyLore = new ArrayList<>();
         for (Component line : lore) {
-            Component processedLine = line.replaceText(builder -> {
-                builder.match("\\{issuer\\}").replacement(playername);
-                builder.match("\\{money\\}").replacement(formattedMoney);
-            });
-            legacyLore.add(LegacyComponentSerializer.legacyAmpersand().serialize(processedLine));
+            Component processedLine = line
+                    .replaceText(builder -> builder.match("\\{issuer\\}").replacement(playername))
+                    .replaceText(builder -> builder.match("\\{money\\}").replacement(formattedMoney));
+            legacyLore.add(LegacyComponentSerializer.legacySection().serialize(processedLine));
         }
         im.setLore(legacyLore);
 
