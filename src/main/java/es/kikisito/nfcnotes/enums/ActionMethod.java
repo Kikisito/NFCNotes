@@ -24,5 +24,5 @@ public enum ActionMethod {
     COMMAND_ALL,
     API,
     DEPRECATED_METHOD,
-    OTHER;
+    OTHER
 }

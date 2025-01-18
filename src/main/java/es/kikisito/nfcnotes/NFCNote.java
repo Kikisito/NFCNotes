@@ -18,7 +18,6 @@
 package es.kikisito.nfcnotes;
 
 import es.kikisito.nfcnotes.enums.NFCConfig;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;

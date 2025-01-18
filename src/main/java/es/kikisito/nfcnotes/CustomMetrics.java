@@ -22,7 +22,7 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 
 public class CustomMetrics {
-    public CustomMetrics(Main plugin, Metrics metrics) {
+    public CustomMetrics(Metrics metrics) {
         // Material used
         metrics.addCustomChart(new SimplePie("material_used", NFCConfig.NOTE_MATERIAL::getString));
 

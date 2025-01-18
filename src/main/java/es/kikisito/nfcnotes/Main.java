@@ -116,7 +116,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getCommand("count").setExecutor(new Count(this));
 
         Metrics metrics = new Metrics(this, 8048);
-        new CustomMetrics(this, metrics);
+        new CustomMetrics(metrics);
 
         // Set forbidden inventories
         for(String invtype : NFCConfig.DISABLED_TABLES.getStrings()){

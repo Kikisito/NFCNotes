@@ -17,7 +17,6 @@
 
 package es.kikisito.nfcnotes.enums;
 
-import es.kikisito.nfcnotes.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;

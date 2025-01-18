@@ -45,7 +45,7 @@ public class CreateNote implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         // Cast to Adventure Audience
         Audience audience = plugin.getAdventure().sender(sender);
 
