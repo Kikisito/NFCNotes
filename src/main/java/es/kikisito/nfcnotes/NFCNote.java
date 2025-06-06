@@ -148,15 +148,20 @@ public class NFCNote {
         return noteUuidString.equals(NFCConfig.NOTE_UUID.getString());
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isLegacyNFCNote(ItemStack itemStack) {
-        // No hay item o no tiene meta
-        if(itemStack == null || !itemStack.hasItemMeta()) return false;
+        try {
+            // No hay item o no tiene meta
+            if(itemStack == null || !itemStack.hasItemMeta()) return false;
 
-        ItemMeta im = itemStack.getItemMeta();
-        if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.LUCK) == null || Objects.requireNonNull(im.getAttributeModifiers(Attribute.LUCK)).iterator().next() == null) {
+            ItemMeta im = itemStack.getItemMeta();
+            if(!im.hasAttributeModifiers() || im.getAttributeModifiers(Attribute.LUCK) == null || Objects.requireNonNull(im.getAttributeModifiers(Attribute.LUCK)).iterator().next() == null) {
+                return false;
+            }
+
+            return Objects.requireNonNull(im.getAttributeModifiers(Attribute.LUCK)).iterator().next().getName().equalsIgnoreCase(NFCConfig.NOTE_UUID.getString());
+        } catch (Exception e) {
             return false;
         }
-
-        return Objects.requireNonNull(im.getAttributeModifiers(Attribute.LUCK)).iterator().next().getName().equalsIgnoreCase(NFCConfig.NOTE_UUID.getString());
     }
 }
